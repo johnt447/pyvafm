@@ -1,5 +1,4 @@
-
-Â## Feed object.
+## Feed object.
 # This class contains the numerical value of a channel
 # and its buffered value.
 class Feed(object):
