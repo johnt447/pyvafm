@@ -124,7 +124,28 @@ class VAFM(object):
 			raise NameError( "Connection error: channel "+inames[1]+" not found." )
 		
 		self.circuits[inames[0]].I[inames[1]].signal = self.circuits[onames[0]].O[onames[1]].signal
-	
+		
+	## Disconnect an input channel.
+	# This is achieved by renewing the Feed object in the channel. If the channel was
+	# not connected, it does not really matter.
+	# The input channel to disconnect is specified with the syntax: "circuit.channel"
+        # @param I Name of the input channel given as string: "circuit.channel"
+	def Disconnect(self, I):
+		
+		inames = I.split(".",1)
+		
+		print "disconnecting " + I
+		
+		#check existence of circuit
+		if not(inames[0] in self.circuits.keys()):
+			raise NameError( "Disconnection error: circuit "+inames[0]+" not found." )
+		
+		#check existence of channels
+		if not(inames[1] in self.circuits[inames[0]].I.keys()):
+			raise NameError( "Connection error: input channel "+inames[1]+" not found." )
+		
+		self.circuits[inames[0]].I[inames[1]].Disconnect()
+		
 	## Initialization.
 	#
 	# Use this after all circuits and connections are setup.

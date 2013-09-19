@@ -8,25 +8,14 @@ def main():
 	
 	machine = vafmcore.VAFM();
 
-	#waver = circs.Wave(machine, 'waver');
+        
 	
-	#machine.circuits['waver'] = waver
+	machine.AddCircuit(type='opAdd',name='adder2', factors=3, pushed=True)
+	machine.AddCircuit(type='opAdd',name='adder1', pushed=True)
+	machine.AddCircuit(type='opMul',name='mult1')
+	out1 = machine.AddCircuit(type='output',name='out1', file='log.log', dump=1)
 	
-	#print machine.circuits
-	##print machine.circuits['asd']
-
-	#waver.I['freq'].Set(1);
-	#waver.I['amp'].Set(1);
-
-	#print waver.asder
-	#print str(waver)
-	
-	machine.AddCircuit_test(type='opAdd',name='adder2', factors=3, pushed=True)
-	machine.AddCircuit('opAdd','adder1', pushed=True)
-	machine.AddCircuit('opMul','mult1')
-	out1 = machine.AddCircuit('output','out1', file='log.log', dump=1)
-	
-	machine.AddCircuit('waver','wave', freq=10, amp=1)
+	machine.AddCircuit(type='waver',name='wave', freq=10, amp=1)
 	
 	out1.RegisterChannel(['machine.time', 'wave.cos', 'wave.sin','adder1.out'])
 	
@@ -38,8 +27,10 @@ def main():
 	for i in range(100):
 		#print machine.time, machine.circuits['wave'].O['cos'].value
 		machine.Update()
-	
-	
+	machine.Disconnect("adder1.in1")
+	for i in range(100):
+		machine.Update()	
+
 
 if __name__ == '__main__':
 	main()
