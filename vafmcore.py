@@ -124,7 +124,35 @@ class VAFM(object):
 			raise NameError( "Connection error: channel "+inames[1]+" not found." )
 		
 		self.circuits[inames[0]].I[inames[1]].signal = self.circuits[onames[0]].O[onames[1]].signal
+
+	## Connect the output of a circuit to the input of another.
+	# The I/O channels to connect are specified with the syntax: "circuit.channel", in the *args arguments
+	# array. The first element has to be the output channel to use as source, while all
+	# the following elements refer to the destination channels.
+        # @param *args Name of the channels to connect: "circuit.channel"
+	def Connects(self, *args):
 		
+		onames = args[0].split(".",1)
+
+		#check existence of output circuit.channel
+		if not(onames[0] in self.circuits.keys()):
+			raise NameError( "Connection error: circuit "+onames[0]+" not found." )
+
+                print "connecting " + args[0]
+                
+                for i in args[1:]:
+
+                    inames = i.split(".",1)
+
+                    #check existence of channels
+                    if not(inames[1] in self.circuits[inames[0]].I.keys()):
+			raise NameError( "Connection error: channel "+inames[1]+" not found." )
+
+		    print "  -> " + i
+		    self.circuits[inames[0]].I[inames[1]].signal = self.circuits[onames[0]].O[onames[1]].signal
+
+                    
+	
 	## Disconnect an input channel.
 	# This is achieved by renewing the Feed object in the channel. If the channel was
 	# not connected, it does not really matter.

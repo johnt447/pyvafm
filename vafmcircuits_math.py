@@ -57,6 +57,44 @@ class opAdd(Circuit):
 			
 		self.O['out'].value = result
 
+## Arithmetic subtraction circuit.
+#
+# Outputs the difference between two input signals 'in#' in the output 'out'.
+#
+# - Initialisation parameters:
+# 	- pushed = True|False  push the output buffer immediately if True
+#
+# - Input channels:
+# 	- \f$in1, in2\f$  input signals
+#
+# - Output channels:\n
+# 	- \f$out = in_1 - in_2 \f$
+class opSub(Circuit):
+    
+    
+	def __init__(self, machine, name, **keys):
+		
+		super(opSub, self).__init__( machine, name )
+		
+		#create input channels
+		self.AddInput("in1")
+                self.AddInput("in2")
+		
+		#create output channels
+		self.AddOutput("out")
+		
+		self.SetInputs(**keys)
+
+	def Initialize (self):
+		
+		pass
+		
+        
+	def Update (self):
+		
+		result = self.I["in1"].value - self.I["in2"].value
+		self.O['out'].value = result
+
 ## Arithmetic multiplier circuit.
 #
 # Multiplies the input signals 'in#' and outputs the result in 'out'.
