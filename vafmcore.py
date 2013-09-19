@@ -89,7 +89,10 @@ class VAFM(object):
 		
 		return self.circuits[cname].GetChannel(chname)
 	
-	
+	## Connect the output of a circuit to the input of another.
+	# The I/O channels to connect are specified with the syntax: "circuit.channel"
+        # @param O Name of the output channel (source signal) given as string: "circuit.channel"
+        # @param I Name of the input channel (destination) given as string: "circuit.channel"
 	def Connect(self, O, I):
 		
 		onames = O.split(".",1)
