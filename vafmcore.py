@@ -34,20 +34,32 @@ class VAFM(object):
 	def time(self):
 		return self._idt*self.dt
 	
+
 	## Add a circuit of type 'ctype' named 'name' to the setup.
 	#
 	# This looks into all the loaded modules whose name starts with
 	# 'vafmcircuits' and finds the first class named 'ctype'. 
 	# It then instantiate the class.
-	# @param ctype Name of the class of the circuit to add.
-	# @param name Name of the circuit in the setup.
+        # - Mandatory arguments:\n
+        # 	- type = string: type name of the circuit class\n
+        # 	- name = string: name to use for the new instance of the circuit\n
+        #
 	# @param **argkw Keyworded arguments for circuit initialisation.
 	# @return Reference to the created circuit.
-	def AddCircuit(self, ctype, name, **argkw):
+	def AddCircuit(self, **argkw):
 		
 		lst = sys.modules.keys()
 		classobj = None
-		
+
+                if not ("type" in argkw.keys()):
+                    raise SyntaxError("The circuit type was not specified.")
+                ctype = argkw["type"]
+                
+                if not ("name" in argkw.keys()):
+                    raise SyntaxError("The circuit name was not specified.")
+                cname = argkw["name"]
+
+                print "new circuit: " + ctype + "  " + cname
 		for i in range(len(lst)): #loop over the modules
 			
 			if lst[i].startswith('vafmcircuits'): #if the module is a vafmcircuits module
@@ -65,15 +77,14 @@ class VAFM(object):
 			raise NotImplementedError("Circuit "+ctype+" was not implemented or imported!")
 		
 		#check if the name was good
-		if name in self.circuits.keys():
-			raise NameError("A circuit named '"+name+"' already exists in the setup!")
+		if cname in self.circuits.keys():
+			raise NameError("A circuit named '"+cname+"' already exists in the setup!")
 		
 		#instantiate
-		instance = classobj[1](machine=self, name=name, **argkw)
-		self.circuits[name] = instance
+		instance = classobj[1](machine=self, **argkw)
+		self.circuits[cname] = instance
 		
 		return instance
-	
 	
 	## Find a channel given its name and the name of the circuit.
 	# @param cname Name of the circuit.

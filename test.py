@@ -21,7 +21,7 @@ def main():
 	#print waver.asder
 	#print str(waver)
 	
-	machine.AddCircuit('opAdd','adder2', factors=3, pushed=True)
+	machine.AddCircuit_test(type='opAdd',name='adder2', factors=3, pushed=True)
 	machine.AddCircuit('opAdd','adder1', pushed=True)
 	machine.AddCircuit('opMul','mult1')
 	out1 = machine.AddCircuit('output','out1', file='log.log', dump=1)
