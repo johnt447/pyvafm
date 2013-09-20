@@ -27,7 +27,7 @@ class VAFM(object):
 		self.O = OrderedDict()
 		self.O['time'] = vafmbase.Channel('time',self,False)
 		
-		pass
+		
 	
 	## Total simulation time.
 	@property
@@ -51,6 +51,7 @@ class VAFM(object):
 		lst = sys.modules.keys()
 		classobj = None
 
+                #check for mandatory arguments, type and name
                 if not ("type" in argkw.keys()):
                     raise SyntaxError("The circuit type was not specified.")
                 ctype = argkw["type"]
@@ -70,7 +71,6 @@ class VAFM(object):
 				if len(c)!=0:
 					classobj = c[0]
 					break
-				
 		
 		#check if the type was good
 		if classobj == None:
@@ -173,6 +173,28 @@ class VAFM(object):
 			raise NameError( "Connection error: input channel "+inames[1]+" not found." )
 		
 		self.circuits[inames[0]].I[inames[1]].Disconnect()
+
+	## Disconnect a group of input channels.
+	# This is the same as Disconnect, but it can take multiple "circuit.channel" arguments.
+        # @param *args Input channels given as list of strings of format: "circuit.channel"
+	def Disconnects(self, *args):
+
+                print "disconnecting: "
+		for i in args:
+
+        		inames = i.split(".",1)	
+
+                        #check existence of circuit
+                        if not(inames[0] in self.circuits.keys()):
+                            raise NameError( "Disconnection error: circuit "+inames[0]+" not found." )
+		
+                        #check existence of channels
+                        if not(inames[1] in self.circuits[inames[0]].I.keys()):
+                            raise NameError( "Connection error: input channel "+inames+" not found." )
+		
+                        print "  - "+ inames
+                        self.circuits[inames[0]].I[inames[1]].Disconnect()
+                        
 		
 	## Initialization.
 	#

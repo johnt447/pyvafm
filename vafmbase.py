@@ -61,6 +61,9 @@ class Channel(object):
         def Disconnect(self):
             self.signal = Feed(self.owner)
 
+## Abstract circuit class.
+#
+#
 class Circuit(object):
 
 	#__metaclass__ = abc.ABCMeta;
