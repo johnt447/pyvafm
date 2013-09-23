@@ -245,3 +245,94 @@ class opLinC(Circuit):
 			result += self.I["ina"+str(i+1)].value * self.I["inb"+str(i+1)].value
 			
 		self.O['out'].value = result
+
+
+## Absolute value circuit.
+#
+# Takes in an inpute and returns the Absolute vcalue of it
+#
+# - Initialisation parameters:\n
+# 	- pushed = True|False  push the output buffer immediately if True
+#
+# - Input channels:\n
+# 	- \f$inf$
+#
+# - Output channels:\n
+# 	- \f$out$
+
+
+class OpAbs(Circuit):
+    
+    
+	def __init__(self, machine, name, **keys):
+		
+		super(self.__class__, self).__init__( machine, name )
+
+
+		self.AddInput("in")
+		
+		#create output channels
+		self.AddOutput("out")
+		
+		self.SetInputs(**keys)
+
+	def Initialize (self):
+		
+		pass
+		
+		
+		
+	def Update (self):
+		
+		result = self.I["in"].value
+		
+		if self.I["in"].value < 0:
+			result = self.I["in"].value * -1
+		
+		self.O["out"].value = result
+
+
+
+## Power value circuit.
+#
+# Takes in an inpute and returns the result raised to a given power
+#
+# - Initialisation parameters:\n
+# 	- pushed = True|False  push the output buffer immediately if True
+#	- power = integer The value the function result will be raised by
+#
+# - Input channels:\n
+# 	- \f$inf$
+#
+# - Output channels:\n
+# 	- \f$out = in^{power}$
+
+
+class OpPower(Circuit):
+    
+    
+	def __init__(self, machine, name, **keys):
+		
+		super(self.__class__, self).__init__( machine, name )
+
+		if 'power' in keys.keys():
+			self.power = keys['power']
+
+		self.AddInput("in")
+		
+		#create output channels
+		self.AddOutput("out")
+		
+		self.SetInputs(**keys)
+
+	def Initialize (self):
+		
+		pass
+		
+		
+		
+	def Update (self):
+		
+		result = math.pow(self.I["in"].value,  self.power)
+		
+		self.O["out"].value = result

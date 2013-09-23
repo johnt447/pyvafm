@@ -38,6 +38,19 @@ class NotGate(Circuit):
 		self.O['out'].value = result
 		
 
+## And Gate
+#Takes in an Input Signal and will output 1 if in1 and in2 are positve numbers
+#
+# - Initialisation parameters:
+# 	- pushed = True|False  push the output buffer immediately if True
+#
+# - Input channels:
+# 	- \f$in1 in2\f$
+#
+# - Output channels:\n
+#   - \f$out\f$
+
+
 class AndGate(Circuit):
 
 	def __init__(self, machine, name, **keys):
@@ -62,6 +75,17 @@ class AndGate(Circuit):
 			result=1
 		self.O['out'].value = result
 
+## Or Gate
+#Takes in an Input Signal and will output 1 if in1 or in2 are positve numbers
+#
+# - Initialisation parameters:
+# 	- pushed = True|False  push the output buffer immediately if True
+#
+# - Input channels:
+# 	- \f$in1 in2\f$
+#
+# - Output channels:\n
+#   - \f$out\f$
 
 class OrGate(Circuit):
 
@@ -88,6 +112,18 @@ class OrGate(Circuit):
 			result=1
 		self.O['out'].value = result
 
+
+## XOr Gate
+#Takes in an Input Signal and will output 1 if in1 or in2 are positve numbers but will output 0 if both in1 and in2 are positve
+#
+# - Initialisation parameters:
+# 	- pushed = True|False  push the output buffer immediately if True
+#
+# - Input channels:
+# 	- \f$in1 in2\f$
+#
+# - Output channels:\n
+#   - \f$out\f$
 
 class XOrGate(Circuit):
 
@@ -118,6 +154,17 @@ class XOrGate(Circuit):
 
 		self.O['out'].value = result
 
+## NOR Gate
+#Takes in an Input Signal and will output 1 if in1 and in2 are negative 
+#
+# - Initialisation parameters:
+# 	- pushed = True|False  push the output buffer immediately if True
+#
+# - Input channels:
+# 	- \f$in1 in2\f$
+#
+# - Output channels:\n
+#   - \f$out\f$
 
 class NORGate(Circuit):
 
