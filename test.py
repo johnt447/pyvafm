@@ -13,6 +13,7 @@ def main():
 	machine.AddCircuit(type='opSub',name='diff', pushed=True, in1=3)
 	machine.AddCircuit(type='opAdd',name='adder1', pushed=True)
 	machine.AddCircuit(type='opMul',name='mult1')
+
 	out1 = machine.AddCircuit(type='output',name='out1', file='log.log', dump=1)
 	
 	machine.AddCircuit(type='waver',name='wave', freq=10, amp=1)
@@ -24,6 +25,7 @@ def main():
 	machine.Connects("wave.sin","adder1.in1","diff.in1")
 	machine.Connect("wave.cos","adder1.in2")
 	machine.Connects("wave.cos","adder1.in2","diff.in2")
+
 	
 	for i in range(100):
 		#print machine.time, machine.circuits['wave'].O['cos'].value
