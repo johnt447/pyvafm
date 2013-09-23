@@ -83,7 +83,6 @@ class VAFM(object):
 		#instantiate
 		instance = classobj[1](machine=self, **argkw)
 		self.circuits[cname] = instance
-		
 		return instance
 	
 	## Find a channel given its name and the name of the circuit.
@@ -229,7 +228,6 @@ class VAFM(object):
 		
 		for kw in self.circuits.keys():
 			self.circuits[kw].Push()
-	
 
 
 
