@@ -8,7 +8,7 @@ def main():
 	
 	machine = vafmcore.VAFM();
 	#Add Circuits
-  	machine.AddCircuit(type='OrGate',name='And', pushed=True)
+  	machine.AddCircuit(type='NORGate',name='And', pushed=True)
 	out1 = machine.AddCircuit(type='output',name='out1', file='log.dat', dump=1)
 	machine.AddCircuit(type='waver',name='wave', freq=10, amp=1)
 	
