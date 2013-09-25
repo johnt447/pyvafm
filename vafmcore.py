@@ -9,6 +9,7 @@ import vafmbase
 import vafmcircuits
 import vafmcircuits_math
 import vafmcircuits_Logic
+import vafmcircuits_signal_processing
 
 ## Virtual Machine class.
 #
