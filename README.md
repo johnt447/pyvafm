@@ -19,3 +19,5 @@ vafmcircuits.py: oscillator and output circuits
 vafmcircuits_math.py: mathematical functions
 
 vafmcircuits_Logic.py: logic gates
+
+vafmcircuits_Comparison.py: comparison operators
