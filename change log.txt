@@ -1,4 +1,5 @@
 change log
+
 20/09/2013 15:50 - Added change log
 
 23/09/2013 10:22 the commit "I think this diffe" was a typo I meant to say the file has no changes but I think some of the line spacings may have been altered so the actual code hasn't changes.
@@ -10,3 +11,5 @@ change log
 23/09/2013 15:48 Added Abs and power functions
 
 25/09/2013 14:16 Added differentiation, integration, comparison and min/max circuits
+
+26/09/2013 14.28 BugFix: added "pass" in delay.Update()

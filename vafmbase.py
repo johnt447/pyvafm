@@ -105,6 +105,7 @@ class Circuit(object):
 				self.I[key].Set(kwargs[key])
 				print '   input '+key+' -> '+str(kwargs[key])
 			else:
+				#print the init parameter even if not an input flag
 				print "   " + key + " " + str(kwargs[key])
 		
 		if 'pushed' in kwargs.keys():

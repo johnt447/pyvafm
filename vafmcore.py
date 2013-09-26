@@ -10,6 +10,7 @@ import vafmcircuits
 import vafmcircuits_math
 import vafmcircuits_Logic
 import vafmcircuits_signal_processing
+import vafmcircuits_composite
 
 ## Virtual Machine class.
 #
@@ -26,7 +27,12 @@ class VAFM(object):
 		## Integer number of update steps so far.
 		self._idt = 0;
 		
-		self.O = OrderedDict()
+		## Dictionary of input channels
+		self.I = {}
+		## Dictionary of output channels
+		self.O = {}
+		
+		#self.O = OrderedDict()
 		self.O['time'] = vafmbase.Channel('time',self,False)
 		
 		
@@ -101,7 +107,7 @@ class VAFM(object):
 		
 		return self.circuits[cname].GetChannel(chname)
 	
-	## Connect the output of a circuit to the input of another.
+	## (deprecated) Connect the output of a circuit to the input of another.
 	# The I/O channels to connect are specified with the syntax: "circuit.channel"
         # @param O Name of the output channel (source signal) given as string: "circuit.channel"
         # @param I Name of the input channel (destination) given as string: "circuit.channel"
@@ -154,7 +160,7 @@ class VAFM(object):
 
                     
 	
-	## Disconnect an input channel.
+	## (deprecated) Disconnect an input channel.
 	# This is achieved by renewing the Feed object in the channel. If the channel was
 	# not connected, it does not really matter.
 	# The input channel to disconnect is specified with the syntax: "circuit.channel"

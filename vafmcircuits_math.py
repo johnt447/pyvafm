@@ -17,6 +17,13 @@ import math
 #
 # - Output channels:\n
 # 	- \f$out = \sum_i^{factors} in_i \f$
+#
+#\b Examples:
+# \code{.py}
+# machine.AddCircuit(type='opAdd', name='adder')
+# machine.AddCircuit(type='opAdd', name='summer', factors=4)
+# machine.AddCircuit(type='opAdd', name='summer', in2=3.5)
+# \endcode
 class opAdd(Circuit):
     
     
@@ -24,7 +31,7 @@ class opAdd(Circuit):
 		
 		super(opAdd, self).__init__( machine, name )
 		
-		# ## Amount of input channels to sum. Default is 2.
+		## Amount of input channels to sum. Default is 2.
 		self.factors = 2
 		
 		#check if the amount of factors was given	
