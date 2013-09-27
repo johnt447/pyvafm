@@ -45,11 +45,15 @@ class Machine(Circuit):
 		
 		self.AddOutput('time')
 		
-		
+		if 'assembly' in keys.keys():
+			self.Assemble = keys['assembly']
+			self.Assemble(self)
 		
 		self.SetInputs(**keys)
 		
 		
+	def Assemble(self):
+		pass
 	
 	## Total simulation time.
 	@property
