@@ -1,6 +1,5 @@
 from vafmbase import Circuit
 import math
-import vafmcore
 
 ## Min/Max value circuit.
 #
