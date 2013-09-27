@@ -1,3 +1,8 @@
+## \file vafmcircuits_math.py
+# This file contains the basic arithmetic operator circuits.
+#
+#
+
 from vafmbase import Circuit
 import math
 
@@ -29,7 +34,7 @@ class opAdd(Circuit):
     
 	def __init__(self, machine, name, **keys):
 		
-		super(opAdd, self).__init__( machine, name )
+		super(self.__class__, self).__init__( machine, name )
 		
 		## Amount of input channels to sum. Default is 2.
 		self.factors = 2
@@ -81,7 +86,7 @@ class opSub(Circuit):
     
 	def __init__(self, machine, name, **keys):
 		
-		super(opSub, self).__init__( machine, name )
+		super(self.__class__, self).__init__( machine, name )
 		
 		#create input channels
 		self.AddInput("in1")
@@ -175,7 +180,7 @@ class opDiv(Circuit):
     
 	def __init__(self, machine, name, **keys):
 		
-		super(opDiv, self).__init__( machine, name )
+		super(self.__class__, self).__init__( machine, name )
 		
 		#create input channels
 		self.AddInput("in1")

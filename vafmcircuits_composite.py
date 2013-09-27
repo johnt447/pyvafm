@@ -5,9 +5,8 @@ import math
 
 ## Template composite circuit
 #
-# Sums up the input signals 'in#' and outputs the result in 'out'.
-# The amount of input signals is set with the 'factors=#' argument when
-# the circuit is created.
+# The composite circuit contains a reference to a new VAFM instance, where the subcircuits
+# are added and connected.
 #
 # \code{.py}
 # asd
@@ -67,6 +66,7 @@ class composite(Circuit):
 		
 		self._machine.Connects(*args)
 
+	
 
 	def Initialize (self):
 		

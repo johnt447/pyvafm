@@ -13,3 +13,13 @@ change log
 25/09/2013 14:16 Added differentiation, integration, comparison and min/max circuits
 
 26/09/2013 14.28 BugFix: added "pass" in delay.Update()
+
+27/09/2013 02.00 Major changes to the main VAFM class:
+	VAFM class renamed Machine and moved to vafmcircuits.py. vafmcore is now empty
+	The Machine class now has input and output channels so it can be used as a composite circuit
+	Subcircuits inside a Machine can receive/send signals from/to the Machine input/output channels 
+	through the meta Input/Output channels.
+	Connections are handled with the Connect function, which now supports unlimited arguments, the first being
+	the channels from which the signal is taken, and all the following the channels to which send the signal.
+	Within a machine only output-to-input connections are allowed. Global input channels of a machine can be
+	connected to subcircuits input channels, and subcircuits outputs can be connected to global outputs.
