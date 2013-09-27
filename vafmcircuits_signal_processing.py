@@ -20,8 +20,6 @@ import vafmcore
 #	- \f$max = minimum value over the given peroid $
 #	- \f$amp = \frac{max-min}{2} $
 #	- \f$amp = \frac{max-min}{2} $
-
-
 class minmax(Circuit):
     
     
@@ -203,6 +201,7 @@ class Delay(Circuit):
 		
 	
 	def Update (self):
-
+		
+		pass
 
 

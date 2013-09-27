@@ -1,3 +1,10 @@
+
+def enum(**enums):
+	return type('Enum', (), enums)
+	
+ChannelType = enum(Input=1, Output=2, Any=0)
+
+
 ## Feed object.
 # This class contains the numerical value of a channel
 # and its buffered value.
@@ -30,7 +37,8 @@ class Feed(object):
 		self._value = value
 		self._buff = value
 	
-	
+	def __str__ (self):
+		return str(self._value) # + "("+str(self._buff)+")"
 
 class Channel(object):
 	
@@ -60,6 +68,10 @@ class Channel(object):
 	## Renew the Feed object so that it is disconnected from everything.
         def Disconnect(self):
             self.signal = Feed(self.owner)
+
+	def __str__(self):
+		return self.owner.name+"."+self.name+" = "+str(self.signal)
+		
 
 ## Abstract circuit class.
 #
@@ -105,6 +117,7 @@ class Circuit(object):
 				self.I[key].Set(kwargs[key])
 				print '   input '+key+' -> '+str(kwargs[key])
 			else:
+				#print the init parameter even if not an input flag
 				print "   " + key + " " + str(kwargs[key])
 		
 		if 'pushed' in kwargs.keys():
@@ -115,12 +128,17 @@ class Circuit(object):
 	# @param name Name of the new input channel.
 	def AddInput(self, name):
 		
+		if name in self.I.keys() or name in self.O.keys():
+			raise NameError("A channel named "+name+" already exists in circuit "+ str(self))
+		
 		self.I[name] = Channel(name,self,True)
 	
 	## Create an output channel with the given name.
 	# @param name Name of the new output channel.
 	def AddOutput(self, name):
 		
+		if name in self.I.keys() or name in self.O.keys():
+			raise NameError("A channel named "+name+" already exists in circuit "+ str(self))
 		self.O[name] = Channel(name,self,False)
 
 	## Find a channel by name.
