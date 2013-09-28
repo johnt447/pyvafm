@@ -22,7 +22,7 @@ def ADC(compo):
 def main():
 	
 	
-	machine = Machine(machine=None, name='machine', pushed=True);
+	machine = Machine(name='machine', pushed=True);
 	
 	
 	#Add Circuits
@@ -36,7 +36,7 @@ def main():
 	machine.Connect("osc.cos","compo1.signal2")
 
 	out1 = machine.AddCircuit(type='output',name='output',file='log.log', dump=1)
-	out1.RegisterChannel('global.time', 'osc.sin', 'osc.cos', 'compo1.out')
+	out1.Register('global.time', 'osc.sin', 'osc.cos', 'compo1.out')
 	
 	for i in range(1000):
 		machine.Update()

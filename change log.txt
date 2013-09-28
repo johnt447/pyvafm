@@ -23,3 +23,10 @@ change log
 	the channels from which the signal is taken, and all the following the channels to which send the signal.
 	Within a machine only output-to-input connections are allowed. Global input channels of a machine can be
 	connected to subcircuits input channels, and subcircuits outputs can be connected to global outputs.
+
+28/09/2013 
+	improved and added documentation
+	output circuit:
+		RegisterChannel renamed to Register
+		added an Unregister function
+		behaviour improved and extended

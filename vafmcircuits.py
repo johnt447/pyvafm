@@ -20,12 +20,15 @@ import math
 import io
 
 
-## Virtual Machine class.
+## Virtual Machine main class.
+#
+# The vitual machine is effectively a Circuit, with input/output channels,
+# and an internal assembly of circuits. 
 #
 class Machine(Circuit):
 	
 
-	def __init__(self, machine, name, **keys):
+	def __init__(self, machine=None, name="machine", **keys):
 		
 		super(self.__class__, self).__init__( machine, name )
 		
@@ -33,7 +36,11 @@ class Machine(Circuit):
 		self.circuits = OrderedDict()
 		
 		## Integration timestep
-		self.dt = 1.0e-2
+		self.dt = 0.0
+		if not ('dt' in keys.keys()):
+			print 'WARNING! No timestep dt was given in the initialisation parameters.'
+		else:
+			self.dt = keys['dt']
 		
 		## Integer number of update steps so far.
 		self._idt = 0;
@@ -51,7 +58,42 @@ class Machine(Circuit):
 		
 		self.SetInputs(**keys)
 		
-		
+	## Fabricator function.
+	# 
+	# This function is called when the machine is instantiated, only if
+	# the "assembly" parameter was given among initialisation arguments.
+	# The function is originally left unimplemented, so the user can build
+	# the setup after the machine is instantiated.
+	#
+	# \b Example:
+	# \code{.py}
+	# ...
+	# # assembly function definition
+	# def MyAssembly(compo):
+	# 
+	#   # add global channels
+  	#   compo.AddInput("signal1")
+  	#   ...
+  	#   # add internal circuits
+  	#   compo.AddCircuit(type='opAdd',name='adder',factors=2, pushed=True)
+  	#   ...
+  	#   # connect internal circuits to global input and outputs
+  	#   compo.Connect("global.signal1","adder.in1")
+  	#   compo.Connect("adder.out","global.out")
+	#   ...
+	# 
+	# # main script
+	# def main():
+	#  
+	#   main = Machine(name='machine', dt=0.01, pushed=True);
+	#   
+	#   # add a Machine circuit to main, and set it up with the MyAssembly function
+  	#   main.AddCircuit(type='Machine', name='compo1', assembly=MyAssembly, pushed=True)
+  	#   ...
+	#  
+	# if __name__ == '__main__':
+	#   main()
+	# \endcode
 	def Assemble(self):
 		pass
 	
@@ -62,7 +104,19 @@ class Machine(Circuit):
 	
 
 	## Create an input channel with the given name.
+	#
+	# Add a global input channel to the machine. This is done when the
+	# machine is intended to be used as a composite circuit inside another machine,
+	# and thus it needs to communicate with other circuits.
+	#
 	# @param name Name of the new input channel.
+	#
+	# \b Example:
+	# \code{.py}
+	# machine = Machine(name='machine', dt=0.01);
+	# machine.AddInput('signal')
+	# \endcode
+	#
 	def AddInput(self, name):
 		
 		if name in self.I.keys() or name in self.O.keys():
@@ -72,7 +126,19 @@ class Machine(Circuit):
 		self._MetaI[name] = Channel(name,self,False)
 	
 	## Create an output channel with the given name.
+	#
+	# Add a global output channel to the machine. This is done when the
+	# machine is intended to be used as a composite circuit inside another machine,
+	# and thus it needs to communicate with other circuits.
+	#
 	# @param name Name of the new output channel.
+	#
+	# \b Example:
+	# \code{.py}
+	# machine = Machine(name='machine', dt=0.01);
+	# machine.AddOutput('outsignal')
+	# \endcode
+	#
 	def AddOutput(self, name):
 		
 		if name in self.I.keys() or name in self.O.keys():
@@ -86,12 +152,28 @@ class Machine(Circuit):
 	# This looks into all the loaded modules whose name starts with
 	# 'vafmcircuits' and finds the first class named 'ctype'. 
 	# It then instantiate the class.
-        # - Mandatory arguments:\n
-        # 	- type = string: type name of the circuit class\n
-        # 	- name = string: name to use for the new instance of the circuit\n
-        #
-	# @param **argkw Keyworded arguments for circuit initialisation.
+	# - Mandatory arguments:\n
+    # 	- type = string: type name of the circuit class\n
+    # 	- name = string: name to use for the new instance of the circuit\n
+    #	- others: specific arguments depending on the particular circuit to add.
+    #
+	# - Optional arguments:\n
+    # 	- pushed = bool: defined the output behaviour model.\n
+    #	- others: specific arguments depending on the particular circuit to add.
+    #
+    # 
+    # @param **argkw Keyworded arguments for circuit initialisation.
+    #
 	# @return Reference to the created circuit.
+	#
+    # \b Example:
+	# \code{.py}
+	# machine = Machine(name='machine', dt=0.01);
+	#
+	# machine.AddCircuit(type='opAdd',name='adder',factors=2, pushed=True)
+	# machine.AddCircuit(type='output',name='log',file='log.log', dump=1)
+	# \endcode
+	#
 	def AddCircuit(self, **argkw):
 		
 		lst = sys.modules.keys()
@@ -201,9 +283,21 @@ class Machine(Circuit):
 		
 		return allchs[chname]
 	
-	## Find a channel by name.
-	# @param chname Name of the channel to find.
+	## Find a channel by tag.
+	#
+	# The tag is given in the string format: "circuitname.channelname".
+	# Global circuits of the machine are named "global.channelname".
+	#
+	# @param tag Channel tag
+	#
 	# @return Reference to the channel.
+	#
+	# \b Example:
+	# \code{.py}
+	# sinwave = machine.GetChannel('waver.sin')
+	# time = machine.GetChannel('global.time')
+	# \endcode
+	#
 	def GetChannel(self, tag):
 		
 		#check if the tag has the correct syntax
@@ -251,12 +345,25 @@ class Machine(Circuit):
 		
 	
 	## Connect the output of a circuit to the input of another.
+	#
 	# The I/O channels to connect are specified with the syntax: "circuit.channel", in the *args arguments
 	# array. The first element has to be the output channel to use as source, while all
 	# the following elements refer to the destination channels.
+	#
 	# @param *args Name of the channels to connect: "circuit.channel"
+	#
+	# \b Example:
+	# \code{.py}
+  	# main = Machine(name='machine', dt=0.01, pushed=True);
+  	# 
+  	# main.AddCircuit(type='waver', name='osc', amp=1, freq=1)
+  	# main.AddCircuit(type='opAdd', name='adder', factors=2)
+  	#
+  	# main.Connect("osc.sin", "adder.in1")
+  	# main.Connect("osc.cos", "adder.in2")
+  	#
+	# \endcode
 	def Connect(self, *args):
-		
 		
 		#if the output is a global, then it means that we want to connect
 		#the global input to input channels in the machine
@@ -283,8 +390,17 @@ class Machine(Circuit):
 	
 	
 	## Disconnect one or more input channels.
+	#
 	# This is the same as Disconnect, but it can take multiple "circuit.channel" arguments.
+	#
 	# @param *args Input channels given as list of strings of format: "circuit.channel"
+	#
+	# \b Example:
+	# \code{.py}
+	# machine.Disconnect('waver.amp')
+	# machine.Disconnect('adder.in1', 'adder.in2')
+	# \endcode
+	#
 	def Disconnect(self, *args):
 
 		print "disconnecting: "
@@ -309,6 +425,7 @@ class Machine(Circuit):
 	## Update cycle.
 	#
 	# Calls the update routine of each circuit in the setup.
+	# 
 	def Update(self):
 		
 		#print 'updating machine ' +self.name
@@ -333,14 +450,14 @@ class Machine(Circuit):
 		self.O['time'].Set(self.time)
 		#print 'before post' + str(self.O['time'].value)
 		
-		self.PostUpdate()
+		self._PostUpdate()
 	
 		#print 'after post' + str(self.O['time'].value)
 		
 	## Post Update cycle.
 	#
 	# Called after the Update is finished, to push all buffers.
-	def PostUpdate(self):
+	def _PostUpdate(self):
 		
 		# pass the metaoutput value to the global output
 		for key in self._MetaO.keys():
@@ -377,6 +494,14 @@ class Machine(Circuit):
 # - Output channels:
 # 	- \f$sin\f$ sine wave \f$ = amp\cdot\sin(2 \pi freq\cdot t) + offset \f$
 # 	- \f$cos\f$ cosine wave \f$ = amp\cdot\cos(2 \pi freq\cdot t) + offset \f$
+#
+# 
+# \b Example:
+# \code{.py}
+# machine.AddCircuit(type='waver', name='wgen')
+# machine.AddCircuit(type='waver', name='wgen', amp=1.2, freq=12000)
+# \endcode
+#
 class waver(Circuit):
     
     
@@ -415,7 +540,11 @@ class waver(Circuit):
 
 ## Output circuit.
 #
-# Use this to dump the values of channels in a log file.
+# Use this to dump the values of channels in a log file. 
+# The channel values that are printed to the file are added/removed using the
+# RegisterChannel/Unregister functions
+# The input channel 'record'
+# if connected will make the circuit print to file only 
 #
 # - Initialisation parameters:\n
 # 	- file = name of the log file\n
@@ -426,6 +555,14 @@ class waver(Circuit):
 #
 # - Output channels:\n
 # This circuit has no output channel.
+#
+# 
+# \b Example:
+# \code{.py}
+# logger = machine.AddCircuit(type='output', name='logger', dump=1)
+# logger = machine.AddCircuit(type='output', name='logger', dump=100)
+# \endcode
+#
 class output(Circuit):
     
     
@@ -457,7 +594,16 @@ class output(Circuit):
 	## Register a channel for output.
 	#
 	# If the channel is already registered in this output circuit, it won't be registered again.
-	def RegisterChannel(self, *args):
+	#
+	# @param *args Channel tags to be printed in the output.
+	#
+	# \b Example:
+	# \code{.py}
+	# logger = machine.AddCircuit(type='output', name='logger', dump=100)
+	# logger.Register('global.time','waver.sin','adder.out', ...)
+	# \endcode
+	#
+	def Register(self, *args):
 		
 		#if type(channel) is list:
 		#cclist = [j.split(".",1) for j in channel]
@@ -469,6 +615,30 @@ class output(Circuit):
 		#		self.channels.append(channel)
 				
 
+	## Unregister a channel from the output.
+	#
+	# If the channel is already unregistered, it won't be unregistered again.
+	#
+	# @param *args Channel tags to be removed from the output.
+	#
+	# \b Example:
+	# \code{.py}
+	# logger = machine.AddCircuit(type='output', name='logger', dump=100)
+	# logger.RegisterChannel('global.time','waver.sin','adder.out', ...)
+	# ...
+	# logger.Unregister('adder.out', ...)
+	# \endcode
+	#
+	def Unregister(self, *args):
+		
+		#if type(channel) is list:
+		#cclist = [j.split(".",1) for j in channel]
+		cclist = [self.machine.GetChannel(tag) for tag in args]
+		cclist = [x for x in self.channels.extend if x not in cclist]
+		
+		self.channels = cclist
+		
+		
 
 	def Initialize (self):
 		
@@ -479,16 +649,32 @@ class output(Circuit):
 		
 	def Update (self):
 		
-		self._cnt += 1
 		
-		if self._cnt == self.dump:
-			self._cnt = 0
-			#dump the data
+		
+		if self.I['record'].signal.owner != self:
 			
-			for i in self.channels:
-				self._file.write(str(i.value)+" ")
-			self._file.write('\n')
+			#if the record channel is connected and it is positive valued
+			#write to file
+			if self.I['record'].value > 0:
+				for i in self.channels:
+					self._file.write(str(i.value)+" ")
+				self._file.write('\n')
+		
+		else: #if not connected...
 			
-		pass
+			#if the dumprate is 0, do not print!
+			if self.dump == 0:
+				return
+			
+			self._cnt += 1
+			
+			if self._cnt == self.dump:
+				self._cnt = 0
+				#dump the data
+				
+				for i in self.channels:
+					self._file.write(str(i.value)+" ")
+				self._file.write('\n')
+			
 
 
