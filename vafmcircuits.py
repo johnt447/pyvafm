@@ -25,7 +25,9 @@ import io
 ## Virtual Machine main class.
 #
 # The vitual machine is effectively a Circuit, with input/output channels,
-# and an internal assembly of circuits. 
+# but it also contains an internal assembly of circuits that run during the Update
+# cycle. Every machine always has the output channel 'time' created during initialisation.
+#
 #
 class Machine(Circuit):
 	
