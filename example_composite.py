@@ -1,3 +1,4 @@
+
 #!/usr/bin/env python
 
 from vafmbase import ChannelType
@@ -40,7 +41,6 @@ def main():
 	
 	for i in range(1000):
 		machine.Update()
-		#print machine.GetChannel('global.time')
 
 	
 

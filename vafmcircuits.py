@@ -1,3 +1,5 @@
+## \example example_composite.py
+
 import abc
 import itertools
 import inspect
