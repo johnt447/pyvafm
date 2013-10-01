@@ -15,8 +15,8 @@ import vafmcircuits
 #	- Gain = The size of the gain 
 #
 # - Input channels:\n
-# 	- \f$inf$
-#	-\f$Gain = integer$ \f
+# 	-\f$in\f$
+#	-\f$Gain = integer\f$
 #
 # - Output channels:\n
 # 	- \f$ out = in * gain $\f
@@ -146,7 +146,7 @@ class minmax(Circuit):
 #	
 #
 # - Input channels:\n
-# 	- \f$inf$ \f
+# 	- \f$in\f$
 #
 # - Output channels:\n
 # 	- \f$out = /frac{din}{dt}$ \f
