@@ -498,6 +498,7 @@ class Machine(Circuit):
 # - Output channels:
 # 	- \f$sin\f$ sine wave \f$ = amp\cdot\sin(2 \pi freq\cdot t) + offset \f$
 # 	- \f$cos\f$ cosine wave \f$ = amp\cdot\cos(2 \pi freq\cdot t) + offset \f$
+# 	- \f$sawtooth\f$ cosine wave \f$ = amp\cdot( freq*f(t) - floor(freq*f(t) ) + offset \f$
 #
 # 
 # \b Example:
@@ -519,6 +520,7 @@ class waver(Circuit):
 		
 		self.AddOutput("sin")
 		self.AddOutput("cos")
+		self.AddOutput("sawtooth")
 
 		self.SetInputs(**keys)
 		
@@ -538,7 +540,7 @@ class waver(Circuit):
 		
 		self.O['cos'].value = self.I['amp'].value*math.cos(phase) + self.I['offset'].value
 		self.O['sin'].value = self.I['amp'].value*math.sin(phase) + self.I['offset'].value
-		
+		self.O['sawtooth'].value = self.I['amp'].value * (self.machine.time *self.I["freq"].value - math.floor(self.machine.time *self.I["freq"].value)) + self.I['offset'].value
 		
 		pass
 

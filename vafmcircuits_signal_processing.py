@@ -1,5 +1,56 @@
+## \file vafmcircuits_signal_processing.py
+# This file contains the signal processing circuits for example mn/max and delay.
+#
+
 from vafmbase import Circuit
 import math
+import vafmcircuits
+
+## Gain circuit.
+#
+# Takes in an input and a CheckTime value then it will output the max and min value over that given time period and repeat until the total program time has elapsed
+#
+# - Initialisation parameters:\n
+# 	- pushed = True|False  push the output buffer immediately if True
+#	- Gain = The size of the gain 
+#
+# - Input channels:\n
+# 	- \f$inf$
+#	-\f$Gain = integer$ \f
+#
+# - Output channels:\n
+# 	- \f$ out = in * gain $\f
+
+
+class Gain(Circuit):
+    
+    
+	def __init__(self, machine, name, **keys):
+		
+		super(self.__class__, self).__init__( machine, name )
+		
+		self.AddInput("in")
+		self.AddOutput("out")
+
+		if 'Gain' in keys.keys():
+			self.gain = keys['Gain']
+		else:
+			raise NameError("Missing Gain input!")
+		
+
+
+	def Initialize (self):
+		
+		pass
+	
+		
+		
+	
+	def Update (self):		
+		self.O['out'].value  = self.I['in'].value*self.gain
+
+
+
 
 ## Min/Max value circuit.
 #
@@ -11,14 +62,16 @@ import math
 #     0.5 is chosen and the total program time is 2 then the circuit will output 4 values of min and max
 #
 # - Input channels:\n
-# 	- \f$inf$
-#	-\f$CheckTime = integer$
+# 	- \f$inf$\f
+#	-\f$CheckTime = integer$\f
 #
 # - Output channels:\n
-# 	- \f$max = maximum value over the given peroid $
-#	- \f$max = minimum value over the given peroid $
-#	- \f$amp = \frac{max-min}{2} $
-#	- \f$amp = \frac{max-min}{2} $
+# 	- \f$max = maximum value over the given peroid $\f
+#	- \f$max = minimum value over the given peroid $\f
+#	- \f$amp = \frac{max-min}{2} $\f
+#	- \f$amp = \frac{max-min}{2} $\f
+
+
 class minmax(Circuit):
     
     
@@ -93,10 +146,10 @@ class minmax(Circuit):
 #	
 #
 # - Input channels:\n
-# 	- \f$inf$
+# 	- \f$inf$ \f
 #
 # - Output channels:\n
-# 	- \f$out = /frac{din}{dt}$
+# 	- \f$out = /frac{din}{dt}$ \f
 
 class derivative(Circuit):
     
@@ -143,10 +196,10 @@ class derivative(Circuit):
 #	
 #
 # - Input channels:\n
-# 	- \f$inf$
+# 	- \f$inf$ \f
 #
 # - Output channels:\n
-# 	- \f$out = \int_a^\b \mathrm{in}\,\mathrm{d}t$
+# 	- \f$out = \int_a^\b \mathrm{in}\,\mathrm{d}t$\f
 
 
 class integral(Circuit):
@@ -182,6 +235,20 @@ class integral(Circuit):
 			self.O['out'].value = self.result
 			self.yo = self.I["in"].value
 
+## Delay circuit.
+#
+# Takes in a input and delays the start of the circuit by a fixed amount of inputted time
+#
+# - Initialisation parameters:\n
+# 	- pushed = True|False  push the output buffer immediately if True
+#	- DelayTime = Integer
+#
+# - Input channels:\n
+# 	- \f$inf$ \f
+#	- \f$DelayTime$\f
+#
+# - Output channels:\n
+# 	- \f$out = In_{t-DelayTime}$\f
 
 class Delay(Circuit):
     
@@ -191,6 +258,161 @@ class Delay(Circuit):
 		super(self.__class__, self).__init__( machine, name )
 		
 		self.AddInput("in")
+		self.AddOutput("out")
+
+		if 'DelayTime' in keys.keys():
+			self.delaytime = keys['DelayTime']
+		else:
+			raise NameError("Missing DelayTime input!")
+
+		self.steps = self.delaytime/self.machine.dt
+		self.counter = 0
+		self.counteroutput = 0
+		
+		self.bufferinput = []
+		
+
+
+
+	def Initialize (self):
+		
+		pass
+	
+		
+		
+	
+	def Update (self):
+		if self.counter * self.machine.dt <= self.delaytime:
+			self.O["out"].value = 0
+
+		self.bufferinput.append(self.I["in"].value)
+		self.counter = self.counter + 1
+
+		if self.counter * self.machine.dt  > self.delaytime: 
+			self.O["out"].value = self.bufferinput[self.counteroutput]
+
+			self.counteroutput = self.counteroutput+1
+
+
+## Peak Detector circuit.
+#
+# Takes in an input and outputs when it finds a peak, where the peak is and how long since the last peak
+# - Upper Peak found if $f(t-2) < f(t-1) and f(t-1) > f(t) $ is true
+# - Lower Peak found if $f(t-2) > f(t-1) and f(t-1) < f(t) $ is true
+# - Initialisation parameters:\n
+# 	- pushed = True|False  push the output buffer immediately if True
+#	- up = 1|0 1 means find peaks in the positve y axis and 0 means find peaks in the negative 
+#
+# - Input channels:\n
+# 	- \f$inf$
+#	-\f$up = 1|0$ \f
+#
+# - Output channels:\n
+# 	- \f tick = 1 if a peak and 0 if no peak \f
+# 	- \f peak = location of the peak \f
+# 	- \f delay = time elapsed since last peak was found \f
+
+
+
+class PeakDetector(Circuit):
+    
+    
+	def __init__(self, machine, name, **keys):
+		
+		super(self.__class__, self).__init__( machine, name )
+
+		if 'up' in keys.keys():
+			self.up = keys['up']
+			if self.up == 1:
+				self.upordown=True
+			if self.up == 0:
+				self.upordown = False
+
+		else:
+			raise NameError("Missing up or down selection!")
+		
+		self.AddInput("in")
+		self.AddOutput("tick")
+		self.AddOutput("peak")
+		self.AddOutput("delay")
+
+
+		self.counter=0
+		self.yoo=0
+		self.yo=0
+		self.y=0
+
+		self.peak = 0
+		self.tick = 0
+		self.delay = 0
+		self.startcounter = False
+
+
+
+	def Initialize (self):
+		
+		pass
+	
+		
+		
+	
+	def Update (self):
+		self.yoo= self.yo
+		self.yo = self.y
+		self.y= self.I["in"].value
+		self.tick=0
+
+		if self.yoo < self.yo and self.yo > self.y and self.upordown == True:
+			self.tick = 1 
+			self.peak = self.yo
+			self.delay = self.counter * self.machine.dt
+			self.counter=0
+
+
+
+
+
+
+		if self.yoo > self.yo and self.yo < self.y and self.upordown == False:
+			self.tick = 1  
+			self.peak= self.yo
+			self.delay = self.counter * self.machine.dt
+			self.counter = 0
+
+		self.counter=self.counter + 1
+
+		self.O["peak"].value = self.peak
+		self.O["tick"].value = self.tick
+		self.O["delay"].value = self.delay
+
+
+## Phasor circuit.
+#
+# Takes in two inputs and will measure the legnth of time between the first input becoming postive and the second also becoming positive.
+# - Initialisation parameters:\n
+# 	- pushed = True|False  push the output buffer immediately if True
+#
+# - Input channels:\n
+# 	- \f$in1f$\f
+#	-\f$in2$\f
+#
+# - Output channels:\n
+# 	- \f tick = 1 when input 2 becomes positve assuming input 1 has alreayd become postive before it \f
+# 	- \f delay = time difference between input 1 and input 2 becoming positve \f
+
+class Phasor(Circuit):
+    
+    
+	def __init__(self, machine, name, **keys):
+		
+		super(self.__class__, self).__init__( machine, name )
+		self.AddInput("in1")
+		self.AddInput("in2")
+		self.AddOutput("tick")
+		self.AddOutput("delay")
+
+		self.counter= 0
+		self.check = False
 
 	def Initialize (self):
 		
@@ -201,6 +423,53 @@ class Delay(Circuit):
 	
 	def Update (self):
 		
+		if	self.I["in1"].value > 0 and self.I["in2"].value < 0:
+			self.counter = self.counter +1
+			self.check= True
+
+		self.O["tick"].value = 0
+		self.O["delay"].value = 0
+
+		if self.I["in2"].value > 0 and self.check == True:
+			self.O["tick"].value = 1
+			self.O["delay"].value = self.counter * self.machine.dt
+			self.counter = 0
+			self.check = False
+
+
+
+## Flip circuit.
+#
+# Takes in and input and will output a tick everytime the signal changes from negative to positive.
+# - Initialisation parameters:\n
+# 	- pushed = True|False  push the output buffer immediately if True
+#
+# - Input channels:\n
+# 	-\f$inf$\f
+#
+# - Output channels:\n
+# 	- \f out = 1 when f(t-1) <= 0 and f(t) >0 \f
+	
+
+class Flip(Circuit):
+    
+    
+	def __init__(self, machine, name, **keys):
+		
+		super(self.__class__, self).__init__( machine, name )
+		self.AddInput("in")
+		self.AddOutput("out")
+		self.yo= 0
+
+	def Initialize (self):
+		
 		pass
-
-
+	
+		
+		
+	
+	def Update (self):
+		self.O["out"].value = 0
+		if	self.I["in"].value > 0 and self.yo < 0:
+			self.O["out"].value = 1
+		self.yo=self.I["in"].value

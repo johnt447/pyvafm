@@ -30,3 +30,6 @@ change log
 		RegisterChannel renamed to Register
 		added an Unregister function
 		behaviour improved and extended
+
+27/09/2013 14:48 Added all signal processing circuits and added the saw tooth wave.
+

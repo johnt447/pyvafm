@@ -4,3 +4,7 @@ html
 *.pyc
 
 *.dat
+
+test.py
+logictest.py
+example_composite.py
