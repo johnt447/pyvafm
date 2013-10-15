@@ -1,3 +1,4 @@
+
 pyvafm
 ======
 
@@ -19,4 +20,6 @@ vafmcircuits_Comparison.py: comparison operators
 
 vafmcircuits_signal_processing.py: minmax, deriver integrator
 
+vafmcircuits_signal_Interpolation.py Interpolating circuit
 
+vafmcircuits_Cantilever.py the cantilever system
