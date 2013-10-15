@@ -831,7 +831,7 @@ class PI(Circuit):
 		self.delta =  self.I["set"].value - self.I["signal"].value
 		self.integral = self.integral + ( 0.5*(self.oldInt + self.Ki*self.delta)*self.machine.dt  )
 		self.O["out"].value = self.delta * self.Kp + self.integral
-		self.oldInt = self.Ki * self.delta #@todo is this correct?
+		self.oldInt = self.Ki * self.delta
 
 
 ## PID circuit.

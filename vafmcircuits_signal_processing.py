@@ -377,7 +377,8 @@ class PeakDetector(Circuit):
 
 ## Phasor circuit.
 #
-# Takes in two inputs and will measure the legnth of time between the first input becoming postive and the second also becoming positive.
+# Takes in two inputs and will measure the legnth of time between the first
+# input becoming postive and the second also becoming positive.
 # - Initialisation parameters:\n
 # 	- pushed = True|False  push the output buffer immediately if True
 #
@@ -441,8 +442,8 @@ class Phasor(Circuit):
 # 	-\f$inf\f$
 #
 # - Output channels:\n
-# 	- \f out = 1 when f(t-1) <= 0 and f(t) >0 \f$
-
+# 	- \f$ out = 1 when f(t-1) <= 0 and f(t) >0 \f$
+#
 
 class Flip(Circuit):
     
