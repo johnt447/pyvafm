@@ -34,3 +34,6 @@ change log
 27/09/2013 14:48 Added all signal processing circuits and added the saw tooth wave.
 
 04/10/2013 --.-- Added examples folder for input file samples
+04/10/2013 --.-- corrected some doc comments, added images folder for pretty docs
+04/10/2013 --.-- waver.sawtooth channel renamed to waver.saw
+

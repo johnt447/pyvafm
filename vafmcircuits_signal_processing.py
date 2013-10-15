@@ -304,16 +304,15 @@ class Delay(Circuit):
 #	- up = 1|0 1 means find peaks in the positve y axis and 0 means find peaks in the negative 
 #
 # - Input channels:\n
-# 	- \f$inf$
-#	-\f$up = 1|0$ \f
+# 	- \f$in\f$
+#	-\f$up = 1|0 \f$
 #
 # - Output channels:\n
-# 	- \f tick = 1 if a peak and 0 if no peak \f
-# 	- \f peak = location of the peak \f
-# 	- \f delay = time elapsed since last peak was found \f
-
-
-
+# 	- \f$ tick = \f$ 1 if a peak and 0 if no peak 
+# 	- \f$ peak = \f$ location of the peak
+# 	- \f$ delay = \f$ time elapsed since last peak was found
+#
+#
 class PeakDetector(Circuit):
     
     
@@ -388,18 +387,20 @@ class PeakDetector(Circuit):
 
 ## Phasor circuit.
 #
-# Takes in two inputs and will measure the legnth of time between the first input becoming postive and the second also becoming positive.
+# Takes in two inputs and will measure the legnth of time between the first 
+# input becoming postive and the second also becoming positive.
+#
 # - Initialisation parameters:\n
 # 	- pushed = True|False  push the output buffer immediately if True
 #
 # - Input channels:\n
-# 	- \f$in1f$\f
-#	-\f$in2$\f
+# 	- \f$in1\f$
+#	- \f$in2$\f$
 #
 # - Output channels:\n
-# 	- \f tick = 1 when input 2 becomes positve assuming input 1 has alreayd become postive before it \f
-# 	- \f delay = time difference between input 1 and input 2 becoming positve \f
-
+# 	- \f$ tick = \f$ 1 when input 2 becomes positve assuming input 1 has alreayd become postive before it
+# 	- \f$ delay = \f$ time difference between input 1 and input 2 becoming positve
+#
 class Phasor(Circuit):
     
     

@@ -485,6 +485,7 @@ class Machine(Circuit):
 
 ## Oscillator circuit.
 #
+# \image html waver.png "schema"
 # Creates sine and cosine waves with the specifics given by the inputs.
 #
 # - Initialisation parameters:\n
@@ -498,7 +499,7 @@ class Machine(Circuit):
 # - Output channels:
 # 	- \f$sin\f$ sine wave \f$ = amp\cdot\sin(2 \pi freq\cdot t) + offset \f$
 # 	- \f$cos\f$ cosine wave \f$ = amp\cdot\cos(2 \pi freq\cdot t) + offset \f$
-# 	- \f$sawtooth\f$ cosine wave \f$ = amp\cdot( freq*f(t) - floor(freq*f(t) ) + offset \f$
+# 	- \f$saw\f$ sawtooth wave \f$ = amp\cdot( freq*f(t) - floor(freq*f(t) ) + offset \f$
 #
 # 
 # \b Example:
