@@ -545,7 +545,7 @@ class waver(Circuit):
 
 		self.O['cos'].value = self.I['amp'].value*math.cos(phase) + self.I['offset'].value
 		self.O['sin'].value = self.I['amp'].value*math.sin(phase) + self.I['offset'].value
-		self.O['sawtooth'].value = self.I['amp'].value * (self.machine.time *self.I["freq"].value - math.floor(self.machine.time *self.I["freq"].value)) + self.I['offset'].value
+		self.O['saw'].value = self.I['amp'].value * (self.machine.time *self.I["freq"].value - math.floor(self.machine.time *self.I["freq"].value)) + self.I['offset'].value
 
 
 ## Output circuit.
