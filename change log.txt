@@ -54,7 +54,8 @@ change log
 				Limiter->limiter moved to vafmcircuits_control.py - doc and code corrected
 				in channel renamed signal
 				
-				
+				OpAbs -> opAbs
+				OpPower ->opPow
 				
 				
 
