@@ -684,47 +684,7 @@ class output(Circuit):
 				self._file.write('\n')
 
 
-## Average circuit.
-#
-# This circuit will return a running average of an input signal.
-#
-# - Initialisation parameters:\n
-# 	- pushed = True|False  push the output buffer immediately if True
-# 	
-#
-# - Input channels:\n
-# 	- \f$in\f$
-#
-# - Output channels:\n
-# 	- \f$out\f$
-#
-class Average(Circuit):
-    
-    
-	def __init__(self, machine, name, **keys):
 
-		super(self.__class__, self).__init__( machine, name )
-
-		self.AddInput("in")
-		self.AddOutput("out")
-
-		self.SetInputs(**keys)
-
-
-		self.counter = 1
-
-		self.sum = 0
-
-	def Initialize (self):
-
-		pass
-	
-
-	def Update (self):
-		# @todo this will overflow! the average should be computed within a sample buffer!
-		self.sum = self.I['in'].value + self.sum
-		self.O['out'].value = self.sum / self.counter
-		self.counter = self.counter + 1
 
 ## Limiter circuit.
 #

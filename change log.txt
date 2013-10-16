@@ -33,7 +33,6 @@ change log
 
 27/09/2013 14:48 Added all signal processing circuits and added the saw tooth wave.
 
-<<<<<<< HEAD
 04/10/2013 --.-- Added examples folder for input file samples
 04/10/2013 --.-- corrected some doc comments, added images folder for pretty docs
 04/10/2013 --.-- waver.sawtooth channel renamed to waver.saw
@@ -43,3 +42,13 @@ change log
 3/10/2013 15:31 Added filter, PI, PID, limiter, ramper and averager
 
 4/10/2013 11:44 Added Interpolation (the cantilever file was to test I could pass the object from the main file to another file)
+
+16/10/2013 --:-- Average moved to vafmcircuits_avg.py
+				'Average' circuit remaned 'avg'
+				
+				
+				
+				
+
+
+
