@@ -1,6 +1,6 @@
 from vafmbase import Circuit
 import math
-import vafmcircuits_Logic
+#import vafmcircuits_Logic
 from vafmcircuits import Machine
 
 ## Active Low Pass Filter  circuit.
@@ -8,17 +8,17 @@ from vafmcircuits import Machine
 # Takes a signal in and passes it through a low pass filter using the Sallen-Key topology
 #
 # - Initialisation parameters:
-# 	- Gain =  Integer  How much gain the signal will recive 
-# 	- pushed = True|False  push the output buffer immediately if True
+# 	- gain =  Integer  How much gain the signal will recive 
 # 	- Q = the Q value of the filter
-#	- Fcutoff = the frequency cut off for the circuit
+#	- fcut = the frequency cut off for the circuit
+# 	- pushed = True|False  push the output buffer immediately if True
 #
 # - Input channels:
 # 	- \f$in\f$  incoming signal
 #
 # - Output channels:\n
 # 	- \f$out =\f$ Put Equation here
-
+#
 
 class ActiveLowPass(Circuit):
     
@@ -29,32 +29,30 @@ class ActiveLowPass(Circuit):
 		
 
 		self.AddInput("in")
-		self.AddInput("Gain")
-		self.AddInput("Q")
-		self.AddInput("Fcutoff")
-
 		self.AddOutput("out")
 
 
-		self.Gain=0
-		if 'Gain' in keys.keys():
-			self.Gain = keys['Gain']
+		self.Gain=math.pi*0.5
+		if 'gain' in keys.keys():
+			self.Gain = keys['gain']
 		else:
-			raise NameError("Missing Gain!")
+			print "WARNING! No gain give, using default gain = "+str(self.Gain)
+			#raise NameError("Missing gain!")
 
 
-		self.Q=0
+		self.Q=math.sqrt(2.0)*0.5
 		if 'Q' in keys.keys():
 			self.Q = keys['Q']
 		else:
-			raise NameError("Missing Q!")
+			print "WARNING! No Q give, using default Q = "+str(self.Q)
+			#raise NameError("Missing Q!")
 
 
 		self.Fcutoff=0
-		if 'Fcutoff' in keys.keys():
-			self.fc = keys['Fcutoff']
+		if 'fcut' in keys.keys():
+			self.fc = keys['fcut']
 		else:
-			raise NameError("Missing Fcutoff!")
+			raise NameError("Missing fcut!")
 
 
 

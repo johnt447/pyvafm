@@ -45,6 +45,9 @@ change log
 
 16/10/2013 --:-- Average moved to vafmcircuits_avg.py
 				'Average' circuit remaned 'avg'
+				PI and PID moved to vafmcircuits_control.py - documentation corrected
+				corrected bug in PI and PID codes
+				In ActiveLowPass,  Gain->gain, Q and gain are not mandatory, default sallen key values will be used if none is given
 				
 				
 				

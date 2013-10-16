@@ -267,12 +267,11 @@ class opLinC(Circuit):
 # 	- pushed = True|False  push the output buffer immediately if True
 #
 # - Input channels:\n
-# 	- \f$inf$
+# 	- \f$in\f$
 #
 # - Output channels:\n
-# 	- \f$out$
-
-
+# 	- \f$out = |in|\f$
+#
 class OpAbs(Circuit):
     
     
