@@ -5,7 +5,7 @@ html
 
 *.dat
 
-test.py
+test_*.py
 logictest.py
 
 
