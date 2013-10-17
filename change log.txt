@@ -58,6 +58,8 @@ change log
 				OpPower ->opPow
 				
 				
-
+17/10/2013 --:-- removed *test*.py from Doxygen documentation
+				removed flipflop files: some circuits are not correct
+				
 
 

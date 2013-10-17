@@ -19,8 +19,8 @@ import vafmcircuits
 #
 # - Output channels:\n
 # 	- \f$ out = in \cdot gain \f$
-
-
+#
+#
 class Gain(Circuit):
     
     
@@ -195,9 +195,9 @@ class derivative(Circuit):
 # 	- \f$in\f$
 #
 # - Output channels:\n
-# 	- \f$out = \int_a^\b \mathrm{in}\,\mathrm{d}t \f$
-
-
+# 	- \f$out = \int_0^t in dt \f$
+#
+#
 class integral(Circuit):
     
     
@@ -383,8 +383,8 @@ class PeakDetector(Circuit):
 # 	- pushed = True|False  push the output buffer immediately if True
 #
 # - Input channels:\n
-# 	- \f$in1f\f$
-#	-\f$in2\f$
+# 	- \f$in1\f$
+#	- \f$in2\f$
 #
 # - Output channels:\n
 # 	- \f$ tick =\f$ 1 when input 2 becomes positve assuming input 1 has alreayd become postive before it

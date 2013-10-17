@@ -38,7 +38,7 @@ class Feed(object):
 		self._buff = value
 	
 	def __str__ (self):
-		return str(self._value) # + "("+str(self._buff)+")"
+		return str(self._value)  #+ "("+str(self._buff)+")"
 
 class Channel(object):
 	

@@ -81,6 +81,13 @@ class opAdd(Circuit):
 #
 # - Output channels:\n
 # 	- \f$out = in_1 - in_2 \f$
+#
+#\b Examples:
+# \code{.py}
+# machine.AddCircuit(type='opSub', name='minus')
+# machine.AddCircuit(type='opSub', name='minus', in2=3.5)
+# \endcode
+#
 class opSub(Circuit):
     
     
@@ -123,6 +130,14 @@ class opSub(Circuit):
 #
 # - Output channels:
 # 	- \f$out = \prod_i^{factors} in_i \f$
+#
+#\b Examples:
+# \code{.py}
+# machine.AddCircuit(type='opMul', name='mul')
+# machine.AddCircuit(type='opMul', name='mul', factors=4)
+# machine.AddCircuit(type='opMul', name='mul', in2=0.4)
+# \endcode
+#
 class opMul(Circuit):
     
     
@@ -133,7 +148,7 @@ class opMul(Circuit):
 		#check if the amount of factors was given	
 		self.factors = 2
 		if 'factors' in keys.keys():
-			self.factors = keys['factors']
+			self.factors = int(keys['factors'])
 		#print '   factors: '+str(self.factors)
 		
 		#create input channels
@@ -155,11 +170,11 @@ class opMul(Circuit):
 		
 	def Update (self):
 		
-		result = 0
-		
+		result = 1
+
 		for i in self.I.values():
 			result *= i.value
-			
+		
 		self.O['out'].value = result
 
 
@@ -175,6 +190,13 @@ class opMul(Circuit):
 #
 # - Output channels:\n
 # 	- \f$out = in_1 / in_2 \f$
+#
+#\b Examples:
+# \code{.py}
+# machine.AddCircuit(type='opDiv', name='div')
+# machine.AddCircuit(type='opDiv', name='div', in2=0.5)
+# \endcode
+#
 class opDiv(Circuit):
     
     
@@ -184,7 +206,7 @@ class opDiv(Circuit):
 		
 		#create input channels
 		self.AddInput("in1")
-                self.AddInput("in2")
+		self.AddInput("in2")
 		
 		#create output channels
 		self.AddOutput("out")
@@ -219,6 +241,14 @@ class opDiv(Circuit):
 #
 # - Output channels:\n
 # 	- \f$out = \sum_i^{factors} ina_i\times inb_i \f$
+#
+#\b Examples:
+# \code{.py}
+# machine.AddCircuit(type='opLinC', name='combo')
+# machine.AddCircuit(type='opLinC', name='combo', factors=4)
+# machine.AddCircuit(type='opLinC', name='combo', inb1=5.2)
+# \endcode
+#
 class opLinC(Circuit):
 
 	def __init__(self, machine, name, **keys):
@@ -267,12 +297,17 @@ class opLinC(Circuit):
 # 	- pushed = True|False  push the output buffer immediately if True
 #
 # - Input channels:\n
-# 	- \f$in\f$
+# 	- \f$in\f$ incoming signal
 #
 # - Output channels:\n
 # 	- \f$out = |in|\f$
 #
-class OpAbs(Circuit):
+#\b Examples:
+# \code{.py}
+# machine.AddCircuit(type='opAbs', name='abs')
+# \endcode
+#
+class opAbs(Circuit):
     
     
 	def __init__(self, machine, name, **keys):
@@ -313,13 +348,17 @@ class OpAbs(Circuit):
 #	- power = integer The value the function result will be raised by
 #
 # - Input channels:\n
-# 	- \f$inf$
+# 	- \f$in\f$ incoming signal
 #
 # - Output channels:\n
-# 	- \f$out = in^{power}$
-
-
-class OpPower(Circuit):
+# 	- \f$out = in^{power}\f$
+#
+#\b Examples:
+# \code{.py}
+# machine.AddCircuit(type='opPow', name='pow', power=3.45)
+# \endcode
+#
+class opPow(Circuit):
     
     
 	def __init__(self, machine, name, **keys):
@@ -328,6 +367,8 @@ class OpPower(Circuit):
 
 		if 'power' in keys.keys():
 			self.power = keys['power']
+		else:
+			raise SyntaxError("ERROR! power not specified.")
 
 		self.AddInput("in")
 		

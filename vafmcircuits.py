@@ -34,6 +34,8 @@ class Machine(Circuit):
 
 	def __init__(self, machine=None, name="machine", **keys):
 		
+		print "init of Machine..."
+		
 		super(self.__class__, self).__init__( machine, name )
 
 		## Ordered dictionary of the circuits in the setup.
@@ -42,7 +44,11 @@ class Machine(Circuit):
 		## Integration timestep
 		self.dt = 0.0
 		if not ('dt' in keys.keys()):
-			print 'WARNING! No timestep dt was given in the initialisation parameters.'
+			if(machine!=None):
+				self.dt = machine.dt
+				print 'WARNING! No timestep dt was given, using main machine one!'
+			else:
+				print 'WARNING! No timestep dt was given in the initialisation parameters.'
 		else:
 			self.dt = keys['dt']
 		
@@ -58,7 +64,7 @@ class Machine(Circuit):
 
 		if 'assembly' in keys.keys():
 			self.Assemble = keys['assembly']
-			self.Assemble(self)
+			self.Assemble(self,**keys)
 
 		self.SetInputs(**keys)
 
@@ -497,12 +503,12 @@ class Machine(Circuit):
 # 	- \f$amp\f$ amplitude
 # 	- \f$freq\f$ frequency
 # 	- \f$offset\f$ offset value
-#	- \f$speed\f$ The rate at which the ramper will increase 
+#
 #
 # - Output channels:
-# 	- \f$sin\f$ sine wave \f$ = amp\cdot\sin(2 \pi freq\cdot t) + offset \f$
-# 	- \f$cos\f$ cosine wave \f$ = amp\cdot\cos(2 \pi freq\cdot t) + offset \f$
-# 	- \f$saw\f$ sawtooth wave \f$ = amp\cdot( freq*f(t) - floor(freq*f(t) ) + offset \f$
+# 	- \f$ sin = amp\cdot sin(2 \pi freq\cdot t) + offset \f$
+# 	- \f$ cos = amp\cdot cos(2 \pi freq\cdot t) + offset \f$
+# 	- \f$ saw = amp\cdot( freq*f(t) - floor(freq*f(t) ) + offset \f$
 #
 # 
 # \b Example:
@@ -521,7 +527,7 @@ class waver(Circuit):
 		self.AddInput("freq")
 		self.AddInput("amp")
 		self.AddInput("offset")
-		self.AddInput("speed")
+		#self.AddInput("speed")
 
 		self.AddOutput("sin")
 		self.AddOutput("cos")
