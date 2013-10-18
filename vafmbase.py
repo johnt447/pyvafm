@@ -73,6 +73,7 @@ class Channel(object):
 		return self.owner.name+"."+self.name+" = "+str(self.signal)
 		
 
+## \internal
 ## Abstract circuit class.
 #
 #
@@ -80,6 +81,7 @@ class Circuit(object):
 
 	#__metaclass__ = abc.ABCMeta;
 	
+	##\internal
 	## Common contructor for all circuits.
 	#
 	# @param machine Reference to the virtual machine.
@@ -88,7 +90,7 @@ class Circuit(object):
 		
 		## Name of the circuit.
 		self.name = name
-		## Reference to the virtual machine.
+		## Reference to the virtual machine to which this circuit belongs.
 		self.machine = machine
 		## Push output buffer at the end of Update.
 		#
@@ -98,10 +100,12 @@ class Circuit(object):
 		
 		## Dictionary of input channels
 		self.I = {}
+		
 		## Dictionary of output channels
 		self.O = {}
 		
-
+	
+	##\internal
 	## Default input channels initialisation.
 	#
 	# Use the keyward arguments **kwargs to set the initial value
@@ -123,7 +127,8 @@ class Circuit(object):
 		if 'pushed' in kwargs.keys():
 			self.pushed = bool(kwargs['pushed'])
 			
-		
+	
+	##\internal
 	## Create an input channel with the given name.
 	# @param name Name of the new input channel.
 	def AddInput(self, name):
@@ -133,6 +138,7 @@ class Circuit(object):
 		
 		self.I[name] = Channel(name,self,True)
 	
+	##\internal
 	## Create an output channel with the given name.
 	# @param name Name of the new output channel.
 	def AddOutput(self, name):
@@ -140,7 +146,8 @@ class Circuit(object):
 		if name in self.I.keys() or name in self.O.keys():
 			raise NameError("A channel named "+name+" already exists in circuit "+ str(self))
 		self.O[name] = Channel(name,self,False)
-
+	
+	##\internal
 	## Find a channel by name.
 	# @param chname Name of the channel to find.
 	# @return Reference to the channel.
@@ -157,7 +164,8 @@ class Circuit(object):
 		if isin:
 			return self.I[chname];
 	
-
+	
+	##\internal
 	## Push the buffered value for all output channels.
 	def Push(self):
 		for kw in self.O.keys():
@@ -167,8 +175,10 @@ class Circuit(object):
 	def __str__( self ):
 		return "["+self.__class__.__name__+"]"+self.name
 
+	##\internal
 	def Initialize (self):
 		raise NotImplementedError( "Should have implemented this" )
-		
+	
+	##\internal
 	def Update (self):
 		raise NotImplementedError( "Should have implemented this" )

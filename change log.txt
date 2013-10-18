@@ -61,5 +61,9 @@ change log
 17/10/2013 --:-- removed *test*.py from Doxygen documentation
 				removed flipflop files: some circuits are not correct
 				
-
-
+18/10/2013 --:-- create vafmcircuits_output for output circuits
+				create vafmcircuits_signal_gens for signal generators circuits
+				added square circuit for square waves
+				BUGFIX! waver circuit had the incorrect frequency!!!
+				
+				

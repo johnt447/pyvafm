@@ -1,38 +1,63 @@
-## \example example_composite.py
-
 import abc
 import itertools
 import inspect
 import sys
+import math
+import io
 from collections import OrderedDict
-
-#import vafmbase
 from vafmbase import Circuit
 from vafmbase import ChannelType
 from vafmbase import Channel
 
-#import vafmcircuits
-#import vafmcircuits_math
-#import vafmcircuits_Logic
-#import vafmcircuits_signal_processing
-#import vafmcircuits_composite
+import vafmcircuits_math, vafmcircuits_output, vafmcircuits_signal_gens
 
-
-import math
-import io
-
-
-## Virtual Machine main class.
+## \package vafmcircuits
+# \brief This file contains the basic circuits.
 #
-# The vitual machine is effectively a Circuit, with input/output channels,
-# but it also contains an internal assembly of circuits that run during the Update
-# cycle. Every machine always has the output channel 'time' created during initialisation.
+#
+
+
+## Virtual %Machine main class.
+#
+# The vitual machine is effectively a \link vafmbase.Circuit circuit\endlink, with input/output channels,
+# but it also contains an internal assembly of circuits that run during the \ref Update
+# cycle. Every machine always has the output channel \a 'time' created during initialisation.
+#
+#
+# \b Example:
+# \code{.py}
+# #create the main virtual machine
+# machine = Machine(name='machine', dt=1.0e-8)
+#
+# #create a machine circuit inside the main machine
+# composite = machine.AddCircuit(type="Machine", name='pll', ...)
+# 
+# \endcode
 #
 #
 class Machine(Circuit):
 
+	singleton = False
 
+	## Class contructor.
+	# This should be used only to create the main virtual machine circuit.
+	#
+	# \b Example:
+	# \code{.py}
+	#
+	# machine = Machine(name='machine', dt=1.0e-8)
+	#
+	# \endcode
+	#
+	# \note Only one machine can be initialised this way.
+	#
 	def __init__(self, machine=None, name="machine", **keys):
+		
+		
+		if(Machine.singleton and machine == None):
+			raise NameError ("ERROR! Only one main machine can be initialised!")
+		
+		Machine.singleton = True
 		
 		print "init of Machine..."
 		
@@ -78,11 +103,11 @@ class Machine(Circuit):
 	#
 	# \b Example:
 	# \code{.py}
-	# ...
-	# # assembly function definition
+	# 
+	# # assembly function definition --------------------------------------
 	# def MyAssembly(compo):
 	# 
-	#   # add global channels
+	# 	# add global channels
   	#   compo.AddInput("signal1")
   	#   ...
   	#   # add internal circuits
@@ -92,7 +117,8 @@ class Machine(Circuit):
   	#   compo.Connect("global.signal1","adder.in1")
   	#   compo.Connect("adder.out","global.out")
 	#   ...
-	# 
+	# #--------------------------------------------------------------------
+	#
 	# # main script
 	# def main():
 	#  
@@ -104,7 +130,9 @@ class Machine(Circuit):
 	#  
 	# if __name__ == '__main__':
 	#   main()
+	#
 	# \endcode
+	#
 	def Assemble(self):
 		pass
 
@@ -158,6 +186,7 @@ class Machine(Circuit):
 		self.O[name] = Channel(name,self,False)
 		self._MetaO[name] = Channel(name,self,True)
 
+	## \internal
 	## Add a circuit of type 'ctype' named 'name' to the setup.
 	#
 	# This looks into all the loaded modules whose name starts with
@@ -295,6 +324,7 @@ class Machine(Circuit):
 		return allchs[chname]
 
 
+	## \internal
 	## Find a channel by tag.
 	#
 	# The tag is given in the string format: "circuitname.channelname".
@@ -489,205 +519,6 @@ class Machine(Circuit):
 
 
 
-
-## Oscillator circuit.
-#
-# \image html waver.png "schema"
-# Creates sine and cosine waves with the specifics given by the inputs.
-# Can also create a sawtooth wave and a linear increasing signal (Ramper)
-#
-# - Initialisation parameters:\n
-# 	- pushed = True|False  push the output buffer immediately if True
-#
-# - Input channels:
-# 	- \f$amp\f$ amplitude
-# 	- \f$freq\f$ frequency
-# 	- \f$offset\f$ offset value
-#
-#
-# - Output channels:
-# 	- \f$ sin = amp\cdot sin(2 \pi freq\cdot t) + offset \f$
-# 	- \f$ cos = amp\cdot cos(2 \pi freq\cdot t) + offset \f$
-# 	- \f$ saw = amp\cdot( freq*f(t) - floor(freq*f(t) ) + offset \f$
-#
-# 
-# \b Example:
-# \code{.py}
-# machine.AddCircuit(type='waver', name='wgen')
-# machine.AddCircuit(type='waver', name='wgen', amp=1.2, freq=12000)
-# \endcode
-#
-class waver(Circuit):
-    
-    
-	def __init__(self, machine, name, **keys):
-
-		super(self.__class__, self).__init__( machine, name )
-
-		self.AddInput("freq")
-		self.AddInput("amp")
-		self.AddInput("offset")
-		#self.AddInput("speed")
-
-		self.AddOutput("sin")
-		self.AddOutput("cos")
-		self.AddOutput("saw")
-
-		self.SetInputs(**keys)
-
-
-		self.counter = 0
-
-	def Initialize (self):
-
-		pass
-
-
-
-
-	def Update (self):
-
-		phase = self.machine.time * self.I["freq"].value
-
-		self.O['cos'].value = self.I['amp'].value*math.cos(phase) + self.I['offset'].value
-		self.O['sin'].value = self.I['amp'].value*math.sin(phase) + self.I['offset'].value
-		self.O['saw'].value = self.I['amp'].value * (self.machine.time *self.I["freq"].value - math.floor(self.machine.time *self.I["freq"].value)) + self.I['offset'].value
-
-
-## Output circuit.
-#
-# Use this to dump the values of channels in a log file. 
-# The channel values that are printed to the file are added/removed using the
-# RegisterChannel/Unregister functions
-# The input channel 'record'
-# if connected will make the circuit print to file only 
-#
-# - Initialisation parameters:\n
-# 	- file = name of the log file\n
-# 	- dump = #  rate at which data is printed in the file\n
-#
-# - Input channels:\n
-# 	- \f$record\f$  if connected, the output will be printed only when this input is 1\n
-#
-# - Output channels:\n
-# This circuit has no output channel.
-#
-# 
-# \b Example:
-# \code{.py}
-# logger = machine.AddCircuit(type='output', name='logger', dump=1)
-# logger = machine.AddCircuit(type='output', name='logger', dump=100)
-# \endcode
-#
-class output(Circuit):
-    
-    
-	def __init__(self, machine, name, **keys):
-
-		super(self.__class__, self).__init__( machine, name )
-
-		if not('file' in keys.keys()):
-			raise SyntaxError("Output circuit file not specified!")
-		self.filename = keys['file']
-
-		if not('dump' in keys.keys()):
-			raise SyntaxError("Output circuit dump rate not specified!")
-
-		## List of channels to dump in the file.
-		self.channels = []
-
-		## Dump rate.
-		self.dump = keys['dump']
-
-		self._file = open(self.filename, 'w')
-
-		self._cnt = 0
-
-		self.AddInput("record")
-
-		self.SetInputs(**keys)
-
-	## Register a channel for output.
-	#
-	# If the channel is already registered in this output circuit, it won't be registered again.
-	#
-	# @param *args Channel tags to be printed in the output.
-	#
-	# \b Example:
-	# \code{.py}
-	# logger = machine.AddCircuit(type='output', name='logger', dump=100)
-	# logger.Register('global.time','waver.sin','adder.out', ...)
-	# \endcode
-	#
-	def Register(self, *args):
-
-		#if type(channel) is list:
-		#cclist = [j.split(".",1) for j in channel]
-		cclist = [self.machine.GetChannel(tag) for tag in args]
-		self.channels.extend(cclist)
-		#else :
-
-		#	if not(channel in self.channels):
-		#		self.channels.append(channel)
-
-
-	## Unregister a channel from the output.
-	#
-	# If the channel is already unregistered, it won't be unregistered again.
-	#
-	# @param *args Channel tags to be removed from the output.
-	#
-	# \b Example:
-	# \code{.py}
-	# logger = machine.AddCircuit(type='output', name='logger', dump=100)
-	# logger.RegisterChannel('global.time','waver.sin','adder.out', ...)
-	# ...
-	# logger.Unregister('adder.out', ...)
-	# \endcode
-	#
-	def Unregister(self, *args):
-		
-		cclist = [self.machine.GetChannel(tag) for tag in args]
-		cclist = [x for x in self.channels.extend if x not in cclist]
-
-		self.channels = cclist
-		
-		
-
-	def Initialize (self):
-
-		pass
-
-
-
-
-	def Update (self):
-
-
-		if self.I['record'].signal.owner != self:
-
-			#if the record channel is connected and it is positive valued
-			#write to file
-			if self.I['record'].value > 0:
-				for i in self.channels:
-					self._file.write(str(i.value)+" ")
-				self._file.write('\n')
-
-		else: #if not connected...
-
-			#if the dumprate is 0, do not print!
-			if self.dump == 0:
-				return
-
-			self._cnt += 1
-
-			if self._cnt == self.dump:
-				self._cnt = 0
-				#dump the data
-
-				for i in self.channels:
-					self._file.write(str(i.value)+" ")
-				self._file.write('\n')
 
 
 
