@@ -1,0 +1,34 @@
+/*! \page page_circs Circuits
+
+\section sec_main Generic
+	- \link vafmcircuits.Machine Machine\endlink - <i>main virtual machine</i>
+
+\section sec_gens Signal Generators
+	- \link vafmcircuits_signal_gens.waver waver\endlink - <i>sinusoidal wave generator</i>
+	- \link vafmcircuits_signal_gens.square square\endlink - <i>square wave generator</i>
+
+\section sec_sigproc Signal Processing
+	- Filters
+		- \link vafmcircuits_Filters.ActiveLowPass ActiveLowPass\endlink - <i>second order lowpass filter</i>
+		- \link vafmcircuits_Filters.ActiveHighPass ActiveHighPass\endlink - <i>second order highpass filter</i>
+		- \link vafmcircuits_Filters.ActiveBandPass ActiveBandPass\endlink - <i>second order bandpass filter</i>
+		- \link vafmcircuits_Filters.PassiveLowPass PassiveLowPass\endlink - <i>first order lowpass filter (RC)</i>
+		- \link vafmcircuits_Filters.PassiveHighPass PassiveHighPass\endlink - <i>first order highpass filter (RL)</i>
+		- \link vafmcircuits_Filters.PassiveBandPass PassiveBandPass\endlink - <i>first order bandpass filter (RCL)</i>
+
+\section sec_math Arithmetics
+	- \link vafmcircuits_math.opAdd opAdd\endlink - <i>sum operator</i>
+	
+
+\section sec_logic Logic
+
+
+\section sec_out Output
+	- \link vafmcircuits_output.output output\endlink - <i>output to file</i>
+	
+
+\section sec_compos Composites
+	- \link customs_pll.aPLL aPLL\endlink - <i> analog PLL</i>
+
+*/
+
