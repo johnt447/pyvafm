@@ -1,7 +1,3 @@
-## \file customs_pll.py
-# Contain the assembly functions for composite PLL circuits.
-#
-
 from vafmbase import Circuit
 from vafmcircuits import Machine
 import math
@@ -11,7 +7,46 @@ import vafmcircuits_math
 import vafmcircuits_control
 import vafmcircuits_signal_processing
 
+## \package customs_pll
+# Contain the assembly functions for composite PLL circuits.
 
+
+## \brief Analog PLL composite circuit.
+# Assembly function for analog PLL composite circuit.
+# The Phase-Frequency Detector (PFD) multiplies the signals, and the result
+# is passed to a series of lowpass Sallen-Key filters. The mount of filters
+# and their cutoff frequencies are taken from the input parameter \a filters.
+# 
+# \note For this to work, the output \a sin should be connected to \a signal2 in the parent circuit (main machine or composite).
+#
+# \htmlonly <div class="image"><a href="apll.png"><image src="apll.png" alt="aPLL schema" /></a> \endhtmlonly
+#
+# \b Initialisation \b parameters:
+# - filters = list of cutoff frequencies for PFD lowpass filters
+# - Kp = proportional constant of the charge pump
+# - Ki = integral constant of the charge pump
+# - gain = gain on the charge pump output
+# - pushed = True|False  push the output buffer immediately if True
+#
+# \b Input \b channels:
+# - \a signal1 = incoming signal
+# - \a signal2 = reference signal
+# - \a f0 = fundamental frequency
+#
+# \b Output \b channels:
+# - \a sin = sine wave of the internal VCO
+# - \a cos = cosine wave of the internal VCO
+# - \a df = frequency shift from \a f0
+#
+# 
+# \b Example:
+# \code{.py}
+#machine = Machine(name='machine', dt=1.0e-8, pushed=True);
+#
+#machine.AddCircuit(type="Machine",name='pll', assembly=aPLL, filters=[1000,500],
+#	gain=600.0, f0=1.0e5, Kp=0.4, Ki=500)
+# \endcode
+#
 def aPLL(compo,**keys):
 	
 	# I/O
@@ -32,9 +67,9 @@ def aPLL(compo,**keys):
   	for i in range(len(filters)):
 		f = filters[i]
 		compo.AddCircuit(type='ActiveLowPass',name='lp'+str(i+1),fcut=f, pushed=True)
-		
-  	compo.AddCircuit(type='Gain',name='dfgain', gain=keys['gain'], pushed=True)
+	    
   	compo.AddCircuit(type='PI',name='pump', Kp=keys['Kp'],Ki=keys['Ki'], set=0, pushed=True)
+	compo.AddCircuit(type='Gain',name='dfgain', gain=keys['gain'], pushed=True)
   	compo.AddCircuit(type='opAdd',name='fsum', pushed=True)
   	compo.AddCircuit(type='waver',name='vco', amp=1, pushed=True)
   	
