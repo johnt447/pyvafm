@@ -1,10 +1,10 @@
-## \file vafmcircuits_math.py
+from vafmbase import Circuit
+import math
+
+## \package vafmcircuits_math
 # This file contains the basic arithmetic operator circuits.
 #
 #
-
-from vafmbase import Circuit
-import math
 
 
 ## Arithmetic sum circuit.
@@ -29,6 +29,7 @@ import math
 # machine.AddCircuit(type='opAdd', name='summer', factors=4)
 # machine.AddCircuit(type='opAdd', name='summer', in2=3.5)
 # \endcode
+#
 class opAdd(Circuit):
     
     

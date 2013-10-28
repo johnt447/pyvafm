@@ -18,6 +18,12 @@
 
 \section sec_math Arithmetics
 	- \link vafmcircuits_math.opAdd opAdd\endlink - <i>sum operator</i>
+	- \link vafmcircuits_math.opSub opSub\endlink - <i>subtraction operator</i>
+	- \link vafmcircuits_math.opMul opMul\endlink - <i>multiplication operator</i>
+	- \link vafmcircuits_math.opDiv opDiv\endlink - <i>division operator</i>
+	- \link vafmcircuits_math.opLinC opLinC\endlink - <i>Linear combination operator</i>
+	- \link vafmcircuits_math.opPow opPow\endlink - <i>power operator</i>
+	- \link vafmcircuits_math.opAbs opAbs\endlink - <i>absolute value operator</i>
 	
 
 \section sec_logic Logic
