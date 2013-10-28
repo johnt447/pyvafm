@@ -1,27 +1,35 @@
-## \file vafmcircuits_signal_processing.py
-# This file contains the signal processing circuits for example mn/max and delay.
-#
-
 from vafmbase import Circuit
 import math
 import vafmcircuits
 
-## Gain circuit.
+## \package vafmcircuits_signal_processing
+# This file contains the signal processing circuits for example min/max and delay.
 #
-# Multiply a signal by a constant value.
+
+
+## \brief Gain circuit.
 #
-# - Initialisation parameters:\n
-# 	- pushed = True|False  push the output buffer immediately if True
-#	- gain = The size of the gain 
+# \image html gain.png "schema"
+# Takes in an input signal and multiplies it by a given gain
+# 
 #
-# - Input channels:\n
-# 	-\f$in\f$
+# \b Initialisation \b parameters:
+# - pushed = True|False  push the output buffer immediately if True
+# - gain = integer 
 #
-# - Output channels:\n
-# 	- \f$ out = in \cdot gain \f$
+# \b Input \b channels:
+# - \a signal 
 #
+# \b Output \b channels:
+# - \a out =  signal \f$ \cdot \f$ gain 
 #
-class Gain(Circuit):
+# 
+# \b Example:
+# \code{.py}
+# machine.AddCircuit(type='gain', name='Gain' , gain = 10)
+# \endcode
+#
+class gain(Circuit):
     
     
 	def __init__(self, machine, name, **keys):
