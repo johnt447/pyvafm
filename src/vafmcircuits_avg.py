@@ -1,6 +1,3 @@
-## \file vafmcircuits_avg.py
-# This file contains the averager circuit classes.
-
 from vafmbase import Circuit
 from vafmbase import ChannelType
 from vafmbase import Channel
@@ -8,22 +5,29 @@ from vafmbase import Channel
 import math
 import numpy
 
-## Averager circuit.
+## \package vafmcircuits_avg
+# This file contains the averager circuit classes.
+
+## \brief Averager circuit.
 #
+# \image html Avg.png "schema"
 # This circuit will return the average of an input signal, over a certain amount of time.
-# If the
-# The output is updated only when the buffer
 #
-# - Initialisation parameters:\n
-# 	- pushed = True|False  push the output buffer immediately if True
-# 	- time = sampling time (in real time units)
-#	- moving = True|False  compute average at each step (True) or only when the buffer is full (False, default)
+# \b Initialisation \b parameters:
+# 	- \a pushed = True|False  push the output buffer immediately if True
+# 	- \a time = sampling time (in real time units)
+#	- \a moving = True|False  compute average at each step (True) or only when the buffer is full (False, default)
 #
-# - Input channels:\n
-# 	- \f$in\f$ signal to average
+# \b Input \b channels:
+# 	- \a in =  signal to average
 #
-# - Output channels:\n
-# 	- \f$out\f$ averaged signal
+# \b Output \b channels:
+# 	- \a out = averaged signal
+#
+#\b Examples:
+# \code{.py}
+# machine.AddCircuit(type='avg', name='average', time = 10, moving = False , pushed = 'True')
+# \endcode
 #
 class avg(Circuit):
     

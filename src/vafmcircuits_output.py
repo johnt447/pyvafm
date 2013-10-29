@@ -7,9 +7,10 @@ from vafmbase import Channel
 ## \package vafmcircuits_output
 # \brief This module contains the circuits that handle outputs.
 #
-#
 
-## Output circuit.
+## \brief Output circuit.
+#
+# \image html output.png "schema"
 #
 # Use this to dump the values of channels in a log file. 
 # The channel values that are printed to the file are added/removed using the
@@ -17,14 +18,14 @@ from vafmbase import Channel
 # functions. The input channel \a record, if connected will make the circuit
 # print to file only when its value is positive.
 #
-# - Initialisation parameters:\n
-# 	- \a file = name of the log file\n
-# 	- \a dump = #  rate at which data is printed in the file\n
+# \b Initialisation \b parameters:
+# 	- \a file = name of the log file
+# 	- \a dump = #  rate at which data is printed in the file
 #
-# - Input channels:\n
-# 	- \a record = if connected, the output will be printed only when this input is 1\n
+# \b Input \b channels:
+# 	- \a record = if connected, the output will be printed only when this input is 1
 #
-# - Output channels:\n
+# \b Output channels:
 # This circuit has no output channel.
 #
 # 

@@ -609,7 +609,7 @@ WARN_LOGFILE           =
 # directories like "/usr/src/myproject". Separate the files or directories 
 # with spaces.
 
-INPUT                  = "./" "./doc/index.dox" "./doc/intro.dox" "./doc/circuits.dox" \
+INPUT                  = "./src/" "./doc/index.dox" "./doc/intro.dox" "./doc/circuits.dox" \
 		"./doc/credits.dox"
 
 # This tag can be used to specify the character encoding of the source files 
@@ -629,7 +629,7 @@ INPUT_ENCODING         = UTF-8
 # *.f90 *.f *.for *.vhd *.vhdl
 
 FILE_PATTERNS          = 	./doc/*.dox \
-							./src/*.py
+							*.py
 
 # The RECURSIVE tag can be used to turn specify whether or not subdirectories 
 # should be searched for input files as well. Possible values are YES and NO. 

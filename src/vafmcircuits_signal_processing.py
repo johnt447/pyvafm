@@ -36,7 +36,7 @@ class gain(Circuit):
 
 		super(self.__class__, self).__init__( machine, name )
 
-		self.AddInput("in")
+		self.AddInput("signal")
 		self.AddOutput("out")
 
 		if 'gain' in keys.keys():
@@ -51,35 +51,39 @@ class gain(Circuit):
 
 
 	def Update (self):		
-		self.O['out'].value  = self.I['in'].value*self.gain
+		self.O['out'].value  = self.I['signal'].value*self.gain
 
 
 
-## Min/Max value circuit.
+## \brief Min/Max circuit.
 #
-# Takes in an input and a CheckTime value then it will output the max and min
-# value over that given time period and repeat until the total program
-# time has elapsed.
+# \image html minmax.png "schema"
+# Takes in an input signal and multiplies it by a given gain
+# 
 #
-# - Initialisation parameters:\n
-# 	- pushed = True|False  push the output buffer immediately if True
-#	- CheckTime = This is the peroid which the circuit will check for max and min values, for example if a checktime of 
-#     0.5 is chosen and the total program time is 2 then the circuit will output 4 values of min and max
+# \b Initialisation \b parameters:
+# - pushed = True|False  push the output buffer immediately if True
+# - CheckTime = length of time interval where a max and min value will detected. 
+# 				After this period has elapsed the circuit will output and 
+#				then will begin checking for mins and maxs during the next interval.
 #
-# - Input channels:\n
-# 	- \f$inf\f$
-#	- \f$CheckTime = integer\f$
+# \b Input \b channels:
+# - \a signal 
 #
-# - Output channels:\n
-# 	- \f$max = maximum value over the given peroid \f$
-#	- \f$max = minimum value over the given peroid \f$
-#	- \f$amp = \frac{max-min}{2} \f$
-#	- \f$amp = \frac{max-min}{2} \f$
-
-
+# \b Output \b channels:
+# - \a max =  Maximum found
+# - \a min =  Minimum found
+# - \a amp =\f$ \frac{max - min}{2}\f$
+# - \a offset = \f$ \frac{max + min}{2}\f$
+#
+# 
+# \b Example:
+# \code{.py}
+# machine.AddCircuit(type='minmax', name='MinandMax' , CheckTime = 4)
+# \endcode
+#
 class minmax(Circuit):
-    
-    
+
 	def __init__(self, machine, name, **keys):
 
 		super(self.__class__, self).__init__( machine, name )
@@ -93,7 +97,7 @@ class minmax(Circuit):
 
 		self.counter=0
 
-		self.AddInput("in")
+		self.AddInput("signal")
 
 		#create output channels
 		self.AddOutput("max")
@@ -103,23 +107,19 @@ class minmax(Circuit):
 
 		self.SetInputs(**keys)
 		#setting min and max to the first value in the input file
-		self.min=self.I["in"].value
-		self.max=self.I["in"].value
-
+		self.min=self.I["signal"].value
+		self.max=self.I["signal"].value
 
 	def Initialize (self):
 
 		pass
 
-
-
-
 	def Update (self):
 		#if the value is greater or less than min or max then reassign the max and min values
-		if self.I["in"].value > self.max:
-			self.max=self.I["in"].value
-		if self.I["in"].value < self.min:
-			self.min=self.I["in"].value
+		if self.I["signal"].value > self.max:
+			self.max=self.I["signal"].value
+		if self.I["signal"].value < self.min:
+			self.min=self.I["signal"].value
 		#add one to the counter
 		self.counter=self.counter + 1
 		#only print out values that are not 0 when the counter is = to timesteps
@@ -136,25 +136,33 @@ class minmax(Circuit):
 			self.O['offset'].value = (self.max + self.min)/2
 
 			#reset min and max for the next calculation
-			self.min=self.I["in"].value
-			self.max=self.I["in"].value
+			self.min=self.I["signal"].value
+			self.max=self.I["signal"].value
 
 
 			self.counter=0
+    
 
-## Differentation circuit.
+
+## \brief Differentation circuit.
 #
+# \image html derivative.png "schema"
 # Takes in a input and returns the derivative
 #
-# - Initialisation parameters:\n
-# 	- pushed = True|False  push the output buffer immediately if True
+# \b Initialisation \b parameters:
+#	- \a pushed = True|False  push the output buffer immediately if True
 #	
 #
-# - Input channels:\n
-# 	- \f$in\f$
+# \b Input \b channels: 
+# 	- \a signal
 #
-# - Output channels:\n
-# 	- \f$out =  \frac{din}{dt} \f$
+# \b Output \b channels: 
+# 	- \a out =  \f$ \frac{din}{dt} \f$ = \f$ \frac{f(t)-f(t-1)}{dt} \f$ 
+#
+# \b Example:
+# \code
+# machine.AddCircuit(type='derivative', name='Differentation')
+# \endcode
 #
 class derivative(Circuit):
     
@@ -163,7 +171,7 @@ class derivative(Circuit):
 
 		super(self.__class__, self).__init__( machine, name )
 
-		self.AddInput("in")
+		self.AddInput("signal")
 
 		#create output channels
 		self.AddOutput("out")
@@ -172,7 +180,7 @@ class derivative(Circuit):
 
 
 		#@todo i dont understand this it should always be 0 anyway!
-		self.y=self.I["in"].value
+		self.y=self.I["signal"].value
 
 	def Initialize (self):
 
@@ -185,27 +193,32 @@ class derivative(Circuit):
 
 
 		self.yo=self.y
-		self.y = self.I["in"].value
+		self.y = self.I["signal"].value
 
 		result=(self.y-self.yo)/(self.machine.dt)
 
 		self.O['out'].value = result
+		
 
-## Integration circuit.
+## \brief Integration circuit.
 #
-# Takes in a input and returns the integral
+# \image html integral.png "schema"
+# Takes in a input and returns the integral using the Trapezoidal rule
 #
-# - Initialisation parameters:\n
-# 	- pushed = True|False  push the output buffer immediately if True
+# \b Initialisation \b parameters: 
+# 	- \a pushed = True|False  push the output buffer immediately if True
 #	
 #
-# - Input channels:\n
-# 	- \f$in\f$
+# \b Input \b channels: 
+# 	- \a signal
 #
-# - Output channels:\n
-# 	- \f$out = \int_0^t in dt \f$
+# \b Output \b channels: 
+# 	- \a out = \f$ \int_0^t in\f$ \f$dt \f$
 #
-#
+# \b Example:
+# \code
+# machine.AddCircuit(type='integral', name='Integration')
+# \endcode
 class integral(Circuit):
     
     
@@ -213,7 +226,7 @@ class integral(Circuit):
 
 		super(self.__class__, self).__init__( machine, name )
 
-		self.AddInput("in")
+		self.AddInput("signal")
 
 		#create output channels
 		self.AddOutput("out")
@@ -234,34 +247,40 @@ class integral(Circuit):
 
 	def Update (self):
 
-	 		self.result +=  ( (self.yo + self.I["in"].value)*(self.machine.dt)*0.5 )
+	 		self.result +=  ( (self.yo + self.I["signal"].value)*(self.machine.dt)*0.5 )
 
 			self.O['out'].value = self.result
-			self.yo = self.I["in"].value
+			self.yo = self.I["signal"].value
 
-## Delay circuit.
+## \brief Delay circuit.
 #
+# \image html Delay.png "schema"
 # Takes in a input and delays the start of the circuit by a fixed amount of inputted time
 #
-# - Initialisation parameters:\n
-# 	- pushed = True|False  push the output buffer immediately if True
-#	- DelayTime = Integer
+# \b Initialisation \b parameters:
+# 	- \a pushed    = True|False  push the output buffer immediately if True
+#	- \a DelayTime = Integer
 #
-# - Input channels:\n
-# 	- \f$in\f$
-#	- \f$DelayTime\f$
+# \b Input \b channels:
+# 	- \a signal
 #
-# - Output channels:\n
-# 	- \f$out = In_{t-DelayTime}\f$
-
-class Delay(Circuit):
+#
+# \b Output \b channels:
+# 	- \a out = \f$In_{t-DelayTime}\f$
+#
+# \b Example:
+# \code
+# machine.AddCircuit(type='delay', name='delay' , DelayTime=2)
+# \endcode
+#
+class delay(Circuit):
     
     
 	def __init__(self, machine, name, **keys):
 
 		super(self.__class__, self).__init__( machine, name )
 
-		self.AddInput("in")
+		self.AddInput("signal")
 		self.AddOutput("out")
 
 		if 'DelayTime' in keys.keys():
@@ -290,7 +309,7 @@ class Delay(Circuit):
 		if self.counter * self.machine.dt <= self.delaytime:
 			self.O["out"].value = 0
 
-		self.bufferinput.append(self.I["in"].value)
+		self.bufferinput.append(self.I["signal"].value)
 		self.counter = self.counter + 1
 
 		if self.counter * self.machine.dt  > self.delaytime: 
@@ -300,26 +319,31 @@ class Delay(Circuit):
 
 
 
-## Peak Detector circuit.
+##\brief Peak Detector circuit.
 #
+# \image html PeakDetector.png "schema"
 # Takes in an input and outputs when it finds a peak, where the peak is and how long since the last peak
-# - Upper Peak found if $f(t-2) < f(t-1) and f(t-1) > f(t) $ is true
-# - Lower Peak found if $f(t-2) > f(t-1) and f(t-1) < f(t) $ is true
-# - Initialisation parameters:\n
-# 	- pushed = True|False  push the output buffer immediately if True
-#	- up = 1|0 1 means find peaks in the positve y axis and 0 means find peaks in the negative 
+# - Upper Peak found if \f$(t-2)\f$ \f$<\f$ \f$f(t-1)\f$ and \f$f(t-1)\f$ \f$>\f$ \f$f(t)\f$  is true
+# - Lower Peak found if \f$(t-2)\f$ \f$>\f$ \f$f(t-1)\f$ and \f$f(t-1)\f$ \f$<\f$ \f$f(t)\f$ is true
 #
-# - Input channels:\n
-# 	- \f$in\f$
-#	-\f$up = 1|0 \f$
+# \b Initialisation \b parameters:
+# 	- \a pushed = True|False  push the output buffer immediately if True
+#	- \a up     = 1|0 : When set to 1 peaks in the positve y axis will be detected and when set to 0 peaks in the negative will be detected.
 #
-# - Output channels:\n
-# 	- \f$ tick = \f$ 1 if a peak and 0 if no peak 
-# 	- \f$ peak = \f$ location of the peak
-# 	- \f$ delay = \f$ time elapsed since last peak was found
+# \b Input \b channels:
+# 	- \a signal
 #
+# \b Output \b channels:
+# 	- \a tick  = 1 if a peak and 0 if no peak 
+# 	- \a peak  = location of the peak
+# 	- \a delay = time elapsed since last peak was found
 #
-class PeakDetector(Circuit):
+# \b Example:
+# \code
+# machine.AddCircuit(type='peakdetector', name='Peaks' , up = 1)
+# \endcode
+#
+class peaksdetector(Circuit):
     
     
 	def __init__(self, machine, name, **keys):
@@ -336,7 +360,7 @@ class PeakDetector(Circuit):
 		else:
 			raise NameError("Missing up or down selection!")
 		
-		self.AddInput("in")
+		self.AddInput("signal")
 		self.AddOutput("tick")
 		self.AddOutput("peak")
 		self.AddOutput("delay")
@@ -361,7 +385,7 @@ class PeakDetector(Circuit):
 	def Update (self):
 		self.yoo= self.yo
 		self.yo = self.y
-		self.y= self.I["in"].value
+		self.y= self.I["signal"].value
 		self.tick=0
 
 		if self.yoo < self.yo and self.yo > self.y and self.upordown == True:
@@ -383,22 +407,28 @@ class PeakDetector(Circuit):
 		self.O["delay"].value = self.delay
 
 
-## Phasor circuit.
-#
+##\brief Phasor circuit.
+## \image html Phasor.png "schema"
 # Takes in two inputs and will measure the legnth of time between the first
 # input becoming postive and the second also becoming positive.
-# - Initialisation parameters:\n
-# 	- pushed = True|False  push the output buffer immediately if True
 #
-# - Input channels:\n
-# 	- \f$in1\f$
-#	- \f$in2\f$
+#- \b Initialisation \b parameters:
+# 	- \a pushed = True|False  push the output buffer immediately if True
 #
-# - Output channels:\n
-# 	- \f$ tick =\f$ 1 when input 2 becomes positve assuming input 1 has alreayd become postive before it
-# 	- \f$ delay =\f$ time difference between input 1 and input 2 becoming positve 
-
-class Phasor(Circuit):
+# \b Input \b channels:
+# 	- \a in1
+#	- \a in2
+#
+# \b Output \b channels:
+# 	- \a tick = 1 when input 2 becomes positve assuming input 1 has alreayd become postive before it
+# 	- \a delay = time difference between input 1 and input 2 becoming positve 
+#
+# \b Example:
+# \code
+# machine.AddCircuit(type='phasor', name='Phasor' )
+# \endcode
+#
+class phasor(Circuit):
     
     
 	def __init__(self, machine, name, **keys):
@@ -438,28 +468,33 @@ class Phasor(Circuit):
 			self.check = False
 
 
-## Flip circuit.
+## \brief Flip circuit.
 #
-# Takes in and input and will output a tick everytime the signal changes 
+## \image html Flip.png "schema"
+# Takes in an input and will output a tick everytime the signal changes 
 # from negative to positive.
 #
-# - Initialisation parameters:\n
-# 	- pushed = True|False  push the output buffer immediately if True
+# \b Initialisation \b parameters:
+# 	- \a pushed = True|False  push the output buffer immediately if True
 #
-# - Input channels:\n
-# 	-\f$inf\f$
+# \b Input \b channels:
+# 	- \a signal
 #
-# - Output channels:\n
-# 	- \f$ out = 1 when f(t-1) <= 0 and f(t) >0 \f$
+# \b Output \b channels:
+# 	- \a out = 1 when \f$f(t-1)\f$ \f$<=\f$ 0 and \f$f(t)\f$ \f$>\f$ 0
 #
-
-class Flip(Circuit):
+# \b Example:
+# \code
+# machine.AddCircuit(type='flip', name='Flip')
+# \endcode
+#
+class flip(Circuit):
     
     
 	def __init__(self, machine, name, **keys):
 
 		super(self.__class__, self).__init__( machine, name )
-		self.AddInput("in")
+		self.AddInput("signal")
 		self.AddOutput("out")
 		self.yo= 0
 
@@ -474,7 +509,7 @@ class Flip(Circuit):
 		
 		self.O["out"].value = 0
 		
-		if	self.I["in"].value > 0 and self.yo < 0:
+		if	self.I["signal"].value > 0 and self.yo < 0:
 			self.O["out"].value = 1
 		
 		self.yo=self.I["in"].value

@@ -66,4 +66,5 @@ change log
 				added square circuit for square waves
 				BUGFIX! waver circuit had the incorrect frequency!!!
 				
-				
+23-10-2013 --:-- Updated Interpolation for arbitrary force fields, added cantilever and added Scanner
+29-10-2013 --:-- Merged forks.

@@ -1,25 +1,40 @@
 from vafmbase import Circuit
 import math
 
-## Not Gate
-# Takes in an Input Signal and if this is greater than 0 it will output a 1.
-#
-# - Initialisation parameters:
-# 	- pushed = True|False  push the output buffer immediately if True
-#
-# - Input channels:
-# 	- \f$in\f$ incoming signal
-#
-# - Output channels:\n
-#   - \f$out = !in\f$
+## \package vafmcircuits_Logic
+# This file contains the basic logic operator circuits.
 
+## \brief Not Gate
+# \image html Not.png "schema"
+#
+# Truth Table for a Not Gate
+#
+# Input 		|Output
+# ------------- | ------------- 
+# 1 			| 0             
+# 0			    | 1				
+#
+# \b Initialisation \b parameters:
+# 	- \a pushed = True|False  push the output buffer immediately if True
+#
+# \b Input \b channels:
+# 	- \a signal = incoming signal
+#
+# \b Output \b channels:
+#   - \a out = \! signal
+#
+# \b Example:
+# \code
+# machine.AddCircuit(type='Not',name='scann'pushed=True)
+# \endcode
+#
 class Not(Circuit):
 
 	def __init__(self, machine, name, **keys):
 
 		super(self.__class__, self).__init__( machine, name )
 
-		self.AddInput("in")
+		self.AddInput("signal")
 
 		self.AddOutput("out")
 
@@ -33,26 +48,38 @@ class Not(Circuit):
 		
 		result = 0
 		
-		if self.I["in"].value > 0:
+		if self.I["signal"].value > 0:
 			result = 1
 			
 		self.O['out'].value = result
 		
 
 ## And Gate
-# Takes any amount of incoming signals and output 1 if they are all
-# strictily positve, 0 otherwise.
+# \image html And.png "schema"
 #
-# - Initialisation parameters:
-# 	- pushed = True|False  push the output buffer immediately if True
+# Truth table for an And Gate
+# Input A		|Input B		|Output
+# ------------- | ------------- | ------------- 
+# 0 			| 0             | 0             
+# 0			    | 1				| 0           
+# 1			    | 0				| 0           
+# 1			    | 1				| 1           
 #
-# - Input channels:
-# 	- \f$in1, in2, ..., inx\f$  incoming signals
 #
-# - Output channels:\n
-#   - \f$out = in_1 \land in_2 \land ... \land in_x \f$
-
-
+# \b Initialisation \b parameters:
+# 	- \a pushed = True|False  push the output buffer immediately if True
+#
+# \b Input \b channels:
+# 	- \a in1, \a in2, ..., \a inx =  incoming signals
+#
+# \b Output \b channels:\n
+#   - \a out = \f$ in_1  \land in_2  \land ...  \land in_x \f$
+#
+# \b Example:
+# \code
+# machine.AddCircuit(type='And',name='And'pushed=True)
+# \endcode
+#
 class And(Circuit):
 
 	def __init__(self, machine, name, **keys):
@@ -91,17 +118,30 @@ class And(Circuit):
 		self.O['out'].value = result
 
 ## Or Gate
-#Takes in an Input Signal and will output 1 if in1 or in2 are positve numbers
+# \image html OrGate.png "schema"
 #
-# - Initialisation parameters:
-# 	- pushed = True|False  push the output buffer immediately if True
+# Truth table for a Or Gate
+# Input A		|Input B		|Output
+# ------------- | ------------- | ------------- 
+# 0 			| 0             | 0             
+# 0			    | 1				| 1           
+# 1			    | 0				| 1           
+# 1			    | 1				| 1    
 #
-# - Input channels:
-# 	- \f$in1 in2\f$
+# \b Initialisation \b parameters:
+# 	- \a pushed = True|False  push the output buffer immediately if True
 #
-# - Output channels:\n
-#   - \f$out\f$
-
+# \b Input \b channels:
+# 	- \a in1, \a in2 = incoming signal 
+#
+# \b Output \b channels:\n
+#   - \a out = if in1 or in2 >0 output 1 otherwise output 0
+#
+# \b Example:
+# \code
+# machine.AddCircuit(type='OrGate',name='OrGate'pushed=True)
+# \endcode
+#
 class OrGate(Circuit):
 
 	def __init__(self, machine, name, **keys):
@@ -129,17 +169,30 @@ class OrGate(Circuit):
 
 
 ## XOr Gate
-#Takes in an Input Signal and will output 1 if in1 or in2 are positve numbers but will output 0 if both in1 and in2 are positve
+# \image html XOrGate.png "schema"
 #
-# - Initialisation parameters:
-# 	- pushed = True|False  push the output buffer immediately if True
+# Truth table for a XOr Gate
+# Input A		|Input B		|Output
+# ------------- | ------------- | ------------- 
+# 0 			| 0             | 0             
+# 0			    | 1				| 1           
+# 1			    | 0				| 1           
+# 1			    | 1				| 0    
 #
-# - Input channels:
-# 	- \f$in1 in2\f$
+# \b Initialisation \b parameters:
+# 	- \a pushed = True|False  push the output buffer immediately if True
 #
-# - Output channels:\n
-#   - \f$out\f$
-
+# \b Input \b channels:
+# 	-  \a in1, \a in2 = incoming signal
+#
+# \b Output \b channels:\n
+#   - \a out = if in1 or in2 >0 output 1 but if both in1 and in2 > 0 then output 0, otherwise output 0
+#
+# \b Example:
+# \code
+# machine.AddCircuit(type='XOrGate',name='XorGate'pushed=True)
+# \endcode
+#
 class XOrGate(Circuit):
 
 	def __init__(self, machine, name, **keys):
@@ -170,17 +223,30 @@ class XOrGate(Circuit):
 		self.O['out'].value = result
 
 ## NOR Gate
-#Takes in an Input Signal and will output 1 if in1 and in2 are negative 
+# \image html NOrGate.png "schema"
 #
-# - Initialisation parameters:
-# 	- pushed = True|False  push the output buffer immediately if True
+# Truth table for a NOr Gate
+# Input A		|Input B		|Output
+# ------------- | ------------- | ------------- 
+# 0 			| 0             | 1             
+# 0			    | 1				| 0           
+# 1			    | 0				| 0           
+# 1			    | 1				| 0    
 #
-# - Input channels:
-# 	- \f$in1 in2\f$
+# \b Initialisation \b parameters:
+# 	- \a pushed = True|False  push the output buffer immediately if True
 #
-# - Output channels:\n
-#   - \f$out\f$
-
+# \b Input \b channels:
+# 	- \a in1, \a in2 = incoming signal
+#
+# \b Output \b channels:
+#   - \a out = will output 1 if in1 and in2 are < 1 otherwise will output 0
+#
+# \b Example:
+# \code
+# machine.AddCircuit(type='NORGate',name='NORGate'pushed=True)
+# \endcode
+#
 class NORGate(Circuit):
 
 	def __init__(self, machine, name, **keys):

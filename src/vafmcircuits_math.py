@@ -6,22 +6,23 @@ import math
 #
 #
 
-
-## Arithmetic sum circuit.
+## \brief Arithmetic sum circuit.
 #
+# \image html opAdd.png "schema"
 # Sums up the input signals 'in#' and outputs the result in 'out'.
 # The amount of input signals is set with the 'factors=#' argument when
 # the circuit is created.
 #
-# - Initialisation parameters:
-# 	- factors = # number of input channels
-# 	- pushed = True|False  push the output buffer immediately if True
+# \b Initialisation \b parameters:
+# 	- \a factors = # number of input channels
+# 	- \a pushed = True|False  push the output buffer immediately if True
 #
-# - Input channels:
-# 	- \f$in1, in2, ..., inx\f$  incoming signals
+# \b Input \b channels:
+# 	- \a in1, \a in2, ..., \a inx =  incoming signals
 #
-# - Output channels:\n
-# 	- \f$out = \sum_i^{factors} in_i \f$
+#
+# \b Output \b channels: 
+# 	- \a out = \f$ \sum_i^{factors} in_i \f$
 #
 #\b Examples:
 # \code{.py}
@@ -70,18 +71,19 @@ class opAdd(Circuit):
 			
 		self.O['out'].value = result
 
-## Arithmetic subtraction circuit.
+## \brief Arithmetic subtraction circuit.
 #
 # Outputs the difference between two input signals 'in#' in the output 'out'.
 #
-# - Initialisation parameters:
-# 	- pushed = True|False  push the output buffer immediately if True
+# \image html opSub.png "schema"
+# \b Initialisation \b parameters:
+# 	- \a pushed = True|False  push the output buffer immediately if True
 #
-# - Input channels:
-# 	- \f$in1, in2\f$  input signals
+# \b Input \b channels:
+#	- \a in1, \a in2  = input signals
 #
-# - Output channels:\n
-# 	- \f$out = in_1 - in_2 \f$
+# \b Output \b channels: 
+# 	- \a out = \f$ in_1 - in_2 \f$ 
 #
 #\b Examples:
 # \code{.py}
@@ -116,21 +118,22 @@ class opSub(Circuit):
 		self.O['out'].value = result
 
 
-## Arithmetic multiplier circuit.
+## \brief Arithmetic multiplier circuit.
 #
+# \image html opMul.png "schema"
 # Multiplies the input signals 'in#' and outputs the result in 'out'.
 # The amount of input signals is set with the 'factors=#' argument when
 # the circuit is created.
 #
-# - Initialisation parameters:
-# 	- factors = # number of input channels
-# 	- pushed = True|False  push the output buffer immediately if True
+# \b Initialisation \b parameters:
+# 	- \a factors = # number of input channels
+# 	- \a pushed = True|False  push the output buffer immediately if True
 #
-# - Input channels:
-# 	- \f$in1, in2, ..., inx\f$  incoming signals
+# \b Input \b channels:
+# 	- \a in1, \a in2, ..., \a inx  incoming signals
 #
-# - Output channels:
-# 	- \f$out = \prod_i^{factors} in_i \f$
+# \b Output \b channels:
+# 	-  \a out = \f$ \prod_i^{factors} in_i \f$
 #
 #\b Examples:
 # \code{.py}
@@ -179,18 +182,19 @@ class opMul(Circuit):
 		self.O['out'].value = result
 
 
-## Arithmetic division circuit.
+## \brief Arithmetic division circuit.
 #
 # Outputs the ratio between two input signals 'in#' in the output 'out'.
 #
-# - Initialisation parameters:
-# 	- pushed = True|False  push the output buffer immediately if True
+# \image html opDiv.png "schema"
+# \b Initialisation \b parameters:
+# 	- \a pushed = True|False  push the output buffer immediately if True
 #
-# - Input channels:
-# 	- \f$in1, in2\f$  input signals
+# \b Input \b channels:
+# 	- \a in1, \a in2 =  input signals
 #
-# - Output channels:\n
-# 	- \f$out = in_1 / in_2 \f$
+# \b Output \b channels:
+# 	- \a out = \f$ in_1 / in_2 \f$
 #
 #\b Examples:
 # \code{.py}
@@ -225,23 +229,24 @@ class opDiv(Circuit):
 		self.O['out'].value = result
 
 
-## Arithmetic linear-combo circuit.
+## \brief Arithmetic linear-combo circuit.
 #
+# \image html opLinC.png "schema"
 # Computes the linear combination of the input signals 'ina#' and 'inb#',
 # and outputs the result in 'out'.
 # The amount of input signals is set with the 'factors=#' argument when
 # the circuit is created.
 #
-# - Initialisation parameters:\n
-# 	- factors = # number of factors\n
-# 	- pushed = True|False  push the output buffer immediately if True
+# \b Initialisation \b parameters:
+# 	- \a factors = # number of factors
+# 	- \a pushed = True|False  push the output buffer immediately if True
 #
-# - Input channels:\n
-# 	- \f$ina1, ina2, ..., inax\f$  incoming signals\n
-# 	- \f$inb1, inb2, ..., inbx\f$  incoming signals\n
+# \b Input \b channels:
+# 	- \a ina1, \a ina2, ..., \a inax = incoming signals
+# 	- \a inb1, \a inb2, ..., \a inbx = incoming signals
 #
-# - Output channels:\n
-# 	- \f$out = \sum_i^{factors} ina_i\times inb_i \f$
+# \b Output \b channels:
+# 	- \a out = \f$ \sum_i^{factors} ina_i\times inb_i \f$
 #
 #\b Examples:
 # \code{.py}
@@ -290,18 +295,19 @@ class opLinC(Circuit):
 		self.O['out'].value = result
 
 
-## Absolute value circuit.
+## \brief Absolute value operator circuit.
 #
+# \image html opAbs.png "schema"
 # Takes in an inpute and returns the Absolute vcalue of it
 #
-# - Initialisation parameters:\n
-# 	- pushed = True|False  push the output buffer immediately if True
+# \b Initialisation \b parameters:
+# 	- \a pushed = True|False  push the output buffer immediately if True
 #
-# - Input channels:\n
-# 	- \f$in\f$ incoming signal
+# \b Input \b channels:
+# 	- \a signal =  incoming signal
 #
-# - Output channels:\n
-# 	- \f$out = |in|\f$
+# \b Output \b channels:
+# 	- \a out = \f$|in|\f$
 #
 #\b Examples:
 # \code{.py}
@@ -316,7 +322,7 @@ class opAbs(Circuit):
 		super(self.__class__, self).__init__( machine, name )
 
 
-		self.AddInput("in")
+		self.AddInput("signal")
 		
 		#create output channels
 		self.AddOutput("out")
@@ -331,28 +337,30 @@ class opAbs(Circuit):
 		
 	def Update (self):
 		
-		result = self.I["in"].value
+		result = self.I["signal"].value
 		
-		if self.I["in"].value < 0:
-			result = self.I["in"].value * -1
+		if self.I["signal"].value < 0:
+			result = self.I["signal"].value * -1
 		
 		self.O["out"].value = result
 
 
 
-## Power value circuit.
+## Power operator circuit.
+## \brief Power value circuit.
 #
 # Takes in an inpute and returns the result raised to a given power
 #
-# - Initialisation parameters:\n
-# 	- pushed = True|False  push the output buffer immediately if True
-#	- power = integer The value the function result will be raised by
+# \image html opPow.png "schema"
+# \b Initialisation \b parameters:
+# 	- \a pushed = True|False  push the output buffer immediately if True
+#	- \a power = integer The value the function result will be raised by
 #
-# - Input channels:\n
-# 	- \f$in\f$ incoming signal
+# \b Input \b channels:
+# 	- \a signal = incoming signal
 #
-# - Output channels:\n
-# 	- \f$out = in^{power}\f$
+# \b Output \b channels:
+# 	- \a out =  \f$ signal^{power} \f$
 #
 #\b Examples:
 # \code{.py}
@@ -371,7 +379,7 @@ class opPow(Circuit):
 		else:
 			raise SyntaxError("ERROR! power not specified.")
 
-		self.AddInput("in")
+		self.AddInput("signal")
 		
 		#create output channels
 		self.AddOutput("out")
@@ -386,6 +394,6 @@ class opPow(Circuit):
 		
 	def Update (self):
 		
-		result = math.pow(self.I["in"].value,  self.power)
+		result = math.pow(self.I["signal"].value,  self.power)
 		
 		self.O["out"].value = result

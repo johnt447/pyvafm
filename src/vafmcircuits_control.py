@@ -1,29 +1,31 @@
-## \file vafmcircuits_control.py
-# This file contains the controller circuits.
-
 from vafmbase import Circuit
 from vafmbase import ChannelType
 from vafmbase import Channel
 
 import math
 
-
-## PI circuit.
+## \package vafmcircuits_control.py
+# This file contains the controller circuits.
 #
+
+
+## \brief PI circuit.
+#
+# \image html PI.png "schema"
 # This circuit will compare the input signal with a reference signal and 
 # regulate the output in order to minimise the difference using a PI controller.
 #
-# - Initialisation parameters:\n
-# 	- pushed = True|False  push the output buffer immediately if True
+# \b Initialisation \b parameters: 
+# 	- \a pushed = True|False  push the output buffer immediately if True
 #
-# - Input channels:\n
-# 	- \f$signal\f$ incoming signal
-# 	- \f$set\f$ reference signal
-# 	- \f$Kp\f$ proportional constant
-# 	- \f$Ki\f$ integral constant
+# \b Input \b channels: 
+# 	- \a signal = incoming signal
+# 	- \a set = reference signal
+# 	- \a Kp = proportional constant
+# 	- \a Ki = integral constant
 #
-# - Output channels:\n
-# 	- \f$out = K_p (set-signal) + K_i \int (set-signal) dt \f$
+# \b Output \b channels: 
+# 	- \a out = \f$ K_p (set-signal) + K_i \int (set-signal) dt \f$
 #
 #\b Examples:
 # \code{.py}
@@ -31,6 +33,7 @@ import math
 # machine.AddCircuit(type='PI', name='pi', Kp=0.1)
 # machine.AddCircuit(type='PI', name='pi', Kp=0.2, Ki=0.01)
 # \endcode
+#
 class PI(Circuit):
     
     
@@ -65,25 +68,24 @@ class PI(Circuit):
 		self.oldInt = self.I["Ki"].value * self.delta
 
 
-## PID circuit.
+##  \brief PID circuit.
 #
+# \image html PID.png "schema"
 # This circuit will compare the input signal with a reference signal and 
 # regulate the output in order to minimise the difference using a PID controller.
 #
-# - Initialisation parameters:\n
-# 	- pushed = True|False  push the output buffer immediately if True
-# 	- Kp = Proportionality tuning constant
-#	- Ki = Integral tuning constant
-#	- Kd = Derivative tuning constant
-# - Input channels:\n
-# 	- \f$signal\f$ incoming signal
-# 	- \f$set\f$ reference signal
-# 	- \f$Kp\f$ proportional constant
-# 	- \f$Ki\f$ integral constant
-# 	- \f$Kd\f$ derivative constant
+# \b Initialisation \b parameters:
+# 	- \a pushed = True|False  push the output buffer immediately if True
 #
-# - Output channels:\n
-# 	- \f$out = K_p (set-signal) + K_i \int (set-signal) dt +K_d\frac{d(set-signal)}{dt}\f$
+# \b Input \b channels: 
+# 	- \a signal = incoming signal
+# 	- \a set = reference signal
+# 	- \a Kp = proportional constant
+# 	- \a Ki = integral constant
+# 	- \a Kd = derivative constant
+#
+# \b Output \b channels: 
+# 	- out = \f$ K_p (set-signal) + K_i \int (set-signal) dt +K_d\frac{d(set-signal)}{dt}\f$
 #
 #\b Examples:
 # \code{.py}
@@ -91,6 +93,7 @@ class PI(Circuit):
 # machine.AddCircuit(type='PID', name='pid', Kp=0.1)
 # machine.AddCircuit(type='PID', name='pid', Kp=0.2, Ki=0.01, Kd=0.1)
 # \endcode
+#
 class PID(Circuit):
     
     
@@ -133,20 +136,21 @@ class PID(Circuit):
 		#self.counter = self.counter + 1
 
 
-## Limiter circuit.
+##  \brief Limiter circuit.
 #
+# \image html Limiter.png "schema"
 # This circuit will limit a signal from going above the max and below the min values.
 #
-# - Initialisation parameters:\n
-# 	- pushed = True|False  push the output buffer immediately if True
+# \b Initialisation \b parameters:
+# 	- \a pushed = True|False  push the output buffer immediately if True
 #
-# - Input channels:\n
-# 	- \f$signal\f$ incoming signal
-# 	- \f$min\f$ minimum value
-# 	- \f$max\f$ maximum value
+# \b Input \b channels: 
+# 	- \a signal = incoming signal
+# 	- \a min = minimum value
+# 	- \a max = maximum value
 #
-# - Output channels:\n
-# 	- \f$out = Max(Min(in, max), min)\f$
+# \b Output \b channels:
+# 	- \a out = \f$ Max(Min(in, max), min)\f$
 #
 # \b Example:
 # \code{.py}

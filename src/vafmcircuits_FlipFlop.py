@@ -3,26 +3,40 @@ import math
 import vafmcircuits_Logic
 from vafmcircuits import Machine
 
-## SR Flip Flop circuit.
-# This circuit will output 1 if the Signal is high and the reset is low.
-# When the reset is high it will output 0.
+## \package vafmcircuits_FlipFlop
+# This file contains the flip flop circuits.
+#
+
+
+## \breif SR Flip Flop circuit.
+# \image html SRFlipFlop.png "schema"
+#
+# Truth Table for SR FLip FLop
+#
+# S 			|R  		    | Q 			 |  QBar 		  |  Action 
+# ------------- | ------------- |  ------------- |  ------------- |  -------------
+# 0  			| 0             |   Q		  	 |	Qbar 		  | Hold State
+# 0			    | 1				| 	0			 |  1			  | Reset
+# 1			    | 0				| 	1			 |  0			  | Set
+# 1			    | 1				| 	X			 |  X			  | Not Alowed
 # 
 #
-# - Initialisation parameters:\n
-# 	- pushed = True|False  push the output buffer immediately if True
+# \b Initialisation \b parameters:
+# 	- \a pushed = True|False  push the output buffer immediately if True
 #
-# - Input channels:\n
-# 	-\f$S\f$ set signal
-#	-\f$R\f$ reset signal
+# \b Input \b channels: 
+# 	- \a S = set signal
+#	- \a R = reset signal
 #
-# - Output channels:\n
-#	- \f$Q = \f$ stored bit (0|1)
-#	- \f$Qbar = \f$ opposite of the stored bit
+# \b Output \b channels: 
+#	- \a Q =  stored bit (0|1)
+#	- \a Qbar =  opposite of the stored bit
 #
 #\b Examples:
 # \code{.py}
 # machine.AddCircuit(type='SRFlipFlop', name='sr')
 # \endcode
+#
 class SRFlipFlop(Circuit):
     
     
@@ -58,22 +72,36 @@ class SRFlipFlop(Circuit):
 
 
 
-## JK Flip Flop circuit.
-# This circuit will output the value of J if J does not eual K, if J and K are 0 then there will be no change, if J is high and K is low then it will output 1 and if both J and K
-# are high then it will toggle between Q and Q bar
+## \brief JK Flip Flop circuit.
+# \image html JKFlipFlop.png
+#
+# Truth Table JK Flip FLop
+#
+# J 			|K  		    | Q 			 |  QBar 		  |  Action 
+# ------------- | ------------- |  ------------- |  ------------- |  -------------
+# 0  			| 0             |   Q		  	 |	Qbar 		  | Hold State
+# 0			    | 1				| 	0			 |  1			  | Reset
+# 1			    | 0				| 	1			 |  0			  | Set
+# 1			    | 1				| 	QBar		 |  Q			  | Toggle
 # 
 #
-# - Initialisation parameters:\n
-# 	- pushed = True|False  push the output buffer immediately if True
+# \b Initialisation \b parameters: 
+# 	- \a pushed = True|False  push the output buffer immediately if True
 #
-# - Input channels:\n
-# 	-\f$J\f$
-#	-\f$K\f$
+# \b Input \b channels: 
+# 	- \a J = set signal
+#	- \a K = reset signal
 #
-# - Output channels:\n
-# 	- \f$ out = Q \f$
-#   - \f$ out = Qbar \f$
-
+#
+# \b Output \b channels: 
+#	- \a Q =  stored bit (0|1)
+#	- \a Qbar =  opposite of the stored bit
+#
+#\b Examples:
+# \code{.py}
+# machine.AddCircuit(type='JKFlipFlop', name='jk')
+# \endcode
+#
 class JKFlipFlop(Circuit):
     
     
@@ -112,20 +140,31 @@ class JKFlipFlop(Circuit):
 
 
 ## D Flip Flop circuit.
-#	This circuit is data or delay flip flop. It is dependent on the previous output so will only output high if D is high and previous Q is either low or high. If D is low and
-#   the previous Q is high then it will output 0. 
+# \image html DFlipFlop.png
+# Truth Table D Flip Fop
+#
+# D 			|   Q 			 |  QBar 		  |  Action 
+# ------------- |  ------------- |  ------------- |  -------------
+# 0  			|   Q 		  	 |	Qbar 		  | No Change
+# 1			    | 	1			 |  0			  | Set
+# 
 # 
 #
-# - Initialisation parameters:\n
-# 	- pushed = True|False  push the output buffer immediately if True
+# \b Initialisation \b parameters:
+# 	- \a pushed = True|False  push the output buffer immediately if True
 #
-# - Input channels:\n
-# 	-\f$D\f$
+# \b Input \b channels:
+# 	- \a D = Data Channel
 #
-# - Output channels:\n
-# 	- \f$ out = Q \f$
-#   - \f$ out = Qbar \f$
-
+# \b Output \b channels: 
+#	- \a Q =  stored bit (0|1)
+#	- \a Qbar =  opposite of the stored bit
+#
+#\b Examples:
+# \code{.py}
+# machine.AddCircuit(type='DFlipFlop', name='D')
+# \endcode
+#
 class DFlipFlop(Circuit):
     
     
@@ -169,21 +208,26 @@ class DFlipFlop(Circuit):
 
 
 ## DR Flip Flop circuit.
-#	This circuit is the same as the D flip flop except it includes an reset switch so when R is high the output is 0
-# 
+# \image html DRFlipFlop.png
+# Truth Table DR Flip Flop
 #
-# - Initialisation parameters:\n
-# 	- pushed = True|False  push the output buffer immediately if True
+# D 			|   R 			 |   Q 			 |  QBar 		    |  Action 
+# ------------- |  ------------- |  -------------|  -------------   | ------------- 
+# 0  			|   0 		  	 |  Q 		  	 |	Qbar 		    | No Change
+# 0			    | 	1			 | 	0			 |  1			    | Reset
+# 1			    | 	0			 |  0			 |  0				| Set
+# 1				|   1			 |  x 			 |  x   			| Not Alowed
+# \b Initialisation \b parameters: 
+# 	- \a pushed = True|False  push the output buffer immediately if True
 #
-# - Input channels:\n
-# 	-\f$D\f$
-#	-\f$R\f$
+# \b Input \b channels: 
+# 	- \a D = Data Channel
+#	- \a R = Reset Channel
 #
-# - Output channels:\n
-# 	- \f$ Q \f$
-#   - \f$ Qbar \f$
-
-
+# \b Output \b channels: 
+#	- \a Q =  stored bit (0|1)
+#	- \a Qbar =  opposite of the stored bit
+#
 class DRFlipFlop(Circuit):
     
     
