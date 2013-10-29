@@ -17,7 +17,9 @@ import vafmcircuits_signal_processing
 # is passed to a series of lowpass Sallen-Key filters. The mount of filters
 # and their cutoff frequencies are taken from the input parameter \a filters.
 # 
-# \note For this to work, the output \a sin should be connected to \a signal2 in the parent circuit (main machine or composite).
+# \note For this to work, the output \a sin should be connected to \a signal2 in the parent circuit (as shown in example). 
+# Also, both signals should be normalised (amplitude = 1) and their offset should be removed.
+#
 #
 # \htmlonly <div class="image"><a href="apll.png"><image src="apll.png" alt="aPLL schema" /></a> \endhtmlonly
 #
@@ -45,6 +47,8 @@ import vafmcircuits_signal_processing
 #
 #machine.AddCircuit(type="Machine",name='pll', assembly=aPLL, filters=[1000,500],
 #	gain=600.0, f0=1.0e5, Kp=0.4, Ki=500)
+#
+#machine.Connect("pll.sin","pll.signal2")
 # \endcode
 #
 def aPLL(compo,**keys):
