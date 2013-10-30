@@ -68,3 +68,7 @@ change log
 				
 23-10-2013 --:-- Updated Interpolation for arbitrary force fields, added cantilever and added Scanner
 29-10-2013 --:-- Merged forks.
+30-10-2013 --:-- added test files in /examples/
+				removed the test_*.py exclusion from .gitignore
+
+

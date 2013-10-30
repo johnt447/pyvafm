@@ -4,8 +4,3 @@ html
 *.pyc
 
 *.dat
-
-test_*.py
-logictest.py
-
-

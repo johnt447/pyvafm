@@ -35,7 +35,7 @@ def main():
 	machine.Connect("osc.sin","compo1.signal1")
 	machine.Connect("osc.cos","compo1.signal2")
 
-	out1 = machine.AddCircuit(type='output',name='output',file='log.log', dump=1)
+	out1 = machine.AddCircuit(type='output',name='output',file='example_composite.log', dump=1)
 	out1.Register('global.time', 'osc.sin', 'osc.cos', 'compo1.out')
 	
 	for i in range(1000):
