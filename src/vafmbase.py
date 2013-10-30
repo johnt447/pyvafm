@@ -55,6 +55,9 @@ class Channel(object):
 	#@value.setter
 	def value_set(self,value):
 		self.signal.value = value
+		if(self.signal.owner == self.owner):
+			self.Push()
+		
 		#print 'setting value '+str(value)
 		
 	value = property(value_get, value_set);

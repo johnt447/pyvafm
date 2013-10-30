@@ -15,23 +15,29 @@
 		- \link vafmcircuits_Filters.PassiveLowPass PassiveLowPass\endlink - <i>first order lowpass filter (RC)</i>
 		- \link vafmcircuits_Filters.PassiveHighPass PassiveHighPass\endlink - <i>first order highpass filter (RL)</i>
 		- \link vafmcircuits_Filters.PassiveBandPass PassiveBandPass\endlink - <i>first order bandpass filter (RCL)</i>
+	- Averagers
+		- \link vafmcircuits_avg.avg avg\endlink - <i>Averager circuit.</i>
 
-\section sec_math Arithmetics
-	- \link vafmcircuits_math.opAdd opAdd\endlink - <i>sum operator</i>
-	- \link vafmcircuits_math.opSub opSub\endlink - <i>subtraction operator</i>
-	- \link vafmcircuits_math.opMul opMul\endlink - <i>multiplication operator</i>
-	- \link vafmcircuits_math.opDiv opDiv\endlink - <i>division operator</i>
-	- \link vafmcircuits_math.opLinC opLinC\endlink - <i>Linear combination operator</i>
-	- \link vafmcircuits_math.opPow opPow\endlink - <i>power operator</i>
-	- \link vafmcircuits_math.opAbs opAbs\endlink - <i>absolute value operator</i>
-	
+\section sec_math Mathematics
+	- Arithmetics
+		- \link vafmcircuits_math.opAdd opAdd\endlink - <i>sum operator</i>
+		- \link vafmcircuits_math.opSub opSub\endlink - <i>subtraction operator</i>
+		- \link vafmcircuits_math.opMul opMul\endlink - <i>multiplication operator</i>
+		- \link vafmcircuits_math.opDiv opDiv\endlink - <i>division operator</i>
+		- \link vafmcircuits_math.opLinC opLinC\endlink - <i>Linear combination operator</i>
+		- \link vafmcircuits_math.opPow opPow\endlink - <i>power operator</i>
+		- \link vafmcircuits_math.opAbs opAbs\endlink - <i>absolute value operator</i>
+	- Comparison
+		- \link vafmcircuits_Comparison.GreaterOrEqual GreaterOrEqual\endlink - <i>Greater or equal to circuit.</i>
+		- \link vafmcircuits_Comparison.LessOrEqual LessOrEqual\endlink - <i>Less or equal to circuit.</i>
+		- \link vafmcircuits_Comparison.Equal Equal\endlink - <i>equal to circuit.</i>
 
-\section sec_logic Logic
-	- \link vafmcircuits_Logic.Not Not\endlink - <i>Not gate circuit.</i>
-	- \link vafmcircuits_Logic.And And\endlink - <i>And gate circuit.</i>
-	- \link vafmcircuits_Logic.OrGate OrGate\endlink - <i>Or gate circuit.</i>
-	- \link vafmcircuits_Logic.XOrGate XOrGate\endlink - <i>XOrGate gate circuit.</i>
-	- \link vafmcircuits_Logic.NORGate NORGate\endlink - <i>NORGate gate circuit.</i>
+	- Logic
+		- \link vafmcircuits_Logic.Not Not\endlink - <i>Not gate circuit.</i>
+		- \link vafmcircuits_Logic.And And\endlink - <i>And gate circuit.</i>
+		- \link vafmcircuits_Logic.OrGate OrGate\endlink - <i>Or gate circuit.</i>
+		- \link vafmcircuits_Logic.XOrGate XOrGate\endlink - <i>XOrGate gate circuit.</i>
+		- \link vafmcircuits_Logic.NORGate NORGate\endlink - <i>NORGate gate circuit.</i>
 
 \section sec_out Output
 	- \link vafmcircuits_output.output output\endlink - <i>output to file</i>
@@ -45,7 +51,7 @@
 
 
 ''
-- \link vafmcircuits_avg.avg avg\endlink - <i>Averager circuit.</i>
+
 
 - \link vafmcircuits_Cantilever.InputQV InputQV\endlink - <i>Q factor in the vertical mode.</i>
 - \link vafmcircuits_Cantilever.InputKV InputKV\endlink - <i>K value in the vertical mode.</i>
@@ -57,9 +63,7 @@
 - \link vafmcircuits_Cantilever.MassV MassV\endlink - <i>Mass of the vertical mode.</i>
 - \link vafmcircuits_Cantilever.MassL MassL\endlink - <i>Mass of the lateral mode.</i>
 
-- \link vafmcircuits_Comparison.GreaterOrEqual GreaterOrEqual\endlink - <i>Greater or equal to circuit.</i>
-- \link vafmcircuits_Comparison.LessOrEqual LessOrEqual\endlink - <i>Less or equal to circuit.</i>
-- \link vafmcircuits_Comparison.Equal Equal\endlink - <i>equal to circuit.</i>
+
 
 - \link vafmcircuits_control.PI PI\endlink - <i>PI circuit.</i>
 - \link vafmcircuits_control.PID PID\endlink - <i>PID circuit.</i>
