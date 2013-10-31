@@ -1,4 +1,8 @@
 
+## \package vafmbase
+# This module contains the definitions of the basic circuit and channel objects.
+#
+
 def enum(**enums):
 	return type('Enum', (), enums)
 	
@@ -55,8 +59,8 @@ class Channel(object):
 	#@value.setter
 	def value_set(self,value):
 		self.signal.value = value
-		if(self.signal.owner == self.owner):
-			self.Push()
+		#if(self.signal.owner == self.owner):
+		#	self.Push()
 		
 		#print 'setting value '+str(value)
 		
@@ -76,8 +80,8 @@ class Channel(object):
 		return self.owner.name+"."+self.name+" = "+str(self.signal)
 		
 
-## \internal
-## Abstract circuit class.
+
+## \brief Abstract circuit class.
 #
 #
 class Circuit(object):
@@ -93,8 +97,10 @@ class Circuit(object):
 		
 		## Name of the circuit.
 		self.name = name
+		
 		## Reference to the virtual machine to which this circuit belongs.
 		self.machine = machine
+		
 		## Push output buffer at the end of Update.
 		#
 		# If the circuit is pushed, all the output channels will

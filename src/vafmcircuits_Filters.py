@@ -206,7 +206,7 @@ class ActiveHighPass(Circuit):
 # \b Input \b channels:
 # 	- \a signal = incoming signal
 #
-# \b Output \b channels:\n
+# \b Output \b channels:
 # 	- \a out =\f$ G\frac{Band \cdot dt\cdot(x(t) - x(t-2dt)) + band \cdot dt \cdot (2 \cdot y \cdot (t-dt) - y \cdot (t-2 \cdot dt)) }{ 1 + band \cdot dt + \omega ^2 _c } \f$
 #   where \f$ x \f$ is the input signal, \f$ y \f$ is the input signal,  \f$ \omega_{c} = 2 \pi f_c \f$ is the cut off pulse \f$ Q \f$  is the quality factor and \f$ dt \f$ is the timestep.
 #
@@ -307,10 +307,10 @@ class ActiveBandPass(Circuit):
 #	- \a Fcutoff = the frequency cut off for the circuit
 #	- \a Order = The order of the filter
 #
-# \b Input \b channels: \n
+# \b Input \b channels: 
 # 	- \a signal = Incoming signal
 #
-# \b Output \b channels:\n
+# \b Output \b channels:
 # 	- \a out = Filtered signal
 #
 #\b Examples:
@@ -388,7 +388,7 @@ class PassiveLowPass(Circuit):
 # \b Input \b channels:
 # 	- \a signal = incoming signal
 #
-# \b Output \b channels:\n
+# \b Output \b channels:
 # 	- \a out = Filtered signal
 #
 #\b Examples:

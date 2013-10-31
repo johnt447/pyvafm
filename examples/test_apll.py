@@ -21,7 +21,7 @@ def main():
 	
   	
 	machine.Connect("osc.cos","pll.signal1")
-	machine.Connect("pll.sin","pll.signal2")
+	machine.Connect("pll.cos","pll.signal2")
 	
 	
 	out1 = machine.AddCircuit(type='output',name='output',file='test_apll.log', dump=200)
@@ -29,13 +29,13 @@ def main():
 	
 	for i in range(80000):
 		machine.Update()
-	machine.circuits['osc'].I['freq'].value = f0+14
+	machine.circuits['osc'].I['freq'].Set(f0+14)
 	for i in range(160000):
 		machine.Update()
-	machine.circuits['osc'].I['freq'].value = f0-100
+	machine.circuits['osc'].I['freq'].Set(f0-100)
 	for i in range(160000):
 		machine.Update()
-	machine.circuits['osc'].I['freq'].value = f0-300
+	machine.circuits['osc'].I['freq'].Set(f0-300)
 	for i in range(160000):
 		machine.Update()
 		

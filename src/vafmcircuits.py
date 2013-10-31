@@ -12,14 +12,13 @@ from vafmbase import Channel
 import vafmcircuits_math, vafmcircuits_output, vafmcircuits_signal_gens
 
 ## \package vafmcircuits
-# \brief This file contains the basic circuits.
-#
+# \brief This file contains the main Machine circuit.
 #
 
 
 ## Virtual %Machine main class.
 #
-# The vitual machine is effectively a \link vafmbase.Circuit circuit\endlink, with input/output channels,
+# The vitual machine is effectively a \link vafmbase.Circuit circuit \endlink, with input/output channels,
 # but it also contains an internal assembly of circuits that run during the \ref Update
 # cycle. Every machine always has the output channel \a 'time' created during initialisation.
 #
@@ -63,7 +62,16 @@ class Machine(Circuit):
 		
 		super(self.__class__, self).__init__( machine, name )
 
-		## Ordered dictionary of the circuits in the setup.
+		## \brief Ordered dictionary of the circuits in the setup.
+		# Ordered dictionary of the circuits in the setup. The dictionary keys are the circuit names, the values are
+		# references to the circuit objects.
+		#
+		# \b Example:
+		#
+		# \code
+		# waver = machine.circuits['oscillator']
+		#
+		# \endcode
 		self.circuits = OrderedDict()
 
 		## Integration timestep
@@ -102,9 +110,11 @@ class Machine(Circuit):
 	# the setup after the machine is instantiated.
 	#
 	# \b Example:
+	#
+	# Assembly function definition:
+	#
 	# \code{.py}
 	# 
-	# # assembly function definition --------------------------------------
 	# def MyAssembly(compo):
 	# 
 	# 	# add global channels
@@ -117,9 +127,12 @@ class Machine(Circuit):
   	#   compo.Connect("global.signal1","adder.in1")
   	#   compo.Connect("adder.out","global.out")
 	#   ...
-	# #--------------------------------------------------------------------
+	# \endcode
 	#
-	# # main script
+	# Main script:
+	#
+	# \code
+	#
 	# def main():
 	#  
 	#   main = Machine(name='machine', dt=0.01, pushed=True);
@@ -136,7 +149,9 @@ class Machine(Circuit):
 	def Assemble(self):
 		pass
 
-	## Total simulation time.
+	## \internal
+	## \brief Total simulation time.
+	# Total simulation time elapsed.
 	@property
 	def time(self):
 		return self._idt*self.dt
@@ -153,7 +168,8 @@ class Machine(Circuit):
 	# \b Example:
 	# \code{.py}
 	# machine = Machine(name='machine', dt=0.01);
-	# machine.AddInput('signal')
+	# composite = machine.AddCircuit(type='Machine', name='compo', ...)
+	# composite.AddInput('signal')
 	# \endcode
 	#
 	def AddInput(self, name):
@@ -175,7 +191,8 @@ class Machine(Circuit):
 	# \b Example:
 	# \code{.py}
 	# machine = Machine(name='machine', dt=0.01);
-	# machine.AddOutput('outsignal')
+	# composite = machine.AddCircuit(type='Machine', name='compo', ...)
+	# composite.AddOutput('outsignal')
 	# \endcode
 	#
 	def AddOutput(self, name):
@@ -399,10 +416,10 @@ class Machine(Circuit):
   	# main = Machine(name='machine', dt=0.01, pushed=True);
   	# 
   	# main.AddCircuit(type='waver', name='osc', amp=1, freq=1)
-  	# main.AddCircuit(type='opAdd', name='adder', factors=2)
+  	# main.AddCircuit(type='opAdd', name='adder', factors=3)
   	#
   	# main.Connect("osc.sin", "adder.in1")
-  	# main.Connect("osc.cos", "adder.in2")
+  	# main.Connect("osc.cos", "adder.in2", adder.in3)
   	#
 	# \endcode
 	def Connect(self, *args):
@@ -455,6 +472,29 @@ class Machine(Circuit):
 			print "  - "+ target.name
 			target.Disconnect()
 
+	
+	## \brief Set the value of an input channel.
+	# Immediately sets the value of an input channel.
+	#
+	# @param channel Tag of the channel to set as a 'circuit.channel' string.
+	# @param value Value to be assigned.
+	#
+	# \b Example:
+	# \code{.py}
+	# machine.SetInput(channel='waver.freq', value=10)
+	# \endcode
+	#
+	def SetInput(self, channel=None, value=None):
+		
+		tag = kw['channel']
+		val = kw['value']
+		
+		ch = self.GetChannel(tag)
+		ch.Set(val)
+		
+		#print tag,val,ch
+
+	## \internal
 	## Initialization.
 	#
 	# Use this after all circuits and connections are setup.
@@ -496,6 +536,7 @@ class Machine(Circuit):
 
 		#print 'after post' + str(self.O['time'].value)
 
+	## \internal
 	## Post Update cycle.
 	#
 	# Called after the Update is finished, to push all buffers.

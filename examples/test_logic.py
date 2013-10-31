@@ -26,8 +26,7 @@ def main():
 	machine.Connect("s1.out","and.in1","or.in1","xor.in1","nor.in1")
 	machine.Connect("s2.out","and.in2","or.in2","xor.in2","nor.in2")
 	
-	#machine.Connect("osc.cos","compo1.signal2")
-
+	
 	out1 = machine.AddCircuit(type='output',name='output',file='test_logic.log', dump=1)
 	out1.Register('global.time', 's1.out', 's2.out','not.out','and.out','or.out','xor.out','nor.out')
 	
