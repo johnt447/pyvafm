@@ -70,5 +70,9 @@ change log
 29-10-2013 --:-- Merged forks.
 30-10-2013 --:-- added test files in /examples/
 				removed the test_*.py exclusion from .gitignore
+31-10-2013 --:-- limiter circuit moved in signal_processing
+				added SetInput function to Machine
+				fixed some documentation for Machine and Circuit
+				
 
 

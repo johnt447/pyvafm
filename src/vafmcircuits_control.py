@@ -136,51 +136,5 @@ class PID(Circuit):
 		#self.counter = self.counter + 1
 
 
-##  \brief Limiter circuit.
-#
-# \image html Limiter.png "schema"
-# This circuit will limit a signal from going above the max and below the min values.
-#
-# \b Initialisation \b parameters:
-# 	- \a pushed = True|False  push the output buffer immediately if True
-#
-# \b Input \b channels: 
-# 	- \a signal = incoming signal
-# 	- \a min = minimum value
-# 	- \a max = maximum value
-#
-# \b Output \b channels:
-# 	- \a out = \f$ Max(Min(in, max), min)\f$
-#
-# \b Example:
-# \code{.py}
-# machine.AddCircuit(type='limiter', name='lim')
-# machine.AddCircuit(type='limiter', name='lim', min=-10.0)
-# machine.AddCircuit(type='limiter', name='lim', min=0.0, max=99999)
-# \endcode
-#
-class limiter(Circuit):
-    
-    
-	def __init__(self, machine, name, **keys):
-
-		super(self.__class__, self).__init__( machine, name )
-
-		self.AddInput("signal")
-		self.AddInput("min")
-		self.AddInput("max")
-		self.AddOutput("out")
-
-		self.SetInputs(**keys)
-
-	def Initialize (self):
-
-		pass
-
-
-	def Update (self):
-	
-		self.O["out"].value =  max(min(self.I["signal"].value, self.I["max"].value), 
-			self.I["min"].value)
 
 
