@@ -3,6 +3,37 @@
 # This module contains the definitions of the basic circuit and channel objects.
 #
 
+## \internal
+## \brief Base Event class
+#
+class Event:
+    def __init__(self):
+        self.handlers = set()
+
+    def handle(self, handler):
+        self.handlers.add(handler)
+        return self
+
+    def unhandle(self, handler):
+        try:
+            self.handlers.remove(handler)
+        except:
+            raise ValueError("Handler is not handling this event, so cannot unhandle it.")
+        return self
+
+    def fire(self, *args, **kargs):
+        for handler in self.handlers:
+            handler(*args, **kargs)
+
+    def getHandlerCount(self):
+        return len(self.handlers)
+
+    __iadd__ = handle
+    __isub__ = unhandle
+    __call__ = fire
+    __len__  = getHandlerCount
+
+
 def enum(**enums):
 	return type('Enum', (), enums)
 	
@@ -98,6 +129,9 @@ class Circuit(object):
 		## Name of the circuit.
 		self.name = name
 		
+		## if it is working...
+		self.enabled = True
+		
 		## Reference to the virtual machine to which this circuit belongs.
 		self.machine = machine
 		
@@ -112,6 +146,9 @@ class Circuit(object):
 		
 		## Dictionary of output channels
 		self.O = {}
+		
+		## Dictionary of events
+		self.events = {}
 		
 	
 	##\internal
@@ -180,6 +217,8 @@ class Circuit(object):
 		for kw in self.O.keys():
 			self.O[kw].Push()
 
+
+	#def AddEvent(self, eventname, function):
 	
 	def __str__( self ):
 		return "["+self.__class__.__name__+"]"+self.name

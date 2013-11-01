@@ -73,6 +73,6 @@ change log
 31-10-2013 --:-- limiter circuit moved in signal_processing
 				added SetInput function to Machine
 				fixed some documentation for Machine and Circuit
-				
+				added Dump() function to output circuit
 
 

@@ -123,14 +123,14 @@ class minmax(Circuit):
 		#add one to the counter
 		self.counter=self.counter + 1
 		#only print out values that are not 0 when the counter is = to timesteps
-		self.O['max'].value = 0
-		self.O['min'].value = 0
+		#self.O['max'].value = 0
+		#self.O['min'].value = 0
 
 		#if the counter is equal to the amount of time steps then then output the values
 		if self.timesteps == self.counter:
 
 			self.O['max'].value = self.max
-			self.O['min'].value=self.min
+			self.O['min'].value = self.min
 
 			self.O['amp'].value = (self.max - self.min)/2
 			self.O['offset'].value = (self.max + self.min)/2

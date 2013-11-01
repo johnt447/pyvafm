@@ -8,6 +8,7 @@ from vafmcircuits import Machine
 # This file contains the Filters
 
 ## \brief Active Low Pass Filter  circuit.
+## \example test_filters.py
 #
 # \image html ActiveLowPass.png "schema"
 # Takes a signal in and passes it through a low pass filter using the Sallen-Key topology
@@ -46,7 +47,7 @@ class ActiveLowPass(Circuit):
 		if 'gain' in keys.keys():
 			self.Gain = keys['gain']
 		else:
-			print "WARNING! No gain give, using default gain = "+str(self.Gain)
+			print "WARNING! No gain given, using default gain = "+str(self.Gain)
 			#raise NameError("Missing gain!")
 
 

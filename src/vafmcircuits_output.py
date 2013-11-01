@@ -109,20 +109,37 @@ class output(Circuit):
 		cclist = [x for x in self.channels.extend if x not in cclist]
 
 		self.channels = cclist
+	
+	## \brief Write the output to the file.
+	# Use this function to write one record in the output file.
+	#
+	#
+	# \b Example:
+	#
+	# \code
+	# logger = machine.AddCircuit(type='output', name='logger', dump=100)
+	# logger.RegisterChannel('global.time','waver.sin','filter.out', ...)
+	# ...
+	# logger.Dump()
+	# \endcode
+	#
+	def Dump(self):
 		
+		for i in self.channels:
+			self._file.write(str(i.value)+" ")
+		self._file.write('\n')
 		
 
 	def Initialize (self):
 
 		pass
 
-
-
+	
 
 	def Update (self):
 
 
-		if self.I['record'].signal.owner != self:
+		if self.I['record'].signal.owner != self: #check if the record signal is connected to something else
 
 			#if the record channel is connected and it is positive valued
 			#write to file

@@ -486,11 +486,8 @@ class Machine(Circuit):
 	#
 	def SetInput(self, channel=None, value=None):
 		
-		tag = kw['channel']
-		val = kw['value']
-		
-		ch = self.GetChannel(tag)
-		ch.Set(val)
+		ch = self.GetChannel(channel)
+		ch.Set(value)
 		
 		#print tag,val,ch
 
@@ -521,11 +518,11 @@ class Machine(Circuit):
 		#	self._MetaI[key].Set(self.I[key].value)
 
 		for kw in self.circuits.keys():
-
-			self.circuits[kw].Update()
-
-			if self.circuits[kw].pushed: #push if needed
-				self.circuits[kw].Push()
+			
+			if(self.circuits[kw].enabled):
+				self.circuits[kw].Update()
+				if self.circuits[kw].pushed: #push if needed
+					self.circuits[kw].Push()
 
 		self._idt += 1
 		self._MetaO['time'].Set(self.time)
@@ -556,9 +553,14 @@ class Machine(Circuit):
 		#print 'in post 2' + str(self.O['time'].value)
 
 		for kw in self.circuits.keys():
-			self.circuits[kw].Push()
+			if(self.circuits[kw].enabled):
+				self.circuits[kw].Push()
 
 
+	def Wait(self, dtime):
+		
+		for i in range(int(math.floor(dtime/self.dt))): self.Update()
+		
 
 
 
