@@ -18,7 +18,16 @@
 	- Averagers
 		- \link vafmcircuits_avg.avg avg\endlink - <i>Averager circuit.</i>
 	- Misc
-		- \link vafmcircuits_signal_processing.limiter limiter\endlink - <i>Limiter circuit.</i>
+		- \link vafmcircuits_signal_processing.gain gain\endlink - <i>applies a given gain to a signal</i>
+		- \link vafmcircuits_signal_processing.limiter limiter\endlink - <i>clamps a signal between two values.</i>
+		- \link vafmcircuits_signal_processing.minmax minmax\endlink - <i>outputs max and min values of a signal over a certain time</i>
+		- \link vafmcircuits_signal_processing.derivative derivative\endlink - <i>computes the derivative of a signal</i>
+		- \link vafmcircuits_signal_processing.integral integral\endlink - <i>outputs the integral of a signal</i>
+		- \link vafmcircuits_signal_processing.delay delay\endlink - <i>delays the signal by a given amount of time</i>
+		- \link vafmcircuits_signal_processing.peaksdetector peaksdetector\endlink - <i>detects the peaks in a signal</i>
+		- \link vafmcircuits_signal_processing.phasor phasor\endlink - <i>computes the delay between one signal becoming positive and the other signal becoming positive</i>
+		- \link vafmcircuits_signal_processing.flip flip\endlink - <i>outputs a tick when the signal changes from negative to positive.</i>
+
 
 \section sec_math Mathematics
 	- Arithmetics
@@ -84,14 +93,6 @@
 - \link vafmcircuits_scanner.Wait Wait\endlink - <i>Make the cantilever hold position for a given time.</i>
 - \link vafmcircuits_scanner.Scan Scan\endlink - <i>Scans the cantilever along a given distane, in a given direction with a given speed and records points at a given interval.</i>
 
-- \link vafmcircuits_signal_processing.gain gain\endlink - <i>applies a given gain to a signal</i>
-- \link vafmcircuits_signal_processing.minmax minmax\endlink - <i>outputs max and min values of a signal</i>
-- \link vafmcircuits_signal_processing.derivative derivative\endlink - <i>outputs the derivative of a signal</i>
-- \link vafmcircuits_signal_processing.integral integral\endlink - <i>outputs the integral of a signal</i>
-- \link vafmcircuits_signal_processing.delay delay\endlink - <i>delays the signal by a given amount</i>
-- \link vafmcircuits_signal_processing.peaksdetector peaksdetector\endlink - <i>outputs the peaks in a signal</i>
-- \link vafmcircuits_signal_processing.phasor phasor\endlink - <i>outputs the legnth time between one signal becoming positive and the other signal becoming positive</i>
-- \link vafmcircuits_signal_processing.flip flip\endlink - <i>Takes in an input and will output a tick everytime the signal changes from negative to positive.</i>
 - \link vafmcircuits_Interpolation.Interpolate Interpolate\endlink - <i>Multi-linear interpolation circuit.</i>
 
 

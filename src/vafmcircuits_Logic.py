@@ -108,7 +108,7 @@ class And(Circuit):
                         self.AddInput("in"+str(i+1))
                 
                 self.AddOutput("out")
-                self.AddInput("Clock")
+                #self.AddInput("Clock")
 
                 self.SetInputs(**keys)
                 self.result = 1
@@ -122,9 +122,11 @@ class And(Circuit):
 
 
                 self.result = 1
-                for i in range (1,self.factors+1):
-                        if self.I["in" + str(i)].value <= 0:
-                                self.result = 0                
+                for i in self.I.values():
+					#print i
+					if i.value <= 0:
+						self.result = 0
+						break 
                 self.O['out'].value = self.result                
 
 
@@ -173,7 +175,7 @@ class OrGate(Circuit):
                         self.AddInput("in"+str(i+1))
         
                 self.AddOutput("out")
-                self.AddInput("Clock")
+                #self.AddInput("Clock")
 
                 self.SetInputs(**keys)
 
@@ -185,11 +187,13 @@ class OrGate(Circuit):
 
         def Update (self):
 
-                self.result = 0
-                for i in range (1,self.factors+1):
-                        if self.I["in" + str(i)].value > 0:
-                                self.result = 1                
-                self.O['out'].value = self.result                
+			self.result = 0
+			for i in self.I.values():
+				if i.value > 0:
+					self.result = 1
+					break
+			
+			self.O['out'].value = self.result                
 
 
 ## XOr Gate
@@ -238,7 +242,7 @@ class XOrGate(Circuit):
                         self.AddInput("in"+str(i+1))
         
                 self.AddOutput("out")
-                self.AddInput("Clock")
+                #self.AddInput("Clock")
 
                 self.SetInputs(**keys)
 
@@ -250,21 +254,17 @@ class XOrGate(Circuit):
                 pass        
 
         def Update (self):
-                self.check=True
-
-        
-                self.result = 0
-                for i in range (1,self.factors+1):
-                        if self.I["in" + str(i)].value > 0:
-                                self.result = 1
-
-                        if self.I["in" + str(i)].value <= 0:
-                                self.check = False
-
-                        if self.check == True:
-                                self.result = 0
-                        
-                self.O['out'].value = self.result
+			
+			self.check=True
+			self.result = 0
+			
+			for i in self.I.values():
+				self.result += int(i.value>0)
+			
+			if self.result != 1:
+				self.result = 0
+			
+			self.O['out'].value = self.result
 
 
 ## NOR Gate
