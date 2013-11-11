@@ -16,11 +16,11 @@ def main():
 	machine.AddCircuit(type='square',name='s1', amp=1, freq=1, duty=0.5, pushed=True )
 	machine.AddCircuit(type='square',name='s2', amp=1, freq=2.5, duty=0.2, pushed=True )
   	
-	machine.AddCircuit(type='Not',name='not', pushed=True )
-	machine.AddCircuit(type='And',name='and', pushed=True )
-	machine.AddCircuit(type='OrGate',name='or', pushed=True )
-	machine.AddCircuit(type='XOrGate',name='xor', pushed=True )
-	machine.AddCircuit(type='NORGate',name='nor', pushed=True )
+	machine.AddCircuit(type='NOT',name='not', pushed=True )
+	machine.AddCircuit(type='AND',name='and', pushed=True )
+	machine.AddCircuit(type='OR',name='or', pushed=True )
+	machine.AddCircuit(type='XOR',name='xor', pushed=True )
+	machine.AddCircuit(type='NOR',name='nor', pushed=True )
 	
 	machine.Connect("s1.out","not.signal")
 	machine.Connect("s1.out","and.in1","or.in1","xor.in1","nor.in1")

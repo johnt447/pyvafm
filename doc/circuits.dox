@@ -44,11 +44,11 @@
 		- \link vafmcircuits_Comparison.Equal Equal\endlink - <i>equal to circuit.</i>
 
 	- Logic
-		- \link vafmcircuits_Logic.Not Not\endlink - <i>Not gate circuit.</i>
-		- \link vafmcircuits_Logic.And And\endlink - <i>And gate circuit.</i>
-		- \link vafmcircuits_Logic.OrGate OrGate\endlink - <i>Or gate circuit.</i>
-		- \link vafmcircuits_Logic.XOrGate XOrGate\endlink - <i>XOrGate gate circuit.</i>
-		- \link vafmcircuits_Logic.NORGate NORGate\endlink - <i>NORGate gate circuit.</i>
+		- \link vafmcircuits_Logic.NOT NOT\endlink - <i>Not gate circuit.</i>
+		- \link vafmcircuits_Logic.AND AND\endlink - <i>And gate circuit.</i>
+		- \link vafmcircuits_Logic.OR OR\endlink - <i>Or gate circuit.</i>
+		- \link vafmcircuits_Logic.XOR XOR\endlink - <i>XOrGate gate circuit.</i>
+		- \link vafmcircuits_Logic.NOR NOR\endlink - <i>NOrGate gate circuit.</i>
 
 \section sec_control Controllers
 	- \link vafmcircuits_control.PI PI\endlink - <i>Proportional-Integral controller</i>

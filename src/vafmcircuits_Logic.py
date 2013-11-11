@@ -1,7 +1,6 @@
 ## \package vafmcircuits_Logic
 # This file contains the basic logic operator circuits.
-# \file vafmcircuits_Logic.py
-# This file contains the basic logic operator circuits.
+
 from vafmbase import Circuit
 import math
 
@@ -10,63 +9,47 @@ import math
 #
 # Truth Table for a Not Gate
 #
-# Input                 |Output
+# signal        |out
 # ------------- | -------------
 # 1                         | 0
 # 0                         | 1                                
 #
 # - \b Initialisation \b parameters:
-#         - \a pushed = True|False push the output buffer immediately if True
+# 	- \a pushed = True|False push the output buffer immediately if True
 #
 # - \b Input \b channels:
-#         - \a signal = incoming signal
+#	- \a signal = incoming signal
 #
 # - \b Output \b channels:
-# - \a out = \! signal
+# 	- \a out = \! \a signal
 #
 # \b Example:
 # \code
-# machine.AddCircuit(type='Not',name='scann'pushed=True)
+# machine.AddCircuit(type='NOT', name='not', pushed=True)
 # \endcode
+#
+class NOT(Circuit):
 
-class Not(Circuit):
+	def __init__(self, machine, name, **keys):
 
-        def __init__(self, machine, name, **keys):
+		super(self.__class__, self).__init__( machine, name )
 
-                super(self.__class__, self).__init__( machine, name )
+		self.AddInput("signal")
+		self.AddOutput("out")
 
+		self.SetInputs(**keys)
 
+	def Initialize (self):
+		pass
 
-                self.AddInput("signal")
-
-                self.AddOutput("out")
-
-                self.SetInputs(**keys)
-
-        def Initialize (self):
-                
-                pass
-
-        def Update (self):
-
-                
-                result = 1
-        
-                if self.I["signal"].value <= 0:
-                        result = 1
-                if self.I["signal"].value > 0:
-                        result = 0
-
-
-                        
-                self.O['out'].value = result
-                
+	def Update (self):
+		self.O['out'].value = int(not(self.I["signal"].value>0))
 
 ## And Gate
 # \image html And.png "schema"
 #
 # Truth table for an And Gate
-# Input A                |Input B                |Output
+# in1           |in2            |out
 # ------------- | ------------- | -------------
 # 0                         | 0 | 0
 # 0                         | 1                                | 0
@@ -75,132 +58,129 @@ class Not(Circuit):
 #
 #
 # - \b Initialisation \b parameters:
-#         - \a pushed = True|False push the output buffer immediately if True
+# 	- \a pushed = True|False push the output buffer immediately if True
+# 	- \a factors = number of input channels. Default is 2.
 #
 # - \b Input \b channels:
-#         - \a in1, \a in2, ..., \a inx = incoming signals
+# 	- \a in1, \a in2, ..., \a inx = incoming signals
 #
 # - \b Output \b channels:\n
-# - \a out = in_1 \f$ \land \f$ in_2 \f$ \land\f$ ... \f$ \land \f$ in_x \f$
+# 	- \a out = \a in_1 \f$ \land \f$ \a in_2 \f$ \land\f$ ... \f$ \land \f$ \a in_x \f$
 #
 # \b Example:
 # \code
-# machine.AddCircuit(type='And',name='And'pushed=True)
+# machine.AddCircuit(type='AND', name='andgate', factors=4)
+# machine.AddCircuit(type='AND', name='andgate', pushed=True)
 # \endcode
+#
+class AND(Circuit):
 
-class And(Circuit):
+	def __init__(self, machine, name, **keys):
 
-        def __init__(self, machine, name, **keys):
+		super(self.__class__, self).__init__( machine, name )
 
-                super(self.__class__, self).__init__( machine, name )
+		# ## Amount of input channels to put in the AND. Default is 2.
+		self.factors = 2
 
-                # ## Amount of input channels to put in the AND. Default is 2.
-                self.factors = 2
+		#check if the amount of factors was given        
+		if 'factors' in keys.keys():
+			self.factors = keys['factors']
+		#print ' factors: '+str(self.factors)
+		
+		#create input channels
+		for i in range(self.factors):
+			self.AddInput("in"+str(i+1))
+		
+		self.AddOutput("out")
 
+		self.SetInputs(**keys)
 
-                #check if the amount of factors was given        
-                if 'factors' in keys.keys():
-                        self.factors = keys['factors']
-                #print ' factors: '+str(self.factors)
-                
-                #create input channels
-                for i in range(self.factors):
-                        self.AddInput("in"+str(i+1))
-                
-                self.AddOutput("out")
-                #self.AddInput("Clock")
+	def Initialize (self):
+		pass        
 
-                self.SetInputs(**keys)
-                self.result = 1
+	def Update (self):
 
-        def Initialize (self):
-
-                pass        
-
-        def Update (self):
-
-
-
-                self.result = 1
-                for i in self.I.values():
-					#print i
-					if i.value <= 0:
-						self.result = 0
-						break 
-                self.O['out'].value = self.result                
+		self.result = 1
+		for i in self.I.values():
+			#print i
+			if i.value <= 0:
+				self.result = 0
+				break 
+		self.O['out'].value = self.result
 
 
 ## Or Gate
 # \image html OrGate.png "schema"
 #
 # Truth table for a Or Gate
-# Input A                |Input B                |Output
+# in1           |in2            |out
 # ------------- | ------------- | -------------
-# 0                         | 0 | 0
-# 0                         | 1                                | 1
-# 1                         | 0                                | 1
-# 1                         | 1                                | 1
+# 0             | 0 | 0
+# 0             | 1 | 1
+# 1             | 0 | 1
+# 1             | 1 | 1
 #
 # - \b Initialisation \b parameters:
-#         - \a pushed = True|False push the output buffer immediately if True
+#         - \a pushed = True|False push the output buffer immediately if True.
+#         - \a factors = number of input channels. Default is 2.
 #
 # - \b Input \b channels:
-#         - \a in1, \a in2 = incoming signal
+#         - \a in1, \a in2, ... = incoming signal
 #
 # - \b Output \b channels:\n
-# - \a out = if in1 or in2 >0 output 1 otherwise output 0
+# 	- \a out = \a in_1 \f$ \lor \f$ \a in_2 \f$ \lor \f$ ... \f$ \lor \f$ \a in_x \f$
 #
 # \b Example:
 # \code
-# machine.AddCircuit(type='OrGate',name='OrGate'pushed=True)
+# machine.AddCircuit(type='OR', name='or', factors=3)
+# machine.AddCircuit(type='OR', name='or', pushed=True)
 # \endcode
+#
+class OR(Circuit):
 
-class OrGate(Circuit):
+	def __init__(self, machine, name, **keys):
+	
+		super(self.__class__, self).__init__( machine, name )
 
-        def __init__(self, machine, name, **keys):
-        
-                super(self.__class__, self).__init__( machine, name )
-
-                # ## Amount of input channels to put in the AND. Default is 2.
-                self.factors = 2
+		# ## Amount of input channels to put in the AND. Default is 2.
+		self.factors = 2
 
 
-                #check if the amount of factors was given        
-                if 'factors' in keys.keys():
-                        self.factors = keys['factors']
-                #print ' factors: '+str(self.factors)
-                
-                #create input channels
-                for i in range(self.factors):
-                        self.AddInput("in"+str(i+1))
-        
-                self.AddOutput("out")
-                #self.AddInput("Clock")
+		#check if the amount of factors was given        
+		if 'factors' in keys.keys():
+			self.factors = keys['factors']
+		#print ' factors: '+str(self.factors)
+		
+		#create input channels
+		for i in range(self.factors):
+			self.AddInput("in"+str(i+1))
 
-                self.SetInputs(**keys)
+		self.AddOutput("out")
 
-                self.result = 0
+		self.SetInputs(**keys)
 
-        def Initialize (self):
+		self.result = 0
 
-                pass        
+	def Initialize (self):
 
-        def Update (self):
+			pass        
 
-			self.result = 0
-			for i in self.I.values():
-				if i.value > 0:
-					self.result = 1
-					break
-			
-			self.O['out'].value = self.result                
+	def Update (self):
+
+		self.result = 0
+		for i in self.I.values():
+			if i.value > 0:
+				self.result = 1
+				break
+		
+		self.O['out'].value = self.result                
 
 
 ## XOr Gate
 # \image html XOrGate.png "schema"
 #
 # Truth table for a XOr Gate
-# Input A                |Input B                |Output
+# in1                |in2                |out
 # ------------- | ------------- | -------------
 # 0                         | 0 | 0
 # 0                         | 1                                | 1
@@ -208,70 +188,66 @@ class OrGate(Circuit):
 # 1                         | 1                                | 0
 #
 # - \b Initialisation \b parameters:
-#         - \a pushed = True|False push the output buffer immediately if True
+#         - \a pushed = True|False push the output buffer immediately if True.
+#         - \a factors = number of input channels. Default is 2.
 #
 # - \b Input \b channels:
-#         - \a in1, \a in2 = incoming signal
+#         - \a in1, \a in2, ... = incoming signal
 #
 # - \b Output \b channels:\n
-# - \a out = if in1 or in2 >0 output 1 but if both in1 and in2 > 0 then output 0, otherwise output 0
+# 	- \a out = \a in_1 \f$ \oplus \f$ \a in_2 \f$ \oplus \f$ ... \f$ \oplus \f$ \a in_x \f$
 #
 # \b Example:
 # \code
-# machine.AddCircuit(type='XOrGate',name='XorGate'pushed=True)
+# machine.AddCircuit(type='XOR', name='xor', factors=3)
+# machine.AddCircuit(type='XOR', name='xor', pushed=True)
 # \endcode
-class XOrGate(Circuit):
+#
+class XOR(Circuit):
 
-        def __init__(self, machine, name, **keys):
-        
-                super(self.__class__, self).__init__( machine, name )
+	def __init__(self, machine, name, **keys):
+	
+		super(self.__class__, self).__init__( machine, name )
 
-                # ## Amount of input channels to put in the AND. Default is 2.
-                self.factors = 2
-                self.check = True
+		# ## Amount of input channels to put in the AND. Default is 2.
+		self.factors = 2
 
+		#check if the amount of factors was given        
+		if 'factors' in keys.keys():
+			self.factors = keys['factors']
+		
+		#create input channels
+		for i in range(self.factors):
+			self.AddInput("in"+str(i+1))
+		
+		self.AddOutput("out")
 
+		self.SetInputs(**keys)
 
-                #check if the amount of factors was given        
-                if 'factors' in keys.keys():
-                        self.factors = keys['factors']
-                #print ' factors: '+str(self.factors)
-                
-                #create input channels
-                for i in range(self.factors):
-                        self.AddInput("in"+str(i+1))
-        
-                self.AddOutput("out")
-                #self.AddInput("Clock")
-
-                self.SetInputs(**keys)
-
-                self.result = 0
+		self.result = 0
 
 
-        def Initialize (self):
+	def Initialize (self):
+		pass        
 
-                pass        
+	def Update (self):
 
-        def Update (self):
+		self.result = 0
+				
+		for i in self.I.values():
+			self.result += int(i.value>0)
 			
-			self.check=True
+		if self.result != 1:
 			self.result = 0
-			
-			for i in self.I.values():
-				self.result += int(i.value>0)
-			
-			if self.result != 1:
-				self.result = 0
-			
-			self.O['out'].value = self.result
+		
+		self.O['out'].value = self.result
 
 
 ## NOR Gate
 # \image html NOrGate.png "schema"
 #
 # Truth table for a NOr Gate
-# Input A                |Input B                |Output
+# in1                |in2                |out
 # ------------- | ------------- | -------------
 # 0                         | 0 | 1
 # 0                         | 1                                | 0
@@ -279,66 +255,56 @@ class XOrGate(Circuit):
 # 1                         | 1                                | 0
 #
 # - \b Initialisation \b parameters:
-#         - \a pushed = True|False push the output buffer immediately if True
+# 	- \a pushed = True|False push the output buffer immediately if True.
+# 	- \a factors = number of input channels. Default is 2.
 #
 # - \b Input \b channels:
-#         - \a in1, \a in2 = incoming signal
+# 	- \a in1, \a in2 = incoming signals
 #
 # - \b Output \b channels:
-# - \a out = will output 1 if in1 and in2 are < 1 otherwise will output 0
+# 	- \a out = ! (\in1 \f$ \lor \f$ \a in2 ... \f$ \lor \f$ \a inx )
 #
 # \b Example:
 # \code
-# machine.AddCircuit(type='NORGate',name='NORGate'pushed=True)
+# machine.AddCircuit(type='NOR', name='nor', factors=4)
+# machine.AddCircuit(type='NOR', name='nor', pushed=True)
 # \endcode
+#
+class NOR(Circuit):
 
-class NORGate(Circuit):
+	def __init__(self, machine, name, **keys):
 
-        def __init__(self, machine, name, **keys):
+		super(self.__class__, self).__init__( machine, name )
 
-                super(self.__class__, self).__init__( machine, name )
+		# ## Amount of input channels to put in the AND. Default is 2.
+		self.factors = 2
 
-				# ## Amount of input channels to put in the AND. Default is 2.
-                self.factors = 2
-                self.check = True
-                self.clock = False
+		#check if the amount of factors was given        
+		if 'factors' in keys.keys():
+			self.factors = keys['factors']
+		#print ' factors: '+str(self.factors)
+		
+		#create input channels
+		for i in range(self.factors):
+			self.AddInput("in"+str(i+1))
 
-                if 'clock' in keys.keys():
-                        self.clock = keys['clock']
+		self.AddOutput("out")
 
-                #check if the amount of factors was given        
-                if 'factors' in keys.keys():
-                        self.factors = keys['factors']
-                #print ' factors: '+str(self.factors)
-                
-                #create input channels
-                for i in range(self.factors):
-                        self.AddInput("in"+str(i+1))
-        
-                self.AddOutput("out")
-                self.AddInput("Clock")
+		self.SetInputs(**keys)
 
-                self.SetInputs(**keys)
-
-                self.result = 0
+		self.result = 0
 
 
-        def Initialize (self):
+	def Initialize (self):
+		pass        
 
-                pass        
-
-        def Update (self):
-                self.check=False
-
-
-
-                for i in range (1,self.factors+1):
-                        if self.I["in" + str(i)].value > 0:
-                                self.check = True
-                                self.result = 0
-
-                        if self.check == False:
-                                self.result = 1
-                                
-                self.O['out'].value = self.result
-
+	def Update (self):
+	
+		self.result = 1
+		
+		for i in self.I.values():
+			if i.value > 0:
+				self.result = 0
+				break
+		
+		self.O['out'].value = self.result
