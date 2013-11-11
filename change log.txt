@@ -74,5 +74,6 @@ change log
 				added SetInput function to Machine
 				fixed some documentation for Machine and Circuit
 				added Dump() function to output circuit
+11-11-2013 late! logic updated, circuits renamed!
 
 
