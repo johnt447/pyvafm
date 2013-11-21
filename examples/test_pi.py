@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from vafmbase import ChannelType
+#from vafmbase import ChannelType
 from vafmcircuits import Machine
 
 import vafmcircuits
@@ -16,7 +16,7 @@ def main():
 	
   	machine.AddCircuit(type='waver',name='osc', freq=1, pushed=True)
   	machine.AddCircuit(type='opAbs',name='abs', pushed=True)
-  	machine.AddCircuit(type='ActiveLowPass',name='lp', fcut=0.02, pushed=True)
+  	machine.AddCircuit(type='SKLP',name='lp', fcut=0.02, pushed=True)
   	
 	machine.AddCircuit(type='PID', name='pi', set=1,Kp=1.0,Ki=0.1,Kd=0.01)
   	
@@ -25,13 +25,12 @@ def main():
 	
 	machine.Connect("osc.sin","abs.signal")
 	machine.Connect("abs.out","lp.signal")
-
+	
 	out1 = machine.AddCircuit(type='output',name='output',file='test_pi.log', dump=5)
 	out1.Register('global.time', 'osc.sin', 'abs.out', 'lp.out')
 	
 	for i in range(100000):
 	    machine.Update()
-
 	
 
 if __name__ == '__main__':
