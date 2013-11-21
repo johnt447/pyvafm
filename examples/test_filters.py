@@ -16,12 +16,12 @@ def main():
 	machine.AddCircuit(type='waver',name='wave', amp=1, pushed=True )
 	
 	#lowpass filter at fc=100
-	machine.AddCircuit(type='ActiveLowPass',name='alp100', fcut=100, pushed=True )
+	machine.AddCircuit(type='SKLP',name='alp100', fcut=100, pushed=True )
 	#amplitude detector for the filter
 	machine.AddCircuit(type='minmax', name='amp100', CheckTime=0.2, pushed=True)
 	
 	#lowpass filter at fc=200
-	machine.AddCircuit(type='ActiveLowPass',name='alp200', fcut=200, pushed=True )
+	machine.AddCircuit(type='SKLP',name='alp200', fcut=200, pushed=True )
 	#amplitude detector for the filter
 	machine.AddCircuit(type='minmax', name='amp200', CheckTime=0.2, pushed=True)
 
