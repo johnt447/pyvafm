@@ -367,7 +367,7 @@ class RL(Circuit):
 
 
 
-## \brief Passive High Pass Filter  circuit.
+## \brief RC High Pass Filter  circuit.
 #
 #
 # \image html PassiveHighPass.png "schema"
