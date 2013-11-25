@@ -1,14 +1,14 @@
 from vafmbase import Circuit
 import math
-#import vafmcircuits_Logic
 from vafmcircuits import Machine
 
 
 ## \package vafmcircuits_Filters
 # This file contains the Filters
 
-## \brief Active Low Pass Filter  circuit.
-## \example test_filters.py
+
+## \brief Active Low Pass Filter circuit.
+#
 #
 # \image html ActiveLowPass.png "schema"
 # Takes a signal in and passes it through a low pass filter using the Sallen-Key topology
@@ -28,10 +28,11 @@ from vafmcircuits import Machine
 #
 #\b Examples:
 # \code{.py}
-# machine.AddCircuit(type='ActiveLowPass', name='ActiveLowFilter', gain = 10, Q= 2, fcutoff= 50, pushed = 'True')
+# machine.AddCircuit(type='SKLP', name='filter', fcut=150)
+# machine.AddCircuit(type='SKLP', name='filter', gain=10, Q=2, fcut=50, pushed='True')
 # \endcode
 #
-class ActiveLowPass(Circuit):
+class SKLP(Circuit):
     
     
 	def __init__(self, machine, name, **keys):
@@ -48,7 +49,6 @@ class ActiveLowPass(Circuit):
 			self.Gain = keys['gain']
 		else:
 			print "WARNING! No gain given, using default gain = "+str(self.Gain)
-			#raise NameError("Missing gain!")
 
 
 		self.Q=math.sqrt(2.0)*0.5
@@ -56,7 +56,6 @@ class ActiveLowPass(Circuit):
 			self.Q = keys['Q']
 		else:
 			print "WARNING! No Q give, using default Q = "+str(self.Q)
-			#raise NameError("Missing Q!")
 
 
 		self.Fcutoff=0
@@ -64,7 +63,6 @@ class ActiveLowPass(Circuit):
 			self.fc = keys['fcut']
 		else:
 			raise NameError("Missing fcut!")
-
 
 
 		self.wc = 2* math.pi * self.fc * machine.dt
@@ -98,16 +96,18 @@ class ActiveLowPass(Circuit):
 		self.yo=self.y
 
 
+
+
 ## \brief Active High Pass Filter circuit.
 #
 # \image html ActiveHighPass.png "schema"
 # Takes a signal in and passes it through a High pass filter using the Sallen-Key topology
 #
 # \b Initialisation \b parameters:
-# 	- \a Gain =  Integer  How much gain the signal will recive 
-# 	- \a pushed = True|False  push the output buffer immediately if True
+# 	- \a gain =  Integer  How much gain the signal will recive 
 # 	- \a Q = the Q value of the filter
-#	- \a Fcutoff = the frequency cut off for the circuit
+#	- \a fcut = the frequency cut off for the circuit
+# 	- \a pushed = True|False  push the output buffer immediately if True
 #
 # \b Input \b channels:
 # 	- signal =  incoming signal
@@ -118,10 +118,11 @@ class ActiveLowPass(Circuit):
 #
 #\b Examples:
 # \code{.py}
-# machine.AddCircuit(type='ActiveHighPass', name='ActiveHighFilter', gain = 10, Q= 2, fcutoff= 50, pushed = 'True')
+# machine.AddCircuit(type='SKHP', name='filter', fcut=50, pushed='True')
+# machine.AddCircuit(type='SKHP', name='filter', gain=10, Q=2, fcut=50)
 # \endcode
 #
-class ActiveHighPass(Circuit):
+class SKHP(Circuit):
     
     
 	def __init__(self, machine, name, **keys):
@@ -130,32 +131,28 @@ class ActiveHighPass(Circuit):
 		
 
 		self.AddInput("signal")
-		self.AddInput("Gain")
-		self.AddInput("Q")
-		self.AddInput("Fcutoff")
-
 		self.AddOutput("out")
 
 
-		self.Gain=0
-		if 'Gain' in keys.keys():
-			self.Gain = keys['Gain']
+		self.Gain=math.pi*0.5
+		if 'gain' in keys.keys():
+			self.Gain = keys['gain']
 		else:
-			raise NameError("Missing Gain!")
+			print "WARNING! No gain given, using default gain = "+str(self.Gain)
 
 
-		self.Q=0
+		self.Q=math.sqrt(2.0)*0.5
 		if 'Q' in keys.keys():
 			self.Q = keys['Q']
 		else:
-			raise NameError("Missing Q!")
+			print "WARNING! No Q give, using default Q = "+str(self.Q)
 
 
 		self.Fcutoff=0
-		if 'Fcutoff' in keys.keys():
-			self.fc = keys['Fcutoff']
+		if 'fcut' in keys.keys():
+			self.fc = keys['fcut']
 		else:
-			raise NameError("Missing Fcutoff!")
+			raise NameError("Missing fcut!")
 
 
 
@@ -198,25 +195,26 @@ class ActiveHighPass(Circuit):
 # Takes a signal in and passes it through a Band pass filter using the Sallen-Key topology
 #
 # \b Initialisation \b parameters:
-# 	- \a Gain =  Integer  How much gain the signal will recive 
-# 	- \a pushed = True|False  push the output buffer immediately if True
+# 	- \a gain =  Integer  How much gain the signal will recive 
 # 	- \a Q = the Q value of the filter
-#	- \a Fcutoff = the frequency cut off for the circuit
-#	- \a Band = The band of frequncies that will be filtered.
+#	- \a fc = the frequency cut off for the circuit
+#	- \a band = The band of frequncies that will be filtered.
+# 	- \a pushed = True|False  push the output buffer immediately if True
 #
 # \b Input \b channels:
 # 	- \a signal = incoming signal
 #
 # \b Output \b channels:
-# 	- \a out =\f$ G\frac{Band \cdot dt\cdot(x(t) - x(t-2dt)) + band \cdot dt \cdot (2 \cdot y \cdot (t-dt) - y \cdot (t-2 \cdot dt)) }{ 1 + band \cdot dt + \omega ^2 _c } \f$
+# 	- \a out =\f$ G\frac{band \cdot dt\cdot(x(t) - x(t-2dt)) + band \cdot dt \cdot (2 \cdot y \cdot (t-dt) - y \cdot (t-2 \cdot dt)) }{ 1 + band \cdot dt + \omega ^2 _c } \f$
 #   where \f$ x \f$ is the input signal, \f$ y \f$ is the input signal,  \f$ \omega_{c} = 2 \pi f_c \f$ is the cut off pulse \f$ Q \f$  is the quality factor and \f$ dt \f$ is the timestep.
 #
 #\b Examples:
 # \code{.py}
-# machine.AddCircuit(type='ActiveBandPass', name='ActiveBandFilter', gain = 10, Q= 2, Fcutoff= 50, Band=5 ,pushed = 'True')
+# machine.AddCircuit(type='SKBP', name='filter', fc=50, band=5, pushed='True')
+# machine.AddCircuit(type='SKBP', name='filter', gain=10, Q=2, fc=50, band=5, pushed='True')
 # \endcode
 #
-class ActiveBandPass(Circuit):
+class SKBP(Circuit):
     
     
 	def __init__(self, machine, name, **keys):
@@ -225,38 +223,34 @@ class ActiveBandPass(Circuit):
 		
 
 		self.AddInput("signal")
-		self.AddInput("Gain")
-		self.AddInput("Q")
-		self.AddInput("Fcutoff")
-
 		self.AddOutput("out")
 
 
-		self.Gain=0
-		if 'Gain' in keys.keys():
-			self.Gain = keys['Gain']
+		self.Gain=math.pi*0.5
+		if 'gain' in keys.keys():
+			self.Gain = keys['gain']
 		else:
-			raise NameError("Missing Gain!")
+			print "WARNING! No gain given, using default gain = "+str(self.Gain)
 
 
-		self.Q=0
+		self.Q=math.sqrt(2.0)*0.5
 		if 'Q' in keys.keys():
 			self.Q = keys['Q']
 		else:
-			raise NameError("Missing Q!")
+			print "WARNING! No Q give, using default Q = "+str(self.Q)
 
 
 		self.Fcutoff=0
-		if 'Fcutoff' in keys.keys():
-			self.fc = keys['Fcutoff']
+		if 'fc' in keys.keys():
+			self.fc = keys['fc']
 		else:
-			raise NameError("Missing Fcutoff!")
+			raise NameError("Missing fc!")
 
 		self.band=0
-		if 'Fcutoff' in keys.keys():
-			self.band = keys['Band']
+		if 'band' in keys.keys():
+			self.band = keys['band']
 		else:
-			raise NameError("Missing Band!")
+			raise NameError("Missing band!")
 
 		self.gamma = self.band
 		self.wc = self.fc
@@ -297,16 +291,15 @@ class ActiveBandPass(Circuit):
 		self.xo=self.x
 
 
-## \brief Passive Low Pass Filter  circuit.
+## \brief RL filter circuit.
 #
 # \image html PassiveLowPass.png "schema"
 # Takes a signal in and passes it through a Low pass filter.
 #
 # \b Initialisation \b parameters:
+#	- \a fcut = the frequency cut off for the circuit
+#	- \a order = the order of the filter
 # 	- \a pushed = True|False  push the output buffer immediately if True
-# 	- \a Q = the Q value of the filter
-#	- \a Fcutoff = the frequency cut off for the circuit
-#	- \a Order = The order of the filter
 #
 # \b Input \b channels: 
 # 	- \a signal = Incoming signal
@@ -316,10 +309,11 @@ class ActiveBandPass(Circuit):
 #
 #\b Examples:
 # \code{.py}
-# machine.AddCircuit(type='PassiveLowPass', name='PassiveLowFilter', order = 2, Q= 2, Fcutoff= 50 ,pushed = 'True')
+# machine.AddCircuit(type='RL', name='lp', fcut=150, pushed='True')
+# machine.AddCircuit(type='RL', name='lp', order=2, fcut=50)
 # \endcode
 #
-class PassiveLowPass(Circuit):
+class RL(Circuit):
     
     
 	def __init__(self, machine, name, **keys):
@@ -328,23 +322,21 @@ class PassiveLowPass(Circuit):
 		
 
 		self.AddInput("signal")
-		self.AddInput("Fcutoff")
-		self.AddInput("Order")
 		self.AddOutput("out")
 
 
 		self.Fcutoff=0
-		if 'Fcutoff' in keys.keys():
-			self.fc = keys['Fcutoff']
+		if 'fcut' in keys.keys():
+			self.fc = keys['fcut']
 		else:
-			raise NameError("Missing Fcutoff!")
+			raise NameError("Missing fcut!")
 
 
-		self.Order=0
-		if 'Order' in keys.keys():
-			self.Order = keys['Order']
+		self.Order=1
+		if 'order' in keys.keys():
+			self.Order = keys['order']
 		else:
-			raise NameError("Missing Order!")
+			print "WARNING! No order given, using default order = "+str(self.Order)
 
 		self.fc = 1/(2*math.pi * self.fc)
 		self.a = machine.dt/(self.fc +self.fc)
@@ -354,14 +346,15 @@ class PassiveLowPass(Circuit):
 
 		self.folds = [0]* (self.Order + 1)
 		self.filter = [0] * (self.Order +1)
-		print self.folds
+		
+		#print self.folds
+		
 	def Initialize (self):
 		
 		pass
 		
 		
-		
-		
+	
 	def Update (self):
 
 		self.filter[0] = self.I["signal"].value 
@@ -381,10 +374,9 @@ class PassiveLowPass(Circuit):
 # Takes a signal in and passes it through a High pass filter.
 #
 # \b Initialisation \b parameters:
+#	- \a fcut = the frequency cut off for the circuit
+#	- \a order = the order of the filter
 # 	- \a pushed = True|False  push the output buffer immediately if True
-# 	- \a Q = the Q value of the filter
-#	- \a Fcutoff = the frequency cut off for the circuit
-#	- \a Order = The order of the 
 #
 # \b Input \b channels:
 # 	- \a signal = incoming signal
@@ -394,10 +386,11 @@ class PassiveLowPass(Circuit):
 #
 #\b Examples:
 # \code{.py}
-# machine.AddCircuit(type='PassiveHighPass', name='PassiveHighFilter', order = 2, Q= 2, Fcutoff= 50 ,pushed = 'True')
+# machine.AddCircuit(type='RC', name='hp', fcut=50, pushed='True')
+# machine.AddCircuit(type='RC', name='hp', order=2, Q=2, fcut=50)
 # \endcode
 #
-class PassiveHighPass(Circuit):
+class RC(Circuit):
     
     
 	def __init__(self, machine, name, **keys):
@@ -406,23 +399,21 @@ class PassiveHighPass(Circuit):
 		
 
 		self.AddInput("signal")
-		self.AddInput("Fcutoff")
-		self.AddInput("Order")
 		self.AddOutput("out")
 
 
-		self.Fcutoff=0
-		if 'Fcutoff' in keys.keys():
-			self.fc = keys['Fcutoff']
+		self.fc=0
+		if 'fcut' in keys.keys():
+			self.fc = keys['fcut']
 		else:
-			raise NameError("Missing Fcutoff!")
+			raise NameError("Missing fcut!")
 
 
-		self.Order=0
-		if 'Order' in keys.keys():
-			self.Order = keys['Order']
+		self.Order=1
+		if 'order' in keys.keys():
+			self.Order = keys['order']
 		else:
-			raise NameError("Missing Order!")
+			print "WARNING! No order given, using default order = "+str(self.Order)
 
 		self.fc = 1/(2*math.pi * self.fc)
 		self.a = self.fc/(machine.dt +self.fc)
@@ -432,7 +423,8 @@ class PassiveHighPass(Circuit):
 
 		self.folds = [0]* (self.Order + 1)
 		self.filter = [0] * (self.Order +1)
-		print self.folds
+		#print self.folds
+		
 	def Initialize (self):
 		
 		pass
@@ -449,4 +441,5 @@ class PassiveHighPass(Circuit):
 
 		for i in range (0, self.Order + 1):
 			self.folds[i] = self.filter[i]
-		self.O["out"].value= self.filter[self.Order -1]
+		self.O["out"].value= self.filter[self.Order]
+		

@@ -16,12 +16,12 @@ def main():
 	machine.AddCircuit(type='waver',name='wave', amp=1, pushed=True )
 	
 	
-	machine.AddCircuit(type='SKLP',name='sklp', fcut=100, pushed=True )
+	machine.AddCircuit(type='RL',name='sklp', fcut=100, order=1, pushed=True )
 	#amplitude detector for the filter
 	machine.AddCircuit(type='minmax', name='asklp', CheckTime=0.2, pushed=True)
 	
 	
-	machine.AddCircuit(type='SKHP',name='skhp', fcut=100, pushed=True )
+	machine.AddCircuit(type='RC',name='skhp', fcut=100, order=1, pushed=True )
 	#amplitude detector for the filter
 	machine.AddCircuit(type='minmax', name='askhp', CheckTime=0.2, pushed=True)
 	
@@ -37,7 +37,7 @@ def main():
 	machine.Connect("skbp.out","askbp.signal") #filter -> amplitude detector
 	
 	#output to file - dump=0 means only manual dump
-	out1 = machine.AddCircuit(type='output',name='output',file='test_filters.log', dump=0)
+	out1 = machine.AddCircuit(type='output',name='output',file='test_filters2.log', dump=0)
 	out1.Register('wave.freq', 'asklp.amp', 'askhp.amp', 'askbp.amp')
 	
 	
