@@ -9,11 +9,11 @@
 
 \section sec_sigproc Signal Processing
 	- Filters
-		- \link vafmcircuits_Filters.ActiveLowPass ActiveLowPass\endlink - <i>second order lowpass filter</i>
-		- \link vafmcircuits_Filters.ActiveHighPass ActiveHighPass\endlink - <i>second order highpass filter</i>
-		- \link vafmcircuits_Filters.ActiveBandPass ActiveBandPass\endlink - <i>second order bandpass filter</i>
-		- \link vafmcircuits_Filters.PassiveLowPass PassiveLowPass\endlink - <i>first order lowpass filter (RC)</i>
-		- \link vafmcircuits_Filters.PassiveHighPass PassiveHighPass\endlink - <i>first order highpass filter (RL)</i>
+		- \link vafmcircuits_Filters.SKLP ActiveLowPass\endlink - <i>second order lowpass filter</i>
+		- \link vafmcircuits_Filters.SKHP ActiveHighPass\endlink - <i>second order highpass filter</i>
+		- \link vafmcircuits_Filters.SKBP ActiveBandPass\endlink - <i>second order bandpass filter</i>
+		- \link vafmcircuits_Filters.RL PassiveLowPass\endlink - <i>first order lowpass filter (RC)</i>
+		- \link vafmcircuits_Filters.RC PassiveHighPass\endlink - <i>first order highpass filter (RL)</i>
 		- \link vafmcircuits_Filters.PassiveBandPass PassiveBandPass\endlink - <i>first order bandpass filter (RCL)</i>
 	- Averagers
 		- \link vafmcircuits_avg.avg avg\endlink - <i>Averager circuit.</i>
