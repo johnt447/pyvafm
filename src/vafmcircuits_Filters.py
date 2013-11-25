@@ -1,5 +1,5 @@
 from vafmbase import Circuit
-import math
+import math, time
 from vafmcircuits import Machine
 
 
@@ -58,7 +58,7 @@ class SKLP(Circuit):
 			print "WARNING! No Q give, using default Q = "+str(self.Q)
 
 
-		self.Fcutoff=0
+		self.fc=0
 		if 'fcut' in keys.keys():
 			self.fc = keys['fcut']
 		else:
@@ -291,10 +291,10 @@ class SKBP(Circuit):
 		self.xo=self.x
 
 
-## \brief RL filter circuit.
+## \brief RC low-pass filter circuit.
 #
 # \image html PassiveLowPass.png "schema"
-# Takes a signal in and passes it through a Low pass filter.
+# Pass a signal through a series of \a order RC low pass filters with transfer function:... .
 #
 # \b Initialisation \b parameters:
 #	- \a fcut = the frequency cut off for the circuit
@@ -309,88 +309,11 @@ class SKBP(Circuit):
 #
 #\b Examples:
 # \code{.py}
-# machine.AddCircuit(type='RL', name='lp', fcut=150, pushed='True')
-# machine.AddCircuit(type='RL', name='lp', order=2, fcut=50)
+# machine.AddCircuit(type='RCLP', name='lp', fcut=150, pushed='True')
+# machine.AddCircuit(type='RCLP', name='lp', order=2, fcut=50)
 # \endcode
 #
-class RL(Circuit):
-    
-    
-	def __init__(self, machine, name, **keys):
-		
-		super(self.__class__, self).__init__( machine, name )
-		
-
-		self.AddInput("signal")
-		self.AddOutput("out")
-
-
-		self.Fcutoff=0
-		if 'fcut' in keys.keys():
-			self.fc = keys['fcut']
-		else:
-			raise NameError("Missing fcut!")
-
-
-		self.Order=1
-		if 'order' in keys.keys():
-			self.Order = keys['order']
-		else:
-			print "WARNING! No order given, using default order = "+str(self.Order)
-
-		self.fc = 1/(2*math.pi * self.fc)
-		self.a = machine.dt/(self.fc +self.fc)
-
-
-		self.x = 0
-
-		self.folds = [0]* (self.Order + 1)
-		self.filter = [0] * (self.Order +1)
-		
-		#print self.folds
-		
-	def Initialize (self):
-		
-		pass
-		
-		
-	
-	def Update (self):
-
-		self.filter[0] = self.I["signal"].value 
-
-		for i in range (0, self.Order):
-			self.filter[i+1] = self.folds[i] + self.a*(self.filter[i] - self.folds[i]) 
-
-			self.folds[i] = self.filter[i+1]
-		self.O["out"].value= self.filter[self.Order]
-
-
-
-## \brief RC High Pass Filter  circuit.
-#
-#
-# \image html PassiveHighPass.png "schema"
-# Takes a signal in and passes it through a High pass filter.
-#
-# \b Initialisation \b parameters:
-#	- \a fcut = the frequency cut off for the circuit
-#	- \a order = the order of the filter
-# 	- \a pushed = True|False  push the output buffer immediately if True
-#
-# \b Input \b channels:
-# 	- \a signal = incoming signal
-#
-# \b Output \b channels:
-# 	- \a out = Filtered signal
-#
-#\b Examples:
-# \code{.py}
-# machine.AddCircuit(type='RC', name='hp', fcut=50, pushed='True')
-# machine.AddCircuit(type='RC', name='hp', order=2, Q=2, fcut=50)
-# \endcode
-#
-class RC(Circuit):
+class RCLP(Circuit):
     
     
 	def __init__(self, machine, name, **keys):
@@ -415,14 +338,14 @@ class RC(Circuit):
 		else:
 			print "WARNING! No order given, using default order = "+str(self.Order)
 
-		self.fc = 1/(2*math.pi * self.fc)
-		self.a = self.fc/(machine.dt +self.fc)
-
-
-		self.x = 0
-
-		self.folds = [0]* (self.Order + 1)
-		self.filter = [0] * (self.Order +1)
+		self.fc = 2*math.pi*self.fc # fc -> wc
+		self.a = 2*machine.dt*self.fc # this is 2dt wc
+		self.a = self.a/(1+self.a) # this is 2dt wc/(1+2dt wc)
+		#self.a = machine.dt/(machine.dt+(1.0/self.fc)) # this is 2dt wc
+		
+		self.y  = [0] * (self.Order +1) #this is the output at time t+dt of each filter, y[0] is the incoming signal
+		self.yo = [0] * (self.Order +1) #this is the output at time t of each filter		
+		self.yoo= [0] * (self.Order +1) #this is the output at time t-dt of each filter		
 		#print self.folds
 		
 	def Initialize (self):
@@ -430,16 +353,100 @@ class RC(Circuit):
 		pass
 		
 		
+	
+	def Update (self):
 		
+		
+		self.y[0] = self.I["signal"].value 
+		
+		for i in range(self.Order):
+			self.y[i+1] = self.a*self.y[i] + (1-self.a)*self.yoo[i+1]
+		
+		self.O["out"].value= self.y[self.Order]
+
+		#collect old values
+		for i in range(self.Order+1):
+			self.yoo[i] = self.yo[i]
+			self.yo[i] = self.y[i]
+
+## \brief RC high-pass filter circuit.
+#
+#
+# \image html PassiveHighPass.png "schema"
+# Pass a signal through a series of \a order RC high pass filters with transfer function:... .
+#
+# \b Initialisation \b parameters:
+#	- \a fcut = the frequency cut off for the circuit
+#	- \a order = the order of the filter
+# 	- \a pushed = True|False  push the output buffer immediately if True
+#
+# \b Input \b channels:
+# 	- \a signal = incoming signal
+#
+# \b Output \b channels:
+# 	- \a out = Filtered signal
+#
+#\b Examples:
+# \code{.py}
+# machine.AddCircuit(type='RCHP', name='hp', fcut=50, pushed='True')
+# machine.AddCircuit(type='RCHP', name='hp', order=2, Q=2, fcut=50)
+# \endcode
+#
+class RCHP(Circuit):
+    
+    
+	def __init__(self, machine, name, **keys):
+		
+		super(self.__class__, self).__init__( machine, name )
+		
+
+		self.AddInput("signal")
+		self.AddOutput("out")
+
+
+		self.fc=0
+		if 'fcut' in keys.keys():
+			self.fc = keys['fcut']
+		else:
+			raise NameError("Missing fcut!")
+
+
+		self.Order=1
+		if 'order' in keys.keys():
+			self.Order = keys['order']
+		else:
+			print "WARNING! No order given, using default order = "+str(self.Order)
+
+		#self.fc = 1/(2*math.pi * self.fc)
+		#self.a = self.fc/(machine.dt +self.fc) #what was this?
+		
+		self.fc = 2*math.pi*self.fc # fc -> wc
+		self.a = 2*machine.dt*self.fc # this is (2dt wc)
+		self.a = 1.0/(1+self.a) # this is 2dt wc/(1+2dt wc)
+
+		self.y  = [0] * (self.Order +1) #this is the output at time t+dt of each filter, y[0] is the incoming signal
+		self.yo = [0] * (self.Order +1) #this is the output at time t of each filter	
+		self.yoo = [0] * (self.Order +1) #this is the output at time t-dt of each filter	
+
+		
+	def Initialize (self):
+		
+		pass
 		
 	def Update (self):
 
-		self.filter[0] = self.I["signal"].value 
+		
+		self.y[0] = self.I["signal"].value 
 
-		for i in range (1, self.Order+1):
-			self.filter[i] = self.a * (self.folds[i] + self.filter[i - 1] - self.folds[i - 1]);
+		for i in range(self.Order):
+			
+			self.y[i+1] = (self.y[i]-self.yoo[i]+ self.yoo[i+1])*self.a
+			#print i+1, self.y[i+1],self.yo[i+1],self.yoo[i+1],"inputs:",self.y[i],self.yoo[i],self.a
+			#time.sleep(0.01)
 
 		for i in range (0, self.Order + 1):
-			self.folds[i] = self.filter[i]
-		self.O["out"].value= self.filter[self.Order]
+			self.yoo[i] = self.yo[i]
+			self.yo[i] = self.y[i]
+		
+		self.O["out"].value= self.y[self.Order]
 		
