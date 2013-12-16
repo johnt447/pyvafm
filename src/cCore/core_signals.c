@@ -2,7 +2,7 @@
 Signal generators circuits definitions.
  *********************************************************/
 #include <math.h>
-#define PI 3.14159265358979323846
+
 
 #ifndef CIRCUIT
 #include "circuit.h"
@@ -41,7 +41,7 @@ int Add_waver( ) {
     c.params = (double*) calloc(c.plen,sizeof(double));
     
     c.updatef = waver;
-    c.update = ID_waver;
+    //c.update = ID_waver;
     
     //*** ALLOCATE IN LIST *********************
     int index = AddToCircuits(c);
@@ -71,8 +71,8 @@ void waver( circuit *c ) {
 
 
     double phase = 2*PI*(c->params[0]) + GlobalSignals[c->inputs[2]];
-    GlobalSignals[c->outputs[0]] = GlobalSignals[c->inputs[1]]*sin(phase)+GlobalSignals[c->inputs[3]];
-    GlobalSignals[c->outputs[1]] = GlobalSignals[c->inputs[1]]*cos(phase)+GlobalSignals[c->inputs[3]];
+    GlobalBuffers[c->outputs[0]] = GlobalSignals[c->inputs[1]]*sin(phase)+GlobalSignals[c->inputs[3]];
+    GlobalBuffers[c->outputs[1]] = GlobalSignals[c->inputs[1]]*cos(phase)+GlobalSignals[c->inputs[3]];
     
 }
 

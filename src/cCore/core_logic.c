@@ -40,7 +40,7 @@ int Add_Logic(char* type, int ni) {
         errorflag++;
     }
     
-    c.update = template;
+    c.updatef = ufunctions[template];
     
     int index = AddToCircuits(c);
     
@@ -59,7 +59,7 @@ void opAND( circuit *c ) {
       break;
     }
   }
-  GlobalSignals[c->outputs[0]] = result;
+  GlobalBuffers[c->outputs[0]] = result;
 }
 
 void opOR( circuit *c ) {
@@ -71,34 +71,6 @@ void opOR( circuit *c ) {
       break;
     }
   }
-  GlobalSignals[c->outputs[0]] = result;
+  GlobalBuffers[c->outputs[0]] = result;
 }
 
-/*
-void opSUB( circuit *c ) {
-
-  double result = 0;
-  result = GlobalSignals[c->inputs[0]]-GlobalSignals[c->inputs[1]];
-  
-  GlobalSignals[c->outputs[0]] = result;
- 
-}
-void opMUL( circuit *c ) {
-
-  double result = 0;
-  result = GlobalSignals[c->inputs[0]]*GlobalSignals[c->inputs[1]];
-  
-  GlobalSignals[c->outputs[0]] = result;
- 
-}
-void opDIV( circuit *c ) {
-
-  double result = 0;
-  result = GlobalSignals[c->inputs[0]]/GlobalSignals[c->inputs[1]];
-  
-  GlobalSignals[c->outputs[0]] = result;
- 
-}
-
-
-*/

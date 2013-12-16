@@ -1,6 +1,7 @@
 /**********************************************************
 Arithmetic circuits definitions.
  *********************************************************/
+#include <math.h>
 
 #ifndef CIRCUIT
 #include "circuit.h"
@@ -21,6 +22,7 @@ void INIT_MATHS(int* counter) {
   pynames[i] = "opDIV"; ufunctions[i] = opDIV; i++;
   pynames[i] = "opABS"; ufunctions[i] = opABS; i++;
   pynames[i] = "opPOW"; ufunctions[i] = opPOW; i++;
+  pynames[i] = "opLINC"; ufunctions[i] = opPOW; i++;
   
   
     MathEnd = i-1;
@@ -35,37 +37,52 @@ int Add_Math(char* type, int ni) {
     c.nI = ni;
     c.nO = 1;
 
+    //c.plen = 1;
+    //c.params = (double*)calloc(c.plen,sizeof(double));
+
     int template = GetCircuitIndex(type);
     if(template < MathStart || template > MathEnd) {
         printf("cERROR! type [%s] is not a maths circuit!\n",type);
         errorflag++;
     }
     
-    c.update = template;
+    //c.update = template;
+    c.updatef = ufunctions[template];
     
     int index = AddToCircuits(c);
     
-    printf("Added maths [%s].\n",type);
+    //printf("Added maths [%s].\n",type);
     return index;
     
 }
 
 
-void opADD( circuit *c ) {
-  //printf("adding...\n");
-  double result = 0;
-  for(int i=0; i < c->nI; i++){
-    result += GlobalSignals[c->inputs[i]];
-  }
+void opADDasd( circuit *c ) {
+  
+    c->params[0] = 0;
+    for(int i=0; i < c->nI; i++){
+        c->params[0] += GlobalSignals[c->inputs[i]];
+    }
 
-  GlobalSignals[c->outputs[0]] = result;
+    GlobalBuffers[c->outputs[0]] = c->params[0];
+}
+void opADD( circuit *c ) {
+  
+    double result = 0;
+    for(int i=0; i < c->nI; i++){
+        result += GlobalSignals[c->inputs[i]];
+        
+    }
+
+    GlobalBuffers[c->outputs[0]] = result;
+    
 }
 void opSUB( circuit *c ) {
 
   double result = 0;
   result = GlobalSignals[c->inputs[0]]-GlobalSignals[c->inputs[1]];
   
-  GlobalSignals[c->outputs[0]] = result;
+  GlobalBuffers[c->outputs[0]] = result;
  
 }
 void opMUL( circuit *c ) {
@@ -73,7 +90,7 @@ void opMUL( circuit *c ) {
   double result = 0;
   result = GlobalSignals[c->inputs[0]]*GlobalSignals[c->inputs[1]];
   
-  GlobalSignals[c->outputs[0]] = result;
+  GlobalBuffers[c->outputs[0]] = result;
  
 }
 void opDIV( circuit *c ) {
@@ -81,12 +98,12 @@ void opDIV( circuit *c ) {
   double result = 0;
   result = GlobalSignals[c->inputs[0]]/GlobalSignals[c->inputs[1]];
   
-  GlobalSignals[c->outputs[0]] = result;
+  GlobalBuffers[c->outputs[0]] = result;
  
 }
 inline void opABS( circuit *c ) {
   
-  GlobalSignals[c->outputs[0]] = abs(GlobalSignals[c->inputs[0]]);
+  GlobalBuffers[c->outputs[0]] = fabs(GlobalSignals[c->inputs[0]]);
  
 }
 
@@ -94,6 +111,19 @@ void opPOW( circuit *c ) {
 
   double result = pow(GlobalSignals[c->inputs[0]],GlobalSignals[c->inputs[1]]);
   
-  GlobalSignals[c->outputs[0]] = result;
+  GlobalBuffers[c->outputs[0]] = result;
  
 }
+void opLINC( circuit *c ) {
+
+    double result = 0;
+    
+    for(int i=0; i < c->nI; i+=2) {
+        result += GlobalSignals[c->inputs[i]]*GlobalSignals[c->inputs[i+1]];
+    }   
+    
+    GlobalBuffers[c->outputs[0]] = result;
+ 
+}
+
+

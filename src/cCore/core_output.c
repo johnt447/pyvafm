@@ -43,7 +43,7 @@ int Add_output(char* filename, int dump) {
     c.vpparams[0] = (void*)fopen(filename, "w");
 
     c.updatef = output;
-    c.update = ID_output;
+    //c.update = ID_output;
 
     //*** ALLOCATE IN LIST *********************
     int index = AddToCircuits(c);

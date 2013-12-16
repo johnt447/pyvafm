@@ -2,31 +2,38 @@
 
 #ifndef CIRCUIT
 #define CIRCUIT
+#define PI 3.14159265358979323846
 
 // DEFINITION OF CIRCUIT **********************************************
+typedef struct circuit circuit;
+    
 typedef struct circuit {
   
+    //number of inputs and outputs
     int nI,nO;
 
-    int *inputs, *oinputs; //indexes of the input, actual and original
+    //indexes of the input, actual and original
+    int *inputs, *oinputs; 
     char **inames;
 
     int *outputs;
 
-    int plen;
-    double *params; //double float parameters
+    int plen;       //number of double parameters
+    double *params; //array of double parameters
 
-    int iplen;
-    int *iparams; //integer parameters
+    int iplen;      //number of integer parameters
+    int *iparams;   //array of integer parameters
 
-    int vplen;
-    void **vpparams; //list of pointers to void
-    //FILE *fp;
+    int vplen;      //number of whatever parameters
+    void **vpparams;//array of whatever parameters lol
+    
 
-    int update; //index of the update function
-    void *updatef;
+    //int update;     //index of the update function
+    void (*updatef)(circuit*);  //
 
-    int init;   //index of init function
+    int init;       //index of init function
+    
+    int pushed;     //0 is false, 1 is true
 
 } circuit;
 //*********************************************************************
@@ -38,6 +45,7 @@ typedef struct circuit {
 
 
 extern double* GlobalSignals;
+extern double* GlobalBuffers;
 extern int GlobalChannelCounter;
 
 extern circuit* circuits;

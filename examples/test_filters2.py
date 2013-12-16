@@ -16,12 +16,12 @@ def main():
 	machine.AddCircuit(type='waver',name='wave', amp=1, pushed=True )
 	
 	
-	machine.AddCircuit(type='RCLP',name='sklp', fcut=100, order=2, pushed=True )
+	machine.AddCircuit(type='RCLP',name='sklp', fcut=100, order=1, pushed=True )
 	#amplitude detector for the filter
 	machine.AddCircuit(type='minmax', name='asklp', CheckTime=0.2, pushed=True)
 	
 	
-	machine.AddCircuit(type='RCHP',name='skhp', fcut=100, order=2, pushed=True )
+	machine.AddCircuit(type='RCHP',name='skhp', fcut=100, order=1, pushed=True )
 	#amplitude detector for the filter
 	machine.AddCircuit(type='minmax', name='askhp', CheckTime=0.2, pushed=True)
 	
