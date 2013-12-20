@@ -9,6 +9,9 @@ from vafmbase import Circuit
 from vafmbase import ChannelType
 from vafmbase import Channel
 
+from ctypes import *
+import threading
+
 import vafmcircuits_math, vafmcircuits_output, vafmcircuits_signal_gens
 
 ## \package vafmcircuits
@@ -37,7 +40,9 @@ import vafmcircuits_math, vafmcircuits_output, vafmcircuits_signal_gens
 class Machine(Circuit):
 
 	singleton = False
-
+	#cCore = None
+	
+	
 	## Class contructor.
 	# This should be used only to create the main virtual machine circuit.
 	#
@@ -61,6 +66,7 @@ class Machine(Circuit):
 		print "init of Machine..."
 		
 		super(self.__class__, self).__init__( machine, name )
+
 
 		## \brief Ordered dictionary of the circuits in the setup.
 		# Ordered dictionary of the circuits in the setup. The dictionary keys are the circuit names, the values are
@@ -89,17 +95,71 @@ class Machine(Circuit):
 		self._idt = 0;
 
 		
-		self._MetaI = {}
+		self._MetaI = OrderedDict()
+		self.cCoreI = []
 
-		self._MetaO = {}
-
-		self.AddOutput('time')
+		self._MetaO = OrderedDict()
+		self.cCoreO = []
+		
+		
+		# create a container in the cCore
+		owneridx = -1
+		if self.machine == None:
+			#print 'Allocating main machine!'
+			owneridx = -1
+		else:
+			owneridx = self.machine.cCoreID
+		
+		self.cCoreID = Circuit.cCore.Add_Container(owneridx)
+		#print 'machine cCoreID: ',self.cCoreID
+		
+		if self.machine == None:
+			self.AddOutput('time')
+		
 
 		if 'assembly' in keys.keys():
 			self.Assemble = keys['assembly']
 			self.Assemble(self,**keys)
 
 		self.SetInputs(**keys)
+
+
+	##\internal
+	## Get the feed indexes from the cCore
+	#
+	#
+	def SetCCoreChannels(self):
+		
+		 
+		#for a container, Circuit.cCore.GetInputs gives the indexes of the dummy
+		#relay circuits that represents external channels
+		
+		
+		getins = Circuit.cCore.GetInputs
+		getins.restype = POINTER(c_int)
+		getouts = Circuit.cCore.GetOutputs
+		getouts.restype = POINTER(c_int)
+		
+		# get the indexes of input(original) channels
+		dummyins = getins(self.cCoreID) #indexes of the dummy circuits
+		for i in range(len(self.I)):
+			feedin = getins(dummyouts[i])[0]
+			feedout= getouts(dummyouts[i])[0]
+			self.I.values()[i].signal.cCoreFEED = feedin
+			self._MetaI.values()[i].signal.cCoreFEED = feedout
+		
+		# --------------------------------------------------------------
+		
+		# get the indexes of output channels
+		dummyouts = getouts(self.cCoreID) #indexes of the dummy circuits
+		for i in range(len(self.O)):
+			
+			feedin = getins(dummyouts[i])[0]
+			feedout= getouts(dummyouts[i])[0]
+			
+			self.O.values()[i].signal.cCoreFEED = feedout
+			self._MetaO.values()[i].signal.cCoreFEED = feedin
+			
 
 
 	## Fabricator function.
@@ -179,6 +239,11 @@ class Machine(Circuit):
 
 		self.I[name] = Channel(name,self,True)
 		self._MetaI[name] = Channel(name,self,False)
+		
+		# add the channel also on the cCore
+		self.cCoreI.append(Circuit.cCore.Add_ChannelToContainer(self.cCoreID, 1)) #1 for input
+
+
 
 	## Create an output channel with the given name.
 	#
@@ -196,12 +261,21 @@ class Machine(Circuit):
 	# \endcode
 	#
 	def AddOutput(self, name):
-
+		
+		#print "py adding output..."
+		
 		if name in self.I.keys() or name in self.O.keys():
 			raise NameError("A channel named "+name+" already exists in composite circuit "+ str(self))
 
 		self.O[name] = Channel(name,self,False)
 		self._MetaO[name] = Channel(name,self,True)
+		
+		# add the channel also on the cCore
+		idx = Circuit.cCore.Add_ChannelToContainer(self.cCoreID, 0)#1 for input
+		#print 'out idx:',idx
+		#print 'machine added output: ',idx
+		self.cCoreO.append(idx) 
+		
 
 	## \internal
 	## Add a circuit of type 'ctype' named 'name' to the setup.
@@ -387,6 +461,36 @@ class Machine(Circuit):
 
 		return allch[chname]
 
+	def GetOutputChannel(self, tag):
+
+		#check if the tag has the correct syntax
+		chname = tag.split(".",1)
+		if len(chname) != 2:
+			raise SyntaxError ("Machine.GetOutputChannel error: channel tag "+tag+ " is invalid.")
+		cname = chname[0]
+		chname = chname[1]
+
+
+		
+
+		if self._IsGlobal(tag):
+			circ = self #if the tag is global, the circuit is the machine itself
+		else:
+			circ = self.circuits
+			if not (cname in circ.keys()):
+				raise NameError( "Machine.GetOutputChannel error: circuit "+cname+" not found." )
+			circ = circ[cname]
+			
+		allch = {} #create a dictionary
+		allch.update(circ.O)
+
+
+		if not( chname in allch.keys() ):
+			raise NameError( "Machine.GetOutputChannel error: channel "+chname+" not found." )
+
+		return allch[chname]
+
+
 	## Checks whether the given channel tag points to a global channel.
 	# Global channels are marked as "global.channelname".
 	# @param tag String with the channel tag.
@@ -429,11 +533,12 @@ class Machine(Circuit):
 
 		#find the output channel
 		if self._IsGlobal(args[0]):
+			#look in MetaI
 			outsignal = self._GetMetaChannel(args[0], ChannelType.Input)
 		else:
 			outsignal = self._GetInternalChannel(args[0], ChannelType.Output)
 
-
+		
 		print "connecting " + args[0]
 
 		for tag in args[1:]: #for each target input tag
@@ -446,7 +551,13 @@ class Machine(Circuit):
 
 			print "  -> " + tag
 			target.signal = outsignal.signal
-
+			
+			#connect in cCore: Connect(int c1, int out, int c2, int in)
+			outidx = outsignal.owner.O.keys().index(outsignal.name)
+			inidx = target.owner.I.keys().index(target.name)
+			print 'PY: connecting ',outidx,inidx
+			
+			Circuit.cCore.Connect(outsignal.owner.cCoreID,outidx, target.owner.cCoreID, inidx)
 
 	## Disconnect one or more input channels.
 	#
@@ -505,7 +616,7 @@ class Machine(Circuit):
 	#
 	# Calls the update routine of each circuit in the setup.
 	# 
-	def Update(self):
+	def UpdateOLD(self):
 
 		#print 'updating machine ' +self.name
 
@@ -533,6 +644,13 @@ class Machine(Circuit):
 
 		#print 'after post' + str(self.O['time'].value)
 
+	def Update(self):
+		
+		Circuit.cCore.Update(1)
+		
+		
+
+
 	## \internal
 	## Post Update cycle.
 	#
@@ -559,8 +677,8 @@ class Machine(Circuit):
 
 	def Wait(self, dtime):
 		
-		for i in range(int(math.floor(dtime/self.dt))): self.Update()
-		
+		#for i in range(int(math.floor(dtime/self.dt))): self.Update()
+		Circuit.cCore.Update(c_int(int(math.floor(dtime/self.dt))))
 
 
 

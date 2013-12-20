@@ -17,20 +17,21 @@ void INIT_MATHS(int* counter) {
 
   int i = *counter; MathStart = i;
   pynames[i] = "opADD"; ufunctions[i] = opADD; i++;
+  /*
   pynames[i] = "opSUB"; ufunctions[i] = opSUB; i++;
   pynames[i] = "opMUL"; ufunctions[i] = opMUL; i++;
   pynames[i] = "opDIV"; ufunctions[i] = opDIV; i++;
   pynames[i] = "opABS"; ufunctions[i] = opABS; i++;
   pynames[i] = "opPOW"; ufunctions[i] = opPOW; i++;
   pynames[i] = "opLINC"; ufunctions[i] = opPOW; i++;
-  
+  */
   
     MathEnd = i-1;
   *counter = i;
 
 }
 
-int Add_Math(char* type, int ni) {
+int Add_Math(int owner, char* type, int ni) {
     
     circuit c = NewCircuit();
 
@@ -49,7 +50,7 @@ int Add_Math(char* type, int ni) {
     //c.update = template;
     c.updatef = ufunctions[template];
     
-    int index = AddToCircuits(c);
+    int index = AddToCircuits(c,owner);
     
     //printf("Added maths [%s].\n",type);
     return index;
@@ -57,15 +58,6 @@ int Add_Math(char* type, int ni) {
 }
 
 
-void opADDasd( circuit *c ) {
-  
-    c->params[0] = 0;
-    for(int i=0; i < c->nI; i++){
-        c->params[0] += GlobalSignals[c->inputs[i]];
-    }
-
-    GlobalBuffers[c->outputs[0]] = c->params[0];
-}
 void opADD( circuit *c ) {
   
     double result = 0;
@@ -77,6 +69,7 @@ void opADD( circuit *c ) {
     GlobalBuffers[c->outputs[0]] = result;
     
 }
+/*
 void opSUB( circuit *c ) {
 
   double result = 0;
@@ -125,5 +118,5 @@ void opLINC( circuit *c ) {
     GlobalBuffers[c->outputs[0]] = result;
  
 }
-
+*/
 

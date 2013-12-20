@@ -18,7 +18,7 @@ def main():
   	machine.AddCircuit(type='opAbs',name='abs', pushed=True)
   	machine.AddCircuit(type='SKLP',name='lp', fcut=0.02, pushed=True)
   	
-	machine.AddCircuit(type='PID', name='pi', set=1,Kp=1.0,Ki=0.1,Kd=0.01)
+	pi = machine.AddCircuit(type='PID', name='pi', set=1,Kp=1.0,Ki=0.1,Kd=0.01)
   	
 	machine.Connect("lp.out","pi.signal")
 	machine.Connect("pi.out","osc.amp")

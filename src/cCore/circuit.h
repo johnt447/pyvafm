@@ -7,7 +7,7 @@
 // DEFINITION OF CIRCUIT **********************************************
 typedef struct circuit circuit;
     
-typedef struct circuit {
+struct circuit {
   
     //number of inputs and outputs
     int nI,nO;
@@ -27,6 +27,13 @@ typedef struct circuit {
     int vplen;      //number of whatever parameters
     void **vpparams;//array of whatever parameters lol
     
+    
+    // for containers
+    int isContainer; //0|1
+    int nsubcircs; //number of subcircuits
+    int *subcircuits; //global indexes of the subcircuits
+    int *dummyin, *dummyout; //global indexes of dummy input-output circuits
+    
 
     //int update;     //index of the update function
     void (*updatef)(circuit*);  //
@@ -35,7 +42,7 @@ typedef struct circuit {
     
     int pushed;     //0 is false, 1 is true
 
-} circuit;
+};
 //*********************************************************************
 //int GlobalChannelCounter = 0;
 //int GlobalCircuitCounter = 0;
@@ -57,7 +64,7 @@ extern char **pynames;
 extern double dt;
 extern int errorflag;
 
-int AddToCircuits(circuit c);
+int AddToCircuits(circuit c, int containerindex);
 int GetCircuitIndex(char* type);
 circuit NewCircuit(void);
 

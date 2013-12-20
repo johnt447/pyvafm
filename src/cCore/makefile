@@ -3,22 +3,26 @@ CFLAGS	= -c -w -std=c99 -fpic -O3
 LFLAGS	= -w -lm -shared -fpic -O3 -o vafmcore.so
 
 
-CIRCUITS = core_maths.o core_logic.o core_signals.o core_output.o core_filters.o
+CIRCUITS = core_container.o core_signals.o core_output.o core_maths.o #core_logic.o  core_filters.o
 
-all: core_filters.o output.o siggen maths.o logic.o main.o
+all: container siggen outputs maths main.o  # core_filters.o  logic.o 
 	$(CC) $(LFLAGS) main.o $(CIRCUITS)
 	rm *.o
+	cp vafmcore.so ../.
+	cp vafmcore.so ../../examples/.
 main.o:
 	$(CC) $(CFLAGS) main.c
-output.o:
+outputs:
 	$(CC) $(CFLAGS) core_output.c
-maths.o: core_maths.c
+maths: 
 	$(CC) $(CFLAGS) core_maths.c
-logic.o: core_logic.c
+logic.o: 
 	$(CC) $(CFLAGS) core_logic.c
-siggen: core_signals.c
+siggen: 
 	$(CC) $(CFLAGS) core_signals.c
-filters: core_filters.c
+filters: 
 	$(CC) $(CFLAGS) core_filters.c
+container: 
+	$(CC) $(CFLAGS) core_container.c
 clean:
 	rm -rf *.o vafmcore.so

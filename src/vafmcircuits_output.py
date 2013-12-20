@@ -2,6 +2,7 @@ from collections import OrderedDict
 from vafmbase import Circuit
 from vafmbase import ChannelType
 from vafmbase import Channel
+from ctypes import *
 
 
 ## \package vafmcircuits_output
@@ -57,15 +58,18 @@ class output(Circuit):
 		## Dump rate.
 		self.dump = keys['dump']
 
-		self._file = open(self.filename, 'w')
+		#self._file = open(self.filename, 'w')
 
 		self._cnt = 0
 
 		self.AddInput("record")
+		
+		self.cCoreID = Circuit.cCore.Add_output(self.machine.cCoreID,self.filename,c_int(self.dump))
+		
 
 		self.SetInputs(**keys)
 
-	## Register a channel for output.
+	## Register an output channel for file output.
 	#
 	# If the channel is already registered in this output circuit, it won't be registered again.
 	#
@@ -81,8 +85,13 @@ class output(Circuit):
 
 		#if type(channel) is list:
 		#cclist = [j.split(".",1) for j in channel]
-		cclist = [self.machine.GetChannel(tag) for tag in args]
+		cclist = [self.machine.GetOutputChannel(tag) for tag in args]
 		self.channels.extend(cclist)
+		
+		for ch in cclist:
+			print 'PY: registering feed:',ch.signal.cCoreFEED
+			Circuit.cCore.output_register_feed(self.cCoreID,ch.signal.cCoreFEED)
+		
 		#else :
 
 		#	if not(channel in self.channels):

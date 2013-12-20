@@ -1,3 +1,6 @@
+from collections import OrderedDict
+from ctypes import *
+
 
 ## \package vafmbase
 # This module contains the definitions of the basic circuit and channel objects.
@@ -51,6 +54,7 @@ class Feed(object):
 		
 		self._value = 0.0
 		self._buff = 0.0
+		self.cCoreFEED = -1
 		
 	#@property
 	def value_get(self):
@@ -83,6 +87,7 @@ class Channel(object):
 		self.owner = owner
 		self.signal = Feed(owner)
 		self.isInput = isInput
+		#self.cCoreID #index of channel in the circuit.inputs[] of cCore
 	
 	#@property
 	def value_get(self):
@@ -104,8 +109,8 @@ class Channel(object):
 		self.signal.PushValue(value)
 
 	## Renew the Feed object so that it is disconnected from everything.
-        def Disconnect(self):
-            self.signal = Feed(self.owner)
+	def Disconnect(self):
+		self.signal = Feed(self.owner)
 
 	def __str__(self):
 		return self.owner.name+"."+self.name+" = "+str(self.signal)
@@ -118,6 +123,8 @@ class Channel(object):
 class Circuit(object):
 
 	#__metaclass__ = abc.ABCMeta;
+	cCoreINIT = False
+	cCore = None
 	
 	##\internal
 	## Common contructor for all circuits.
@@ -142,13 +149,25 @@ class Circuit(object):
 		self.pushed = False
 		
 		## Dictionary of input channels
-		self.I = {}
+		self.I = OrderedDict()
+		
+		self.cCoreI = None
 		
 		## Dictionary of output channels
-		self.O = {}
+		self.O = OrderedDict()
 		
-		## Dictionary of events
-		self.events = {}
+		self.cCoreO = None
+		
+		## index of circuit in cCore
+		self.cCoreID = -1
+		
+		#init the cCore if itz the first time
+		if(Circuit.cCoreINIT == False):
+			print 'Initializing the cCore...'
+			Circuit.cCore = cdll.LoadLibrary("./vafmcore.so")
+			Circuit.cCore.INIT()
+			
+			Circuit.cCoreINIT = True
 		
 	
 	##\internal
@@ -159,12 +178,20 @@ class Circuit(object):
 	# @param **kwargs Keyworded arguments for circuit initialisation.
 	def SetInputs(self, **kwargs):
 		
-		print 'circuit '+self.name+'('+self.__class__.__name__+') created.'
+		print 'PY: circuit '+self.name+'('+self.__class__.__name__+') created.'
+		
+		self.SetCCoreChannels()
 		
 		for key in kwargs.keys():
 			
 			if key in self.I.keys():
-				self.I[key].Set(kwargs[key])
+				
+				self.I[key].Set(kwargs[key]) #deprecated... sets the value in python!
+				
+				idx = self.I.keys().index(key) #find the position of the key
+				Circuit.cCore.SetInput(self.cCoreID, idx, c_double(kwargs[key]))
+				
+				
 				print '   input '+key+' -> '+str(kwargs[key])
 			else:
 				#print the init parameter even if not an input flag
@@ -172,7 +199,42 @@ class Circuit(object):
 		
 		if 'pushed' in kwargs.keys():
 			self.pushed = bool(kwargs['pushed'])
+			if self.pushed:
+				Circuit.cCore.SetPushed(self.cCoreID, 1);
 			
+	
+	
+	##\internal
+	## Get the feed indexes from the cCore
+	#
+	#
+	def SetCCoreChannels(self):
+		
+		print 'PY: setccorechannels...'
+		
+		getins = Circuit.cCore.GetInputs
+		getins.restype = POINTER(c_int)
+		getouts = Circuit.cCore.GetOutputs
+		getouts.restype = POINTER(c_int)
+		
+		
+		# get the indexes of input(original) channels
+		if len(self.I) > 0:
+			self.cCoreI = getins(self.cCoreID)
+			#print 'cCoreI ',self.cCoreI,len(self.I)
+		
+			for i in range(len(self.I)):
+				#print i,self.cCoreI[i]
+				self.I.values()[i].signal.cCoreFEED = self.cCoreI[i]
+		
+		# get the indexes of output channels
+		if len(self.O) > 0:
+			self.cCoreO = getouts(self.cCoreID)
+			#print 'cCoreO ',self.cCoreO, len(self.O)
+			
+			for i in range(len(self.O)):
+				#print i,self.cCoreO[i]
+				self.O.values()[i].signal.cCoreFEED = self.cCoreO[i]
 	
 	##\internal
 	## Create an input channel with the given name.
@@ -209,7 +271,19 @@ class Circuit(object):
 			return self.O[chname];
 		if isin:
 			return self.I[chname];
-	
+	##\internal
+	## Find a channel by name.
+	# @param chname Name of the channel to find.
+	# @return Reference to the channel.
+	def GetOutputChannel(self, chname):
+		
+		isout = chname in self.O.keys()
+		if not( isout or isin ):
+			raise NameError( "Circuit.GetOutputChannel error: channel "+chname+" not found." )
+		
+		if isout:
+			return self.O[chname];
+		
 	
 	##\internal
 	## Push the buffered value for all output channels.
@@ -221,7 +295,7 @@ class Circuit(object):
 	#def AddEvent(self, eventname, function):
 	
 	def __str__( self ):
-		return "["+self.__class__.__name__+"]"+self.name
+		return "["+self.__class__.__name__+"]"+self.name+"  cCoreID: "+str(self.cCoreID)
 
 	##\internal
 	def Initialize (self):

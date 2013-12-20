@@ -2,7 +2,7 @@
 #define CORESIGNALS
 
 void waver( circuit *c );
-int Add_waver( void );
+int Add_waver( int owner );
 
 
 

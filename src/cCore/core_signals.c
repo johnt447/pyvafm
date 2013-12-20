@@ -12,41 +12,36 @@ Signal generators circuits definitions.
 #include "core_signals.h"
 #endif
 
-
-
-extern int AddChannels(circuit *c);
-
-int ID_waver;
-
+//deprecated
 void INIT_SIGNALS(int* counter) {
   
   int i = *counter;
   
-  pynames[i] = "waver"; ufunctions[i] = waver; ID_waver = i; i++;  
+  pynames[i] = "waver"; ufunctions[i] = waver; i++;  
   
   
   *counter = i;
 
 }
 
-int Add_waver( ) {
+int Add_waver(int owner) {
     
     circuit c = NewCircuit();
     
     c.nI = 4;
-    c.nO = 2;
+    c.nO = 3;
     
     
     c.plen = 1;
     c.params = (double*) calloc(c.plen,sizeof(double));
     
     c.updatef = waver;
-    //c.update = ID_waver;
+
     
     //*** ALLOCATE IN LIST *********************
-    int index = AddToCircuits(c);
+    int index = AddToCircuits(c,owner);
     
-    printf("Added waver.\n");
+    printf("cCore: added waver %d\n",index);
     
     return index;
 }
@@ -61,6 +56,7 @@ void waver( circuit *c ) {
     params[0]: phase
     out[0]: sin
     out[1]: cos
+    out[2]: cos
     */
     //printf("waving...\n");
 

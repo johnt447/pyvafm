@@ -44,12 +44,15 @@ class waver(Circuit):
 
 		self.AddInput("freq")
 		self.AddInput("amp")
+		self.AddInput("phi")
 		self.AddInput("offset")
-		#self.AddInput("speed")
+		
 
 		self.AddOutput("sin")
 		self.AddOutput("cos")
 		self.AddOutput("saw")
+
+		self.cCoreID = self.machine.cCore.Add_waver(self.machine.cCoreID)
 
 		self.SetInputs(**keys)
 

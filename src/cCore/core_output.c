@@ -13,12 +13,13 @@ Output circuits definitions.
 
 
 
-int ID_output;
+//int ID_output;
 
+//deprecated
 void INIT_OUTPUT(int* counter) {
   
   int i = *counter;
-  pynames[i] = "output"; ufunctions[i] = output; ID_output = i; i++;
+  pynames[i] = "output"; ufunctions[i] = output; i++;
   
   
 
@@ -26,7 +27,7 @@ void INIT_OUTPUT(int* counter) {
   
 }
 
-int Add_output(char* filename, int dump) {
+int Add_output(int owner, char* filename, int dump) {
 
     circuit c = NewCircuit();
 
@@ -46,9 +47,9 @@ int Add_output(char* filename, int dump) {
     //c.update = ID_output;
 
     //*** ALLOCATE IN LIST *********************
-    int index = AddToCircuits(c);
+    int index = AddToCircuits(c, owner);
 
-    printf("Added output.\n");
+    printf("Added output %i.\n",index);
     return index;
     
 }
@@ -67,6 +68,17 @@ int output_register(int outer, int c, int chout) {
   return 0;
 }
 
+int output_register_feed(int outer, int feedid) {
+
+    circuits[outer].iparams[1]++;
+    circuits[outer].iplen++;
+    circuits[outer].iparams = (int*)realloc(circuits[outer].iparams,
+            (2+circuits[outer].iparams[1])*sizeof(int));
+
+    circuits[outer].iparams[circuits[outer].iplen-1] = feedid;
+    
+    return 0;
+}
 
 
 int output_close(int outer) {

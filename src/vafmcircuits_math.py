@@ -53,6 +53,10 @@ class opAdd(Circuit):
 		#create output channels
 		self.AddOutput("out")
 		
+		self.cCoreID = Circuit.cCore.Add_Math(self.machine.cCoreID,"opADD",self.factors)
+
+		
+		
 		self.SetInputs(**keys)
 
 	def Initialize (self):

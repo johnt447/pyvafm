@@ -71,8 +71,8 @@ class gain(Circuit):
 # - \a signal 
 #
 # \b Output \b channels:
-# - \a max =  Maximum found
-# - \a min =  Minimum found
+# - \a max =  Maximum value found in the CheckTime interval
+# - \a min =  Minimum value found in the CheckTime interval
 # - \a amp =\f$ \frac{max - min}{2}\f$
 # - \a offset = \f$ \frac{max + min}{2}\f$
 #

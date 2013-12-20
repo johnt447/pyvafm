@@ -15,7 +15,7 @@ and run it at uberspeed.
 #include "circuit.h"
 #endif
 
-#include "core_maths.h"
+//#include "core_maths.h"
 
 // *** GLOBAL DEFINITIONS **********************************
 double dt;
@@ -33,6 +33,7 @@ double *GlobalSignals, *GlobalBuffers;
 
 
 circuit *circuits;
+circuit Machine;
 
 int newcircuits = 1;
 
@@ -45,50 +46,49 @@ int INIT(void);
 
 int INIT(void) {
   
-  dt = 0.01;
+    dt = 0.01;
+
+    AllocateCircuits();
   
-  AllocateCircuits();
-  
+    
+
+    printf("VAFMCORE: initialised!\n");
 
 
+    /*
 
-  printf("VAFMCORE: initialised!\n");
+    //initialize some feeds (includes I and O)
+    //... this can be automatized...
+    GlobalSignals = (double*) calloc (20,dsize);
 
+    //python could call these function to create 
+    //circuits in the C library
+    AddCircuit("opMUL",2,1);
+    AddCircuit("opADD",2,1);
 
-  /*
+    circuits[1].inputs[0] = 2;
+    GlobalSignals[circuits[1].inputs[1]] = 0.09;
 
-  //initialize some feeds (includes I and O)
-  //... this can be automatized...
-  GlobalSignals = (double*) calloc (20,dsize);
-  
-  //python could call these function to create 
-  //circuits in the C library
-  AddCircuit("opMUL",2,1);
-  AddCircuit("opADD",2,1);
+    printf("outputs: %lf %lf\n",
+     GlobalSignals[circuits[0].outputs[0]],
+     GlobalSignals[circuits[1].outputs[0]]);
 
-  circuits[1].inputs[0] = 2;
-  GlobalSignals[circuits[1].inputs[1]] = 0.09;
+    Update();
+    printf("outputs: %lf %lf\n",
+     GlobalSignals[circuits[0].outputs[0]],
+     GlobalSignals[circuits[1].outputs[0]]);
 
-  printf("outputs: %lf %lf\n",
-	 GlobalSignals[circuits[0].outputs[0]],
-	 GlobalSignals[circuits[1].outputs[0]]);
-  
-  Update();
-  printf("outputs: %lf %lf\n",
-	 GlobalSignals[circuits[0].outputs[0]],
-	 GlobalSignals[circuits[1].outputs[0]]);
-  
-  GlobalSignals[0] = 1.3;
-  GlobalSignals[1] = 2;
+    GlobalSignals[0] = 1.3;
+    GlobalSignals[1] = 2;
 
-  Update();
-  printf("outputs: %lf %lf\n",
-	 GlobalSignals[circuits[0].outputs[0]],
-	 GlobalSignals[circuits[1].outputs[0]]);
+    Update();
+    printf("outputs: %lf %lf\n",
+     GlobalSignals[circuits[0].outputs[0]],
+     GlobalSignals[circuits[1].outputs[0]]);
 
-  */
+    */
 
-  return 0;
+    return 0;
 }
 
 
@@ -100,19 +100,21 @@ int AllocateCircuits() {
   ifunctions = (void**)malloc(GlobalNFunctions*sizeof(void*));
   ufunctions = (void**)malloc(GlobalNFunctions*sizeof(void*));
   pynames = (char**)malloc(GlobalNFunctions*sizeof(char*));
+  
+  
   circuits = (circuit*)calloc(1,sizeof(circuit));
   
   GlobalSignals = (double*)calloc(1,sizeof(double)); //signal 0 is the time
   GlobalBuffers = (double*)calloc(1,sizeof(double)); //signal 0 is the time
-  GlobalChannelCounter = 1;
+  GlobalChannelCounter = 0;
 
   int i=0;
   INIT_MATHS(&i);
-  INIT_LOGIC(&i);
+  /*INIT_LOGIC(&i);
   INIT_SIGNALS(&i);
   INIT_FILTERS(&i);
   INIT_OUTPUT(&i);
-
+*/
   
 
   return 0;
@@ -134,6 +136,8 @@ int QUIT() {
 ***********************************************************************/
 int AddChannels( circuit *c ) {
   
+  //printf("cCore: adding channels: %i %i\n",c->nI,c->nO);
+  
   if(c->nI > 0) {
     c->inputs = (int*)calloc(c->nI,sizeof(int));
     c->oinputs = (int*)calloc(c->nI,sizeof(int));
@@ -154,32 +158,14 @@ int AddChannels( circuit *c ) {
   GlobalSignals = (double*)realloc(GlobalSignals,sizeof(double)*GlobalChannelCounter);
   GlobalBuffers = (double*)realloc(GlobalBuffers,sizeof(double)*GlobalChannelCounter);
 
+    GlobalSignals[GlobalChannelCounter-1] = 0;
+    GlobalBuffers[GlobalChannelCounter-1] = 0;
+
+    //printf("cCore: Global signals tot: %i\n",GlobalChannelCounter);
+
   return 0;
 }
 
-/*int MakeChannels( circuit *c, int ni, int no ) {
-  
-  c->nI = ni;
-  c->nO = no;
-
-  c->inputs = (int*)calloc(ni,sizeof(int));
-  c->oinputs = (int*)calloc(ni,sizeof(int));
-  for(int i=0;i<ni;i++) {
-    c->inputs[i] = GlobalChannelCounter;
-    c->oinputs[i] = GlobalChannelCounter;
-    GlobalChannelCounter++;
-  }
-
-  c->outputs= (int*)calloc(no,sizeof(int));
-  for(int i=0;i<no;i++) {
-    c->outputs[i] = GlobalChannelCounter;
-    GlobalChannelCounter++;
-  }
-
-  
-  return 0;
-}
-*/
 
 /***********************************************************************
  * Makes a new empty circuit.
@@ -191,6 +177,8 @@ circuit NewCircuit() {
     c.plen = 0;
     c.vplen = 0;
     //c.updatef = DummyCircuit;
+    c.nsubcircs = 0;
+    c.isContainer = 0;
     c.nI = 0;
     c.nO = 0;
     c.pushed = 0; //false by default
@@ -210,49 +198,49 @@ int SetPushed(int cindex, int pushed) {
 }
 
 /***********************************************************************
- * This function makes a new slot in the circuits list and stores the
+ * This function makes a new slot in the global circuits list and stores the
  * new one given as argument. Returns the index of the new circuit.
+ * The index of the circuit is also stored in the container's subcircuits
 ***********************************************************************/
-int AddToCircuits(circuit c) {
+int AddToCircuits(circuit c, int containerindex) {
     
-    AddChannels(&c); //allocates the signals
+    printf("cCore: allocating %i\n",GlobalCircuitCounter);
+    //containers do not get inputs/outputs allocated
+    if(c.isContainer == 0)
+        AddChannels(&c); //allocates the signals
     
     GlobalCircuitCounter++;
     circuits = (circuit*)realloc(circuits, GlobalCircuitCounter*sizeof(circuit));
-    circuits[GlobalCircuitCounter-1] = c;
+    circuits[GlobalCircuitCounter-1] = c; //add the circuit to the list
     
-    //printf("param0: %lf \n",c.params[0]);
+    int index = GlobalCircuitCounter-1;
     
-    return GlobalCircuitCounter-1;
-}
-
-
-void DummyCircuit( circuit *c ) {
-    GlobalSignals[c->outputs[0]] = GlobalBuffers[c->outputs[0]] = GlobalSignals[c->inputs[0]];
-}
-/***********************************************************************
- * This function creates dummy circuits representing composites external
- * channels.
- * ********************************************************************/
-int Add_Dummy( ) {
+    //this is true only for the main machine
+    if(containerindex < 0) {
+        //letz work under the assumption that circuits[0] is the main machine lol!
+        
+        return index;
+    }
     
-    circuit c = NewCircuit();
-
-    c.nI = 1;
-    c.nO = 1;
-
-    c.updatef = DummyCircuit;
-    
-    int index = AddToCircuits(c);
-    
-    //the output is the same as the input
-    //circuits[index].outputs = circuits[index].inputs;
+    //if c belongs to a container, then add it there too
+    circuits[containerindex].nsubcircs++;
+    if(circuits[containerindex].nsubcircs == 1) {
+        
+        //alloc for the first time
+        circuits[containerindex].subcircuits = (int*)calloc(
+            circuits[containerindex].subcircuits, circuits[containerindex].nsubcircs*sizeof(int));
+    } else {
+        // else reshape
+        circuits[containerindex].subcircuits = (int*)realloc(
+            circuits[containerindex].subcircuits, circuits[containerindex].nsubcircs*sizeof(int));
+    }
+    circuits[containerindex].subcircuits[circuits[containerindex].nsubcircs-1] = index;
     
     
-    //printf("Added maths [%s].\n",type);
     return index;
-    
 }
+
+
 
 
 /***********************************************************************
@@ -309,7 +297,7 @@ int GetCircuitIndex(char* type) {
 }
 */
 
-//connect function
+//connect function source - destination
 int Connect(int c1, int out, int c2, int in) {
   
   circuits[c2].inputs[in] = circuits[c1].outputs[out];
@@ -317,6 +305,7 @@ int Connect(int c1, int out, int c2, int in) {
 
   return 0;
 }
+
 
 
 int SetInput(int c, int inidx, double value){
@@ -328,12 +317,36 @@ int SetInput(int c, int inidx, double value){
 }
 
 
+
+int* GetInputs(int c) {
+    
+    //printf("iscontainer %i\n",circuits[c].isContainer);
+    
+    if(circuits[c].isContainer == 1) {
+        return circuits[c].dummyin;
+    }
+    
+    return circuits[c].oinputs;
+}
+int* GetOutputs(int c) {
+    
+    //printf("iscontainer %i\n",circuits[c].isContainer);
+    
+    if(circuits[c].isContainer == 1) {
+        //printf("returning dummyouts!\n");
+        return circuits[c].dummyout;
+    }
+    return circuits[c].outputs;
+}
+
 int Update(int steps) {
  
     for(int t=0; t<steps; t++) {
     //printf("step %d\n",t);
-
-        for(int i=0; i<GlobalCircuitCounter; i++){
+        
+        circuits[0].updatef( &circuits[0] ); //this way is faster
+        
+/*        for(int i=0; i<GlobalCircuitCounter; i++){
             //printf("circuit[%d] function[%d]\n",i,circuits[i].update);
             //ufunctions[circuits[i].update]( &circuits[i] );
             circuits[i].updatef( &circuits[i] ); //this way is faster
@@ -344,8 +357,9 @@ int Update(int steps) {
                 
             }
         }
+*/        
         
-        //now push all
+        //now push all feeds
         for (int i = 0; i < GlobalChannelCounter; i++)
         {
             GlobalSignals[i] = GlobalBuffers[i];
@@ -359,8 +373,8 @@ int Update(int steps) {
                 }
         }*/ //this is slower than updating all buffers
 
-    GlobalBuffers[0] += dt;
-    GlobalSignals[0] = GlobalBuffers[0];
+        //GlobalBuffers[0] += dt;
+        //GlobalSignals[0] = GlobalBuffers[0];
 
     }
     printf("steps %d\n",steps);
@@ -383,19 +397,42 @@ int Status(void) {
 
 int DebugCircuit(int c){
 
-
+    printf("-------------------------------\n");
   printf("circuit [%i]: %i in  %i out \n",c,circuits[c].nI,circuits[c].nO);
-  for(int i=0; i<circuits[c].nI; i++){
-    printf("  in[%i]: signal[%i] value[%lf] buffered[%lf]\n",i,circuits[c].inputs[i],GlobalSignals[circuits[c].inputs[i]],GlobalBuffers[circuits[c].inputs[i]]);
-  }
+  
+  if(circuits[c].isContainer == 0) {
+      
+      for(int i=0; i<circuits[c].nI; i++){
+        printf("  in[%i]: signal ch[%i] value[%lf] buffered[%lf]\n",i,circuits[c].inputs[i],GlobalSignals[circuits[c].inputs[i]],GlobalBuffers[circuits[c].inputs[i]]);
+      }
 
-  for(int i=0; i<circuits[c].nO; i++){
-    printf(" out[%i]: signal[%i] value[%lf] buffered[%lf]\n",i,circuits[c].outputs[i],GlobalSignals[circuits[c].outputs[i]],GlobalBuffers[circuits[c].outputs[i]]);
+      for(int i=0; i<circuits[c].nO; i++){
+        printf(" out[%i]: signal ch[%i] value[%lf] buffered[%lf]\n",i,circuits[c].outputs[i],
+            GlobalSignals[circuits[c].outputs[i]],GlobalBuffers[circuits[c].outputs[i]]);
+      }
+      
+  } else {
+      
+        printf("   the circuit is a container: \n");
+        for (int i = 0; i < circuits[c].nsubcircs; i++) {
+            printf("  - circuit[%i]\n",circuits[c].subcircuits[i]);
+        }
+        printf("\n");
+        printf("   external inputs: \n");
+        for (int i = 0; i < circuits[c].nI; i++) 
+            printf("  -- dummy ch[%i]\n",circuits[c].dummyin[i]);
+        printf("   external outputs: \n");
+        for (int i = 0; i < circuits[c].nO; i++) 
+            printf("  -- dummy ch[%i]\n",circuits[c].dummyout[i]);
+      
   }
-
+  
   for(int i=0; i< circuits[c].iplen; i++){
     printf("  ip[%i]: value[%i]\n",i,circuits[c].iparams[i]);
   }
+
+
+    printf("-------------------------------\n");
 
   return 0;
 }
