@@ -97,10 +97,11 @@ class Machine(Circuit):
 		
 		self._MetaI = OrderedDict()
 		self.cCoreI = []
-
+		self.cCoreIx= OrderedDict() #dictionary <name,feedindex>
+		
 		self._MetaO = OrderedDict()
 		self.cCoreO = []
-		
+		self.cCoreOx= OrderedDict() #dictionary <name,feedindex>
 		
 		# create a container in the cCore
 		owneridx = -1
@@ -143,8 +144,10 @@ class Machine(Circuit):
 		# get the indexes of input(original) channels
 		dummyins = getins(self.cCoreID) #indexes of the dummy circuits
 		for i in range(len(self.I)):
-			feedin = getins(dummyouts[i])[0]
-			feedout= getouts(dummyouts[i])[0]
+			
+			feedin = getins(dummyins[i])[0]
+			feedout= getouts(dummyins[i])[0]
+			
 			self.I.values()[i].signal.cCoreFEED = feedin
 			self._MetaI.values()[i].signal.cCoreFEED = feedout
 		
@@ -160,7 +163,8 @@ class Machine(Circuit):
 			self.O.values()[i].signal.cCoreFEED = feedout
 			self._MetaO.values()[i].signal.cCoreFEED = feedin
 			
-
+		#print self.I.values(), self.O.values()
+		print 'PY: SetCCoreChannels done!'
 
 	## Fabricator function.
 	# 
@@ -233,7 +237,7 @@ class Machine(Circuit):
 	# \endcode
 	#
 	def AddInput(self, name):
-
+		
 		if name in self.I.keys() or name in self.O.keys():
 			raise NameError("A channel named "+name+" already exists in composite circuit "+ str(self))
 
@@ -242,7 +246,9 @@ class Machine(Circuit):
 		
 		# add the channel also on the cCore
 		self.cCoreI.append(Circuit.cCore.Add_ChannelToContainer(self.cCoreID, 1)) #1 for input
-
+		#print 'out idx:',idx
+		#print 'machine added output: ',idx
+		#self.cCoreI.append(idx) 
 
 
 	## Create an output channel with the given name.
@@ -271,10 +277,10 @@ class Machine(Circuit):
 		self._MetaO[name] = Channel(name,self,True)
 		
 		# add the channel also on the cCore
-		idx = Circuit.cCore.Add_ChannelToContainer(self.cCoreID, 0)#1 for input
+		self.cCoreO.append(Circuit.cCore.Add_ChannelToContainer(self.cCoreID, 0))#1 for input
 		#print 'out idx:',idx
 		#print 'machine added output: ',idx
-		self.cCoreO.append(idx) 
+		#self.cCoreO.append(idx) 
 		
 
 	## \internal
@@ -530,34 +536,63 @@ class Machine(Circuit):
 
 		#if the output is a global, then it means that we want to connect
 		#the global input to input channels in the machine
-
+		
+		ccSrcID = -1
+		ccDstID = -1
+		ccSrcCH = -1
+		ccDstCH = -1
+		
 		#find the output channel
 		if self._IsGlobal(args[0]):
 			#look in MetaI
 			outsignal = self._GetMetaChannel(args[0], ChannelType.Input)
+			
+			print 'PY: connect src - out channel name ',outsignal.name
+			print 'PY: connect src - index ',self.I.keys().index(outsignal.name)
+			ccSrcID = self.cCoreI[self.I.keys().index(outsignal.name)]
+			ccSrcCH = 1 #dummy has only one in and one out!
+			print 'PY: connect src - dummyidx ',ccSrcID
+			print self.cCoreI
+			#the global output is the dummy output
+			
 		else:
+			#otherwise, just look for the channel in the normal circuits
 			outsignal = self._GetInternalChannel(args[0], ChannelType.Output)
-
+			ccSrcID = outsignal.owner.cCoreID
+			ccSrcCH = outsignal.owner.O.keys().index(outsignal.name)
+			
 		
-		print "connecting " + args[0]
+		
 
 		for tag in args[1:]: #for each target input tag
-
+			
+			print "PY: connecting " + args[0] + " -> " + tag
+			
 			# find the target channel
 			if self._IsGlobal(tag):
 				target = self._GetMetaChannel(tag, ChannelType.Output)
+				#print 'PY: connect dst - out channel name ',target.name
+				#print 'PY: connect dst - index ',self.O.keys().index(target.name)
+				ccDstID = self.cCoreO[self.O.keys().index(target.name)]
+				ccDstCH = 0 #dummy has only one in and one out!
+				#print 'PY: connect dst - dummyidx ',ccDstID
+				#the global output is the dummy input
 			else:
 				target = self._GetInternalChannel(tag, ChannelType.Input)
+				ccDstID = target.owner.cCoreID
+				ccDstCH = target.owner.I.keys().index(target.name)
 
 			print "  -> " + tag
 			target.signal = outsignal.signal
 			
 			#connect in cCore: Connect(int c1, int out, int c2, int in)
-			outidx = outsignal.owner.O.keys().index(outsignal.name)
-			inidx = target.owner.I.keys().index(target.name)
-			print 'PY: connecting ',outidx,inidx
+			#outidx = outsignal.owner.O.keys().index(outsignal.name)
+			#inidx = target.owner.I.keys().index(target.name)
+			print 'PY: connecting ',ccSrcID,ccSrcCH,ccDstID,ccDstCH
 			
-			Circuit.cCore.Connect(outsignal.owner.cCoreID,outidx, target.owner.cCoreID, inidx)
+			Circuit.cCore.Connect(ccSrcID,ccSrcCH, ccDstID, ccDstCH)
+
+			print 'PY: connection done!'
 
 	## Disconnect one or more input channels.
 	#

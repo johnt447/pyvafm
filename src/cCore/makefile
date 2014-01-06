@@ -5,7 +5,7 @@ LFLAGS	= -w -lm -shared -fpic -O3 -o vafmcore.so
 
 CIRCUITS = core_container.o core_signals.o core_output.o core_maths.o #core_logic.o  core_filters.o
 
-all: container siggen outputs maths main.o  # core_filters.o  logic.o 
+all: container siggen outputs maths main.o  # filters  logics
 	$(CC) $(LFLAGS) main.o $(CIRCUITS)
 	rm *.o
 	cp vafmcore.so ../.
@@ -16,7 +16,7 @@ outputs:
 	$(CC) $(CFLAGS) core_output.c
 maths: 
 	$(CC) $(CFLAGS) core_maths.c
-logic.o: 
+logics: 
 	$(CC) $(CFLAGS) core_logic.c
 siggen: 
 	$(CC) $(CFLAGS) core_signals.c

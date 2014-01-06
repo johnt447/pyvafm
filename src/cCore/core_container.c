@@ -40,7 +40,7 @@ void ExternalRelay( circuit *c ) {
  * ********************************************************************/
 int Add_Dummy( int container ) {
     
-    //printf("adding dummy\n");
+    printf("adding dummy\n");
     
     circuit c = NewCircuit();
 	
