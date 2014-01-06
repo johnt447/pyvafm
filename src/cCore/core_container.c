@@ -95,7 +95,7 @@ int Add_ChannelToContainer(int c, int isInput) {
  * ******************************************************/
 void ContainerUpdate(circuit* c) {
 	
-	//printf("updating container: %i\n",c->nsubcircs);
+	printf("updating container with %i subcirc\n",c->nsubcircs);
 	
 	//update time
 	GlobalBuffers[circuits[c->dummyout[0]].inputs[0]] += dt;
@@ -104,17 +104,22 @@ void ContainerUpdate(circuit* c) {
 	//relay all external inputs
 	for (int i = 0; i < c->nI; i++)
 	{
+		//the signal of the dummy.out takes the value of the dummy.in
 		GlobalSignals[circuits[c->dummyin[i]].outputs[0]] = GlobalSignals[circuits[c->dummyin[i]].inputs[0]];
 		GlobalBuffers[circuits[c->dummyin[i]].outputs[0]] = GlobalSignals[circuits[c->dummyin[i]].inputs[0]];
 	}
 	
 	
 	for (int i = 0; i < c->nsubcircs; i++) {
-		//printf("   updating: %i\n",c->subcircuits[i]);
+		printf("   updating: %i\n",c->subcircuits[i]);
 		circuits[c->subcircuits[i]].updatef(&(circuits[c->subcircuits[i]]));
-		if(circuits[c->subcircuits[i]].pushed) {
+		//push normal circuits only
+		if(circuits[c->subcircuits[i]].pushed == 1 && circuits[c->subcircuits[i]].nsubcircs == 0) {
 			//update signals
-			
+			printf("   pushing %i\n",c->subcircuits[i]);
+			for (int k = 0; k < circuits[c->subcircuits[i]].nO; k++) {
+				GlobalSignals[circuits[c->subcircuits[i]].outputs[k]] = GlobalBuffers[circuits[c->subcircuits[i]].outputs[k]];
+			}
 			
 		}
 	}
