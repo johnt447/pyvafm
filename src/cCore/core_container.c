@@ -95,7 +95,7 @@ int Add_ChannelToContainer(int c, int isInput) {
  * ******************************************************/
 void ContainerUpdate(circuit* c) {
 	
-	printf("updating container with %i subcirc\n",c->nsubcircs);
+	//printf("updating container with %i subcirc\n",c->nsubcircs);
 	
 	//update time
 	GlobalBuffers[circuits[c->dummyout[0]].inputs[0]] += dt;
@@ -111,12 +111,12 @@ void ContainerUpdate(circuit* c) {
 	
 	
 	for (int i = 0; i < c->nsubcircs; i++) {
-		printf("   updating: %i\n",c->subcircuits[i]);
+		//printf("   updating: %i\n",c->subcircuits[i]);
 		circuits[c->subcircuits[i]].updatef(&(circuits[c->subcircuits[i]]));
 		//push normal circuits only
 		if(circuits[c->subcircuits[i]].pushed == 1 && circuits[c->subcircuits[i]].nsubcircs == 0) {
 			//update signals
-			printf("   pushing %i\n",c->subcircuits[i]);
+			//printf("   pushing %i\n",c->subcircuits[i]);
 			for (int k = 0; k < circuits[c->subcircuits[i]].nO; k++) {
 				GlobalSignals[circuits[c->subcircuits[i]].outputs[k]] = GlobalBuffers[circuits[c->subcircuits[i]].outputs[k]];
 			}
