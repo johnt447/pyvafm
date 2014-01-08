@@ -29,7 +29,7 @@ int Add_waver(int owner) {
     circuit c = NewCircuit();
     
     c.nI = 4;
-    c.nO = 3;
+    c.nO = 2;
     
     
     c.plen = 1;
@@ -56,7 +56,6 @@ void waver( circuit *c ) {
     params[0]: phase
     out[0]: sin
     out[1]: cos
-    out[2]: cos
     */
     //printf("waving...\n");
 

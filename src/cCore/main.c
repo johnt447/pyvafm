@@ -110,11 +110,8 @@ int AllocateCircuits() {
 
   int i=0;
   INIT_MATHS(&i);
-  /*INIT_LOGIC(&i);
-  INIT_SIGNALS(&i);
-  INIT_FILTERS(&i);
-  INIT_OUTPUT(&i);
-*/
+  INIT_LOGIC(&i);
+  INIT_COMPARISON(&i);
   
 
   return 0;
