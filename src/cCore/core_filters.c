@@ -36,7 +36,7 @@ void INIT_FILTERS(int* counter) {
  * params[6] yo
  * params[7] yoo
  * ******************************************************/
-int Add_SKLP(double fcut, double Q, double gain) {
+int Add_SKLP(int owner, double fcut, double Q, double gain) {
 	
 	circuit c = NewCircuit();
 	c.nI = 1;
@@ -61,7 +61,7 @@ int Add_SKLP(double fcut, double Q, double gain) {
 	
 	c.updatef = ufunctions[GetCircuitIndex("SKLP")];
 	
-	int index = AddToCircuits(c);
+	int index = AddToCircuits(c,owner);
 	printf("added SKLP filter\n");
 	return index;
 }

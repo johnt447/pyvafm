@@ -27,7 +27,7 @@ void INIT_LOGIC(int* counter) {
 }
 
 
-int Add_Logic(char* type, int ni) {
+int Add_Logic(int owner, char* type, int ni) {
     
     circuit c = NewCircuit();
 
@@ -42,7 +42,7 @@ int Add_Logic(char* type, int ni) {
     
     c.updatef = ufunctions[template];
     
-    int index = AddToCircuits(c);
+    int index = AddToCircuits(c,owner);
     
     printf("Added logic [%s].\n",type);
     return index;
