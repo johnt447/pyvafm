@@ -1,7 +1,7 @@
 from vafmbase import Circuit
 import math, time
 from vafmcircuits import Machine
-
+from ctypes import c_double
 
 ## \package vafmcircuits_Filters
 # This file contains the Filters
@@ -64,6 +64,12 @@ class SKLP(Circuit):
 		else:
 			raise NameError("Missing fcut!")
 
+		
+		
+		self.cCoreID = Circuit.cCore.Add_SKLP(self.machine.cCoreID,"Add_SKLP", 
+			c_double(self.fc), c_double(self.Q), c_double(self.Gain))
+
+		self.SetInputs(**keys)
 
 		self.wc = 2* math.pi * self.fc * machine.dt
 		self.gamma = self.wc/(2*self.Q)

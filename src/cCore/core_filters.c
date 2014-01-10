@@ -49,7 +49,7 @@ int Add_SKLP(int owner, double fcut, double Q, double gain) {
 	c.updatef = SKLP;
 	
 	int index = AddToCircuits(c,owner);
-	printf("added SKLP filter\n");
+	printf("cCore: added SKLP filter\n");
 	return index;
 }
 
