@@ -37,6 +37,8 @@ class NOT(Circuit):
 		self.AddInput("signal")
 		self.AddOutput("out")
 
+		self.cCoreID = Circuit.cCore.Add_Logic(self.machine.cCoreID,"opNOT",1)
+
 		self.SetInputs(**keys)
 
 	def Initialize (self):
@@ -92,6 +94,8 @@ class AND(Circuit):
 			self.AddInput("in"+str(i+1))
 		
 		self.AddOutput("out")
+
+		self.cCoreID = Circuit.cCore.Add_Logic(self.machine.cCoreID,"opAND",self.factors)
 
 		self.SetInputs(**keys)
 
@@ -157,6 +161,8 @@ class OR(Circuit):
 
 		self.AddOutput("out")
 
+		self.cCoreID = Circuit.cCore.Add_Logic(self.machine.cCoreID,"opOR",self.factors)
+
 		self.SetInputs(**keys)
 
 		self.result = 0
@@ -221,6 +227,8 @@ class XOR(Circuit):
 			self.AddInput("in"+str(i+1))
 		
 		self.AddOutput("out")
+
+		self.cCoreID = Circuit.cCore.Add_Logic(self.machine.cCoreID,"opXOR",self.factors)
 
 		self.SetInputs(**keys)
 
@@ -289,6 +297,8 @@ class NOR(Circuit):
 			self.AddInput("in"+str(i+1))
 
 		self.AddOutput("out")
+
+		self.cCoreID = Circuit.cCore.Add_Logic(self.machine.cCoreID,"opNOR",self.factors)
 
 		self.SetInputs(**keys)
 
