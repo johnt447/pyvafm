@@ -109,6 +109,8 @@ class opSub(Circuit):
 		#create output channels
 		self.AddOutput("out")
 		
+		self.cCoreID = Circuit.cCore.Add_Math(self.machine.cCoreID,"opSUB",2)
+		
 		self.SetInputs(**keys)
 
 	def Initialize (self):
@@ -166,6 +168,8 @@ class opMul(Circuit):
 		#create output channels
 		self.AddOutput("out")
 		
+		self.cCoreID = Circuit.cCore.Add_Math(self.machine.cCoreID,"opMUL",self.factors)
+		
 		self.SetInputs(**keys)
 		
 
@@ -219,6 +223,8 @@ class opDiv(Circuit):
 		
 		#create output channels
 		self.AddOutput("out")
+		
+		self.cCoreID = Circuit.cCore.Add_Math(self.machine.cCoreID,"opDIV",2)
 		
 		self.SetInputs(**keys)
 
@@ -278,6 +284,8 @@ class opLinC(Circuit):
 		
 		#create output channels
 		self.AddOutput("out")
+		
+		self.cCoreID = Circuit.cCore.Add_Math(self.machine.cCoreID,"opLINC",self.factors*2)
 		
 		self.SetInputs(**keys)
 		
