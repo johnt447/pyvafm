@@ -93,7 +93,9 @@ class Machine(Circuit):
 		
 		## Integer number of update steps so far.
 		self._idt = 0;
-
+		
+		if(machine == None):
+			Circuit.cCore.SetTimeStep(c_double(self.dt))
 		
 		self._MetaI = OrderedDict()
 		self.cCoreI = []
@@ -121,6 +123,7 @@ class Machine(Circuit):
 		if 'assembly' in keys.keys():
 			self.Assemble = keys['assembly']
 			self.Assemble(self,**keys)
+
 
 		self.SetInputs(**keys)
 
