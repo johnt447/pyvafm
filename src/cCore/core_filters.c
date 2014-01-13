@@ -166,7 +166,7 @@ int Add_SKBP(int owner, double fcut, double band, double gain) {
     double gamma = fcut/band;
     double wc = 2 * PI * fcut * dt;
     gamma = wc/(2*gamma);
-    double alpha = 1.0f/(1.0f + gamma + wc*wc);
+    double alpha = 1.0/(1.0 + gamma + wc*wc);
     
     c.params[0] = fcut; 
     c.params[1] = band; 
@@ -220,37 +220,38 @@ void SKBP( circuit *c ) {
 * ******************************************************/
 int Add_RCLP(int owner, double fcut, int order) {
 	
-	circuit c = NewCircuit();
-	c.nI = 1;
-	c.nO = 1;
-	
-	c.plen = 6 + order*3;
-	c.params = (double*)calloc(c.plen,sizeof(double));
+    circuit c = NewCircuit();
+    c.nI = 1;
+    c.nO = 1;
+    
+    c.plen = 6 + order*3;
+    c.params = (double*)calloc(c.plen,sizeof(double));
 
-	c.iplen=1;
-	c.iparams = (int*)calloc(c.plen,sizeof(double));
-	
-	fcut = 2*PI*fcut;
+    c.iplen=1;
+    c.iparams = (int*)calloc(c.plen,sizeof(double));
+    
+    fcut = 2*PI*fcut;
     double a = 2*dt*fcut;
     a = a/(1+a);
-	
-	
-	c.params[0] = fcut;
-	c.params[1] = a;
-	c.iparams[0] = order;
+    
+    
+    c.params[0] = fcut;
+    c.params[1] = a;
+    
+    c.iparams[0] = order;
 
-	for (int i=2; i<=(5+order*3); i++){
-		c.params[i] = 0;
-	}
+    for (int i=2; i<=(5+order*3); i++){
+	    c.params[i] = 0;
+    }
 
-	//[2 to order+1] = y
-	//[order+1 to order*2+1] = yo
-	//[order*2+1 to order*3+1] = yoo
+    //[2 to order+1] = y
+    //[order+1 to order*2+1] = yo
+    //[order*2+1 to order*3+1] = yoo
 
 
-	c.updatef = RCLP;
-	int index = AddToCircuits(c,owner);
-	return index;
+    c.updatef = RCLP;
+    int index = AddToCircuits(c,owner);
+    return index;
 }
 
 void RCLP( circuit *c ) {
