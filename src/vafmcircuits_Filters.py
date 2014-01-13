@@ -167,6 +167,8 @@ class SKHP(Circuit):
 		self.cCoreID = Circuit.cCore.Add_SKHP(self.machine.cCoreID,
 			c_double(self.fc), c_double(self.Q), c_double(self.Gain))
 
+		
+
 		"""
 		self.wc = 2* math.pi * self.fc * machine.dt
 		self.gamma = self.wc/(2*self.Q)
@@ -211,7 +213,6 @@ class SKHP(Circuit):
 #
 # \b Initialisation \b parameters:
 # 	- \a gain =  Integer  How much gain the signal will recive 
-# 	- \a Q = the Q value of the filter
 #	- \a fc = the frequency cut off for the circuit
 #	- \a band = The band of frequncies that will be filtered.
 # 	- \a pushed = True|False  push the output buffer immediately if True
@@ -226,7 +227,7 @@ class SKHP(Circuit):
 #\b Examples:
 # \code{.py}
 # machine.AddCircuit(type='SKBP', name='filter', fc=50, band=5, pushed='True')
-# machine.AddCircuit(type='SKBP', name='filter', gain=10, Q=2, fc=50, band=5, pushed='True')
+# machine.AddCircuit(type='SKBP', name='filter', gain=10, fc=50, band=5, pushed='True')
 # \endcode
 #
 class SKBP(Circuit):
