@@ -66,11 +66,12 @@ class SKLP(Circuit):
 
 		
 		
-		self.cCoreID = Circuit.cCore.Add_SKLP(self.machine.cCoreID,"Add_SKLP", 
+		self.cCoreID = Circuit.cCore.Add_SKLP(self.machine.cCoreID,
 			c_double(self.fc), c_double(self.Q), c_double(self.Gain))
 
 		self.SetInputs(**keys)
 
+		"""
 		self.wc = 2* math.pi * self.fc * machine.dt
 		self.gamma = self.wc/(2*self.Q)
 
@@ -82,6 +83,7 @@ class SKLP(Circuit):
 		self.yoo=0
 		self.x = 0
 		self.y = 0
+		"""
 
 	def Initialize (self):
 		
@@ -91,6 +93,8 @@ class SKLP(Circuit):
 		
 		
 	def Update (self):
+		pass
+		"""
 		self.x = self.I["signal"].value 
 
 		self.y = self.Gain*self.wc*self.x + (2.0*self.yo-self.yoo) + self.gamma*self.yoo 
@@ -100,7 +104,7 @@ class SKLP(Circuit):
 
 		self.yoo=self.yo
 		self.yo=self.y
-
+		"""
 
 
 
@@ -160,8 +164,10 @@ class SKHP(Circuit):
 		else:
 			raise NameError("Missing fcut!")
 
+		self.cCoreID = Circuit.cCore.Add_SKHP(self.machine.cCoreID,
+			c_double(self.fc), c_double(self.Q), c_double(self.Gain))
 
-
+		"""
 		self.wc = 2* math.pi * self.fc * machine.dt
 		self.gamma = self.wc/(2*self.Q)
 
@@ -173,7 +179,8 @@ class SKHP(Circuit):
 		self.x = 0
 		self.xo=0
 		self.xoo=0
-
+		"""
+	
 	def Initialize (self):
 		
 		pass
@@ -182,6 +189,8 @@ class SKHP(Circuit):
 		
 		
 	def Update (self):
+		pass
+		"""
 		self.x = self.I["signal"].value 
 		self.y = (2*self.yo-self.yoo) + self.gamma*self.yoo + self.Gain*(self.xoo-2.0*self.xo+self.x);
 		self.y=self.y*self.alpha
@@ -193,7 +202,7 @@ class SKHP(Circuit):
 
 		self.xoo=self.xo
 		self.xo=self.x
-
+		"""
 
 ## \brief Active Band Pass Filter  circuit.
 #
@@ -238,15 +247,7 @@ class SKBP(Circuit):
 		else:
 			print "WARNING! No gain given, using default gain = "+str(self.Gain)
 
-
-		self.Q=math.sqrt(2.0)*0.5
-		if 'Q' in keys.keys():
-			self.Q = keys['Q']
-		else:
-			print "WARNING! No Q give, using default Q = "+str(self.Q)
-
-
-		self.Fcutoff=0
+		self.fc=0
 		if 'fc' in keys.keys():
 			self.fc = keys['fc']
 		else:
@@ -258,6 +259,10 @@ class SKBP(Circuit):
 		else:
 			raise NameError("Missing band!")
 
+		self.cCoreID = Circuit.cCore.Add_SKBP(self.machine.cCoreID,
+			c_double(self.fc), c_double(self.band), c_double(self.Gain))
+
+		"""
 		self.gamma = self.band
 		self.wc = self.fc
 		self.gamma = self.wc/self.gamma
@@ -273,15 +278,17 @@ class SKBP(Circuit):
 		self.x = 0
 		self.xo=0
 		self.xoo=0
-
-	def Initialize (self):
+		"""
 		
+	def Initialize (self):
 		pass
 		
 		
 		
 		
 	def Update (self):
+		pass
+		"""
 		self.x = self.I["signal"].value 
 
 		self.y = self.Gain*self.gamma*(self.x-self.xoo) + self.gamma*self.yoo + (2.0*self.yo-self.yoo)
@@ -295,7 +302,7 @@ class SKBP(Circuit):
 
 		self.xoo=self.xo
 		self.xo=self.x
-
+		"""
 
 ## \brief RC low-pass filter circuit.
 #

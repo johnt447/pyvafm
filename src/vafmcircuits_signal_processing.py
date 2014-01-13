@@ -1,4 +1,5 @@
 from vafmbase import Circuit
+from ctypes import *
 import math
 import vafmcircuits
 
@@ -44,6 +45,9 @@ class gain(Circuit):
 		else:
 			raise NameError("Missing gain parameter!")
 
+		self.cCoreID = Circuit.cCore.Add_Gain(self.machine.cCoreID, c_double(self.gain))
+		
+		self.SetInputs(**keys)
 
 	def Initialize (self):
 
@@ -105,16 +109,21 @@ class minmax(Circuit):
 		self.AddOutput("amp")
 		self.AddOutput("offset")
 
+		self.cCoreID = Circuit.cCore.Add_minmax(self.machine.cCoreID, c_double(self.checktime))
+
 		self.SetInputs(**keys)
+
 		#setting min and max to the first value in the input file
-		self.min=self.I["signal"].value
-		self.max=self.I["signal"].value
+		#self.min=self.I["signal"].value
+		#self.max=self.I["signal"].value
 
 	def Initialize (self):
 
 		pass
 
 	def Update (self):
+		pass
+		"""
 		#if the value is greater or less than min or max then reassign the max and min values
 		if self.I["signal"].value > self.max:
 			self.max=self.I["signal"].value
@@ -141,7 +150,7 @@ class minmax(Circuit):
 
 
 			self.counter=0
-    
+		"""
 
 
 ## \brief Differentation circuit.
