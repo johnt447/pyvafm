@@ -44,7 +44,6 @@ int Add_output(int owner, char* filename, int dump) {
     c.vpparams[0] = (void*)fopen(filename, "w");
 
     c.updatef = output;
-    //c.update = ID_output;
 
     //*** ALLOCATE IN LIST *********************
     int index = AddToCircuits(c, owner);
@@ -80,6 +79,23 @@ int output_register_feed(int outer, int feedid) {
     return 0;
 }
 
+void output_dump( int index ) {
+    
+    //circuits[index].updatef(&(circuits[index]));
+    output_printout( &(circuits[index]) );
+}
+
+void output_printout( circuit *c ) {
+    
+    for(int i=2; i < c->iparams[1]+2; i++){
+        
+        //printf("%lf ",GlobalSignals[c->iparams[i]]);
+        fprintf((c->vpparams[0]), "%15.8lf ", GlobalSignals[c->iparams[i]]);
+        
+    }
+    //printf("\n");
+    fprintf((c->vpparams[0]), "\n");
+}
 
 int output_close(int outer) {
   
@@ -90,14 +106,18 @@ int output_close(int outer) {
 
 void output( circuit *c ) {
 
-  for(int i=2; i < c->iparams[1]+2; i++){
-    //printf("%lf ",GlobalSignals[c->iparams[i]]);
-    fprintf((c->vpparams[0]), "%15.8lf ", GlobalSignals[c->iparams[i]]);
+    if(c->iparams[0] <= 0)
+        return;
     
-  }
-  //printf("\n");
-  fprintf((c->vpparams[0]), "\n");
-  //printf();
+    c->iparams[1]++;
+    
+    if(c->iparams[1] >= c->iparams[0]) {
+        
+        output_printout(c); //do the print out
+        c->iparams[1] = 0;
+    
+    }
+
 }
 
 

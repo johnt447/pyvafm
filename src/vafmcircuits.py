@@ -634,6 +634,16 @@ class Machine(Circuit):
 		
 		ch = self.GetChannel(channel)
 		ch.Set(value)
+		circ = ch.owner
+		
+		key = ch.name
+		
+		if ch.isInput == True:
+			idx = circ.I.keys().index(key) #find the position of the key
+		else:
+			idx = circ.O.keys().index(key)
+		print "PY: setinput "+circ.name+"."+key+": "+str(value),circ.cCoreID,idx
+		Circuit.cCore.SetInput(circ.cCoreID, idx, c_double(value))
 		
 		#print tag,val,ch
 
