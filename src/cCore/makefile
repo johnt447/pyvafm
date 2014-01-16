@@ -5,7 +5,7 @@ LFLAGS	= -w -lm -shared -fpic -O3 -o vafmcore.so
 
 #CIRCUITS = core_container.o core_signals.o core_output.o core_maths.o core_logic.o  core_filters.o
 
-all: container siggen outputs maths logics filters comparison control sigproc main.o 
+all: container siggen outputs maths logics filters comparison control sigproc avg main.o 
 	$(CC) $(LFLAGS) *.o
 	rm *.o
 	cp vafmcore.so ../.
@@ -30,5 +30,7 @@ sigproc:
 	$(CC) $(CFLAGS) core_signalprocessing.c
 container: 
 	$(CC) $(CFLAGS) core_container.c
+avg: 
+	$(CC) $(CFLAGS) core_avg.c
 clean:
 	rm -rf *.o vafmcore.so

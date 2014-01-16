@@ -1,6 +1,7 @@
 from vafmbase import Circuit
 from vafmbase import ChannelType
 from vafmbase import Channel
+from ctypes import c_int
 
 import math
 import numpy
@@ -55,6 +56,13 @@ class avg(Circuit):
 		if 'moving' in keys.keys():
 			self._moving = bool(keys['moving'])
 
+		m = c_int(0);
+		if(self._moving == True):
+			m = c_int(1)
+		
+		self.cCoreID = Circuit.cCore.Add_avg(machine.cCoreID, int(self._steps), m)
+
+		
 		self.SetInputs(**keys)
 
 		self.tot = 0
