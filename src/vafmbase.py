@@ -196,7 +196,7 @@ class Circuit(object):
 				print '   input '+key+' -> '+str(kwargs[key])
 			else:
 				#print the init parameter even if not an input flag
-				print "   " + key + " " + str(kwargs[key])
+				print " ??" + key + " " + str(kwargs[key])
 		
 		if 'pushed' in kwargs.keys():
 			self.pushed = bool(kwargs['pushed'])

@@ -727,6 +727,11 @@ class Machine(Circuit):
 		
 		#for i in range(int(math.floor(dtime/self.dt))): self.Update()
 		Circuit.cCore.Update(c_int(int(math.floor(dtime/self.dt))))
+		
+	def Wait2(self, dtime):
+		
+		for i in xrange(int(math.floor(dtime/self.dt))):
+			Circuit.cCore.Update(1)
 	
 	def WaitPY(self, dtime):
 		

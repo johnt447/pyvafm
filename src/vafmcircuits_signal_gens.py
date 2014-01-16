@@ -124,7 +124,7 @@ class square(Circuit):
 		self.phase = 0
 
 	def Initialize (self):
-
+		
 		pass
 
 

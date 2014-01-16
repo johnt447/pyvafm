@@ -10,26 +10,17 @@ Signal generators circuits definitions.
 
 #ifndef CORESIGNALS
 #include "core_signals.h"
+#define ONEoverTWOPI 0.159154943
+
 #endif
 
-//deprecated
-void INIT_SIGNALS(int* counter) {
-  
-  int i = *counter;
-  
-  pynames[i] = "waver"; ufunctions[i] = waver; i++;  
-  
-  
-  *counter = i;
-
-}
 
 int Add_waver(int owner) {
     
     circuit c = NewCircuit();
     
     c.nI = 4;
-    c.nO = 2;
+    c.nO = 3;
     
     
     c.plen = 1;
@@ -56,6 +47,7 @@ void waver( circuit *c ) {
     params[0]: phase
     out[0]: sin
     out[1]: cos
+    out[2]: cos
     */
     //printf("waving...\n");
 
@@ -64,10 +56,19 @@ void waver( circuit *c ) {
     c->params[0] -= (int)(c->params[0]); //this is slightly faster than floor and itz the same for positive numbers!
     //printf("waving2...\n");
 
-
+    double amp = GlobalSignals[c->inputs[1]];
+    double off = GlobalSignals[c->inputs[3]];
+    
+    
     double phase = 2*PI*(c->params[0]) + GlobalSignals[c->inputs[2]];
-    GlobalBuffers[c->outputs[0]] = GlobalSignals[c->inputs[1]]*sin(phase)+GlobalSignals[c->inputs[3]];
-    GlobalBuffers[c->outputs[1]] = GlobalSignals[c->inputs[1]]*cos(phase)+GlobalSignals[c->inputs[3]];
+    //printf("waving2... %i %lf\n",c->inputs[2],GlobalSignals[c->inputs[2]]);
+    GlobalBuffers[c->outputs[0]] = amp*sin(phase) + off;
+    GlobalBuffers[c->outputs[1]] = amp*cos(phase) + off;
+    
+    phase = c->params[0] + ONEoverTWOPI*GlobalSignals[c->inputs[2]];
+    phase -= (int)(phase);
+    GlobalBuffers[c->outputs[2]] = amp*(phase) + off;
+    //self.O['saw'].value = self.I['amp'].value * (self.machine.time *self.I["freq"].value - math.floor(self.machine.time *self.I["freq"].value)) + self.I['offset'].value
     
 }
 
