@@ -87,3 +87,58 @@ void minmax( circuit *c ) {
 }
 
 
+int Add_derivative(int owner) {
+
+    circuit c = NewCircuit();
+    c.nI = 1;
+    c.nO = 1;
+    
+    c.plen = 2;
+    c.params = (double*)calloc(c.plen,sizeof(double));
+    //[0] is yo, [1] is yoo
+    
+    c.updatef = derivative;
+    
+    int index = AddToCircuits(c, owner);
+    printf("cCore: added derivative circuit\n");
+    return index;
+}
+
+void derivative(circuit *c) {
+    
+    double result = 0.5*(GlobalSignals[c->inputs[0]] - c->params[1]) / dt;
+
+    GlobalBuffers[c->outputs[0]] = result;
+    
+    c->params[1] = c->params[0]; //yoo <- yo
+    c->params[0] = GlobalSignals[c->inputs[0]]; //yo <- input
+    
+}
+
+
+int Add_integral(int owner) {
+
+    circuit c = NewCircuit();
+    c.nI = 1;
+    c.nO = 1;
+    
+    c.plen = 2;
+    c.params = (double*)calloc(c.plen,sizeof(double));
+    //[0] is the accumulated value
+    //[1] is yo
+    
+    c.updatef = integral;
+    
+    int index = AddToCircuits(c, owner);
+    printf("cCore: added derivative circuit\n");
+    return index;
+}
+
+void integral(circuit *c) {
+    
+    c->params[0] += (c->params[1] + GlobalSignals[c->inputs[0]])*dt*0.5;
+    GlobalBuffers[c->outputs[0]] = c->params[0];
+
+    c->params[1] = GlobalSignals[c->inputs[0]];
+    
+}

@@ -185,11 +185,14 @@ class derivative(Circuit):
 		#create output channels
 		self.AddOutput("out")
 
+		self.cCoreID = self.machine.cCore.Add_derivative(self.machine.cCoreID)
+
 		self.SetInputs(**keys)
 
 
 		#@todo i dont understand this it should always be 0 anyway!
 		self.y=self.I["signal"].value
+		self.yo = 0
 
 	def Initialize (self):
 
@@ -198,9 +201,7 @@ class derivative(Circuit):
 
 
 	def Update (self):
-
-
-
+		
 		self.yo=self.y
 		self.y = self.I["signal"].value
 
@@ -240,9 +241,9 @@ class integral(Circuit):
 		#create output channels
 		self.AddOutput("out")
 
+		self.cCoreID = self.machine.cCore.Add_integral(self.machine.cCoreID)
+
 		self.SetInputs(**keys)
-
-
 
 		self.yo=0
 		self.result = 0

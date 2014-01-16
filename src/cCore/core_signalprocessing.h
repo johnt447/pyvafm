@@ -7,5 +7,8 @@ void Gain( circuit *c );
 int Add_minmax(int owner, double checktime);
 void minmax( circuit *c );
 
+void derivative(circuit *c);
+void integral(circuit *c);
+
 
 #endif
