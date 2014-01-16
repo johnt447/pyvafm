@@ -160,8 +160,13 @@ int AddChannels( circuit *c ) {
   GlobalSignals = (double*)realloc(GlobalSignals,sizeof(double)*GlobalChannelCounter);
   GlobalBuffers = (double*)realloc(GlobalBuffers,sizeof(double)*GlobalChannelCounter);
 
-    GlobalSignals[GlobalChannelCounter-1] = 0;
-    GlobalBuffers[GlobalChannelCounter-1] = 0;
+    //zeroes all the new channels
+    for (int i = GlobalChannelCounter-c->nO-c->nI; i < GlobalChannelCounter; i++)
+    {
+        GlobalSignals[i] = 0;
+        GlobalBuffers[i] = 0;
+    }
+    
 
     printf("cCore: Global signals tot: %i\n",GlobalChannelCounter);
 
