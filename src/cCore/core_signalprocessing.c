@@ -130,7 +130,7 @@ int Add_integral(int owner) {
     c.updatef = integral;
     
     int index = AddToCircuits(c, owner);
-    printf("cCore: added derivative circuit\n");
+    printf("cCore: added integral circuit\n");
     return index;
 }
 
@@ -141,4 +141,38 @@ void integral(circuit *c) {
 
     c->params[1] = GlobalSignals[c->inputs[0]];
     
+}
+
+
+int Add_delay(int owner, int nsteps) {
+
+    circuit c = NewCircuit();
+    c.nI = 1;
+    c.nO = 1;
+    
+    c.iplen = 2;
+    c.iparams = (int*)calloc(c.iplen, sizeof(int));
+    c.iparams[0] = nsteps; //number of steps
+    c.iparams[1] = 0; //counter
+    
+    c.plen = nsteps;
+    c.params = (double*)calloc(c.plen,sizeof(double));
+    //[0-nsteps-1] buffered value
+    
+    c.updatef = delay;
+    
+    int index = AddToCircuits(c, owner);
+    printf("cCore: added delay circuit\n");
+    return index;
+}
+
+void delay(circuit *c) {
+    
+    GlobalBuffers[c->outputs[0]] = c->params[c->iparams[1]];
+    c->params[c->iparams[1]] = GlobalSignals[c->inputs[0]];
+    
+    c->iparams[1]++;
+    if(c->iparams[1] >= c->iparams[0]) {
+        c->iparams[1] = 0;
+    }
 }

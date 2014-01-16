@@ -201,14 +201,15 @@ class derivative(Circuit):
 
 
 	def Update (self):
-		
+		pass
+		"""
 		self.yo=self.y
 		self.y = self.I["signal"].value
 
 		result=(self.y-self.yo)/(self.machine.dt)
 
 		self.O['out'].value = result
-		
+		"""
 
 ## \brief Integration circuit.
 #
@@ -256,11 +257,13 @@ class integral(Circuit):
 
 
 	def Update (self):
+		pass
+		"""
+		self.result +=  ( (self.yo + self.I["signal"].value)*(self.machine.dt)*0.5 )
 
-	 		self.result +=  ( (self.yo + self.I["signal"].value)*(self.machine.dt)*0.5 )
-
-			self.O['out'].value = self.result
-			self.yo = self.I["signal"].value
+		self.O['out'].value = self.result
+		self.yo = self.I["signal"].value
+		"""
 
 ## \brief Delay circuit.
 #
@@ -298,24 +301,28 @@ class delay(Circuit):
 		else:
 			raise NameError("Missing DelayTime input!")
 
-		self.steps = self.delaytime/self.machine.dt
-		self.counter = 0
-		self.counteroutput = 0
+		self.steps = int(self.delaytime/self.machine.dt)
+		#self.counter = 0
+		#self.counteroutput = 0
 
-		self.bufferinput = []
-
+		#self.bufferinput = []
+		
+		self.cCoreID = Circuit.cCore.Add_delay(machine.cCoreID, self.steps)
+		
+		self.SetInputs(**keys)
+		
 
 
 
 	def Initialize (self):
-
 		pass
 
 
 
 
 	def Update (self):
-	
+		pass
+		"""
 		if self.counter * self.machine.dt <= self.delaytime:
 			self.O["out"].value = 0
 
@@ -326,7 +333,7 @@ class delay(Circuit):
 			self.O["out"].value = self.bufferinput[self.counteroutput]
 
 			self.counteroutput = self.counteroutput+1
-
+		"""
 
 
 ##\brief Peak Detector circuit.
