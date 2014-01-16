@@ -119,6 +119,8 @@ class square(Circuit):
 
 		self.AddOutput("out")
 
+		self.cCoreID = self.machine.cCore.Add_square(self.machine.cCoreID)
+
 		self.SetInputs(**keys)
 		
 		self.phase = 0

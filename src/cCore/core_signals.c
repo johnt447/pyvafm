@@ -14,7 +14,16 @@ Signal generators circuits definitions.
 
 #endif
 
-
+/*************************************
+    in[0]: freq
+    in[1]: amp
+    in[2]: phi
+    in[3]: offset
+    params[0]: phase
+    out[0]: sin
+    out[1]: cos
+    out[2]: saw
+ * **********************************/
 int Add_waver(int owner) {
     
     circuit c = NewCircuit();
@@ -39,16 +48,7 @@ int Add_waver(int owner) {
 
 void waver( circuit *c ) {
 
-    /*
-    in[0]: freq
-    in[1]: amp
-    in[2]: phi
-    in[3]: offset
-    params[0]: phase
-    out[0]: sin
-    out[1]: cos
-    out[2]: cos
-    */
+
     //printf("waving...\n");
 
     c->params[0] += dt*GlobalSignals[c->inputs[0]];
@@ -71,4 +71,47 @@ void waver( circuit *c ) {
     //self.O['saw'].value = self.I['amp'].value * (self.machine.time *self.I["freq"].value - math.floor(self.machine.time *self.I["freq"].value)) + self.I['offset'].value
     
 }
+
+/*************************************
+    in[0]: freq
+    in[1]: amp
+    in[2]: offset
+    in[3]: duty
+    params[0]: phase
+    out[0]: out
+ * **********************************/
+int Add_square(int owner) {
+    
+    circuit c = NewCircuit();
+    
+    c.nI = 4;
+    c.nO = 1;
+    
+    
+    c.plen = 1;
+    c.params = (double*) calloc(c.plen,sizeof(double));
+    
+    c.updatef = square;
+
+    
+    //*** ALLOCATE IN LIST *********************
+    int index = AddToCircuits(c,owner);
+    
+    printf("cCore: added square wave %d\n",index);
+    
+    return index;
+}
+void square(circuit *c) {
+    
+    c->params[0] += dt*GlobalSignals[c->inputs[0]];
+    c->params[0] -= (int)(c->params[0]);
+    
+    double out = (c->params[0] < GlobalSignals[c->inputs[3]])? 1.0 : 0.0;
+    out = out * GlobalSignals[c->inputs[1]] - GlobalSignals[c->inputs[2]];
+    GlobalBuffers[c->outputs[0]] = out;
+    
+    
+}
+
+
 
