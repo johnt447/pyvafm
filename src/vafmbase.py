@@ -187,16 +187,19 @@ class Circuit(object):
 			
 			if key in self.I.keys():
 				
+				
 				self.I[key].Set(kwargs[key]) #deprecated... sets the value in python!
 				
 				idx = self.I.keys().index(key) #find the position of the key
+				#print "PY: "+key+" is an input channel, calling cCore:",idx,c_double(kwargs[key])
 				Circuit.cCore.SetInput(self.cCoreID, idx, c_double(kwargs[key]))
 				
 				
 				print '   input '+key+' -> '+str(kwargs[key])
 			else:
 				#print the init parameter even if not an input flag
-				print " ??" + key + " " + str(kwargs[key])
+				#print " ??" + key + " " + str(kwargs[key])
+				pass
 		
 		if 'pushed' in kwargs.keys():
 			self.pushed = bool(kwargs['pushed'])

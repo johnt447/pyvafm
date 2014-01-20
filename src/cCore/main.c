@@ -317,10 +317,12 @@ int Connect(int c1, int out, int c2, int in) {
 
 int SetInput(int c, int inidx, double value){
 
-  GlobalSignals[circuits[c].inputs[inidx]] = value;
-  GlobalBuffers[circuits[c].inputs[inidx]] = value;
+    //printf("cCore: set input %i -> %lf \n",circuits[c].inputs[inidx],value);
+
+    GlobalSignals[circuits[c].inputs[inidx]] = value;
+    GlobalBuffers[circuits[c].inputs[inidx]] = value;
   
-  return 0;
+    return 0;
 }
 
 

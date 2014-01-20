@@ -42,15 +42,18 @@ class PI(Circuit):
 		super(self.__class__, self).__init__( machine, name )
 
 		self.AddInput("signal")
+		self.AddInput("set")
 		self.AddInput("Kp")
 		self.AddInput("Ki")
-		self.AddInput("set")
+		
 		
 		self.AddOutput("out")
 
-		self.delta = 0
-		self.integral=0
-		self.oldInt=0
+		#self.delta = 0
+		#self.integral=0
+		#self.oldInt=0
+		
+		self.cCoreID = Circuit.cCore.Add_PI(machine.cCoreID)
 		
 		self.SetInputs(**keys)
 
@@ -61,12 +64,13 @@ class PI(Circuit):
 
 
 	def Update (self):
-
+		pass
+		"""
 		self.delta =  self.I["set"].value - self.I["signal"].value
 		self.integral = self.integral + ( 0.5*(self.oldInt + self.I["Ki"].value*self.delta)*self.machine.dt  )
 		self.O["out"].value = self.delta * self.I["Kp"].value + self.integral
 		self.oldInt = self.I["Ki"].value * self.delta
-
+		"""
 
 ##  \brief PID circuit.
 #
@@ -102,18 +106,20 @@ class PID(Circuit):
 		super(self.__class__, self).__init__( machine, name )
 
 		self.AddInput("signal")
+		self.AddInput("set")
 		self.AddInput("Kp")
 		self.AddInput("Ki")
 		self.AddInput("Kd")
-		self.AddInput("set")
 		self.AddOutput("out")
 
-		self.delta = 0
-		self.integral=0
-		self.oldInt=0
-		self.olddelta = 0
+		#self.delta = 0
+		#self.integral=0
+		#self.oldInt=0
+		#self.olddelta = 0
 		#self.counter = 0 # I didnt see why this was here?
-
+		
+		self.cCoreID = Circuit.cCore.Add_PID(machine.cCoreID)
+		
 		self.SetInputs(**keys)
 
 	def Initialize (self):
