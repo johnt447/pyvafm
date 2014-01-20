@@ -124,7 +124,8 @@ class Machine(Circuit):
 			self.Assemble = keys['assembly']
 			self.Assemble(self,**keys)
 
-
+		
+		self.SetCCoreChannels()
 		self.SetInputs(**keys)
 
 

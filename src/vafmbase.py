@@ -87,14 +87,23 @@ class Channel(object):
 		self.owner = owner
 		self.signal = Feed(owner)
 		self.isInput = isInput
+		self.cisInput = 0;
+		if isInput == True:
+			self.cisInput = 1
+		
 		#self.cCoreID #index of channel in the circuit.inputs[] of cCore
+		self.cCoreCHID = 0
 	
 	#@property
 	def value_get(self):
-		return self.signal.value
+		#return self.signal.value
+		return Circuit.cCore.ChannelToPy(self.owner.cCoreID, self.cCoreCHID, self.cisInput)
 	#@value.setter
 	def value_set(self,value):
-		self.signal.value = value
+		
+		#self.signal.value = value
+		Circuit.cCore.PyToChannel(self.owner.cCoreID, self.cCoreCHID, self.cisInput,c_double(value))
+		
 		#if(self.signal.owner == self.owner):
 		#	self.Push()
 		
@@ -126,6 +135,8 @@ class Circuit(object):
 	#__metaclass__ = abc.ABCMeta;
 	cCoreINIT = False
 	cCore = None
+	#cGetInput = None
+	
 	
 	##\internal
 	## Common contructor for all circuits.
@@ -133,6 +144,8 @@ class Circuit(object):
 	# @param machine Reference to the virtual machine.
 	# @param name Name of this instance.
 	def __init__(self, machine, name):
+		
+		#print "PY: initing Circuit"
 		
 		## Name of the circuit.
 		self.name = name
@@ -167,6 +180,8 @@ class Circuit(object):
 			print 'Initializing the cCore...'
 			Circuit.cCore = cdll.LoadLibrary("./vafmcore.so")
 			Circuit.cCore.INIT()
+			Circuit.cCore.ChannelToPy.restype = c_double
+			
 			
 			Circuit.cCoreINIT = True
 		
@@ -181,7 +196,17 @@ class Circuit(object):
 		
 		print 'PY: circuit '+self.name+'('+self.__class__.__name__+') created.'
 		
-		self.SetCCoreChannels()
+		# setup the cCore ID for the channels
+		for ch in self.I.keys():
+			idx = self.I.keys().index(ch)
+			self.I[ch].cCoreCHID = idx
+			#print "PY: input "+ch+" ID:" +str(idx)
+		for ch in self.O.keys():
+			idx = self.O.keys().index(ch)
+			self.O[ch].cCoreCHID = idx
+			#print "PY: output "+ch+" ID:" +str(idx)
+			
+		#self.SetCCoreChannels()
 		
 		for key in kwargs.keys():
 			
@@ -206,7 +231,7 @@ class Circuit(object):
 			if self.pushed:
 				Circuit.cCore.SetPushed(self.cCoreID, 1);
 			
-	
+		print 'PY: circuit '+self.name+'('+self.__class__.__name__+') inited.'
 	
 	##\internal
 	## Get the feed indexes from the cCore

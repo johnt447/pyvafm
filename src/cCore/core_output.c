@@ -13,20 +13,6 @@ Output circuits definitions.
 
 
 
-//int ID_output;
-
-//deprecated
-void INIT_OUTPUT(int* counter) {
-  
-  int i = *counter;
-  pynames[i] = "output"; ufunctions[i] = output; i++;
-  
-  
-
-  *counter = i;
-  
-}
-
 int Add_output(int owner, char* filename, int dump) {
 
     circuit c = NewCircuit();
@@ -54,21 +40,35 @@ int Add_output(int owner, char* filename, int dump) {
     
 }
 
-int output_register(int outer, int c, int chout) {
+int output_register(int outer, int cindex, int chindex, int isInput) {
 
-  circuits[outer].iparams[1]++;
-  circuits[outer].iplen++;
-  circuits[outer].iparams = (int*)realloc(circuits[outer].iparams,
-			(2+circuits[outer].iparams[1])*sizeof(int));
-  //printf("reallocating to size: %d\n",(2+circuits[outer].iparams[1]));
-  
-
-  circuits[outer].iparams[circuits[outer].iplen-1] = (c == -1)? 0:circuits[c].outputs[chout];
-
-  return 0;
+    circuits[outer].iparams[2]++;
+    circuits[outer].iplen+=3;
+    circuits[outer].iparams = (int*)realloc(circuits[outer].iparams,
+        circuits[outer].iplen*sizeof(int));
+    //printf("reallocating to size: %d\n",(2+circuits[outer].iparams[1]));
+    
+    circuit *owner = &(circuits[cindex]);
+    if(owner->isContainer == 1) {
+        
+        int dummy = (isInput==1)? owner->dummyin[chindex] : owner->dummyout[chindex];
+        circuits[outer].iparams[circuits[outer].iplen-3] = dummy;
+        circuits[outer].iparams[circuits[outer].iplen-2] = 0;
+        circuits[outer].iparams[circuits[outer].iplen-1] = isInput;
+        
+    }
+    else {
+        
+        //circuit ID
+        circuits[outer].iparams[circuits[outer].iplen-3] = cindex;
+        circuits[outer].iparams[circuits[outer].iplen-2] = chindex;
+        circuits[outer].iparams[circuits[outer].iplen-1] = isInput;
+    }
+    
+    return 0;
 }
 
-int output_register_feed(int outer, int feedid) {
+int output_register_feedasd(int outer, int feedid) {
 
     circuits[outer].iparams[2]++;
     circuits[outer].iplen++;
@@ -86,12 +86,29 @@ void output_dump( int index ) {
     output_printout( &(circuits[index]) );
 }
 
-void output_printout( circuit *c ) {
+/*void output_printout( circuit *c ) {
     
     for(int i=3; i < c->iplen; i++){
         
         //printf("%lf ",GlobalSignals[c->iparams[i]]);
         fprintf((c->vpparams[0]), "%15.8lf ", GlobalSignals[c->iparams[i]]);
+        
+    }
+    //printf("\n");
+    fprintf((c->vpparams[0]), "\n");
+}*/
+void output_printout( circuit *c ) {
+    
+    for(int i=3; i < c->iplen; i+=3){
+        
+        //printf("%lf ",GlobalSignals[c->iparams[i]]);
+        int feedidx;
+        if(c->iparams[i+2] == 1) 
+            feedidx = circuits[c->iparams[i]].inputs[c->iparams[i+1]];
+        else
+            feedidx = circuits[c->iparams[i]].outputs[c->iparams[i+1]];
+        
+        fprintf((c->vpparams[0]), "%15.8lf ", GlobalSignals[feedidx]);
         
     }
     //printf("\n");

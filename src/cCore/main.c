@@ -41,7 +41,6 @@ int errorflag = 0;
 
 // *********************************************************
 int AllocateCircuits(void);
-int INIT(void);
 
 
 int INIT(void) {
@@ -325,6 +324,44 @@ int SetInput(int c, int inidx, double value){
     return 0;
 }
 
+double InputToPy(int cindex, int chindex) {
+    printf("cCore: InputToPy reads feed: %d \n",circuits[cindex].inputs[chindex]);
+    return GlobalBuffers[circuits[cindex].inputs[chindex]];
+}
+double ChannelToPy(int cindex, int chindex, int isInput) {
+    
+    int idx;
+    
+    if(isInput == 1) {
+        //printf("cCore: ChannelToPy reads feed: %d \n",idx);
+        idx = circuits[cindex].inputs[chindex];
+        return GlobalSignals[idx];
+        
+    } else {
+        //printf("cCore: ChannelToPy reads feed: %d \n",idx);
+        idx = circuits[cindex].outputs[chindex];
+        return GlobalBuffers[idx];
+    }
+    return 0.0;
+}
+
+int PyToChannel(int cindex, int chindex, int isInput, double value) {
+    
+    int idx;
+    
+    if(isInput == 1) {
+        //printf("cCore: PyToChannel write feed: %d [buff/value]\n",idx);
+        idx = circuits[cindex].inputs[chindex];
+        GlobalBuffers[idx] = value;
+        GlobalSignals[idx] = value;
+    } else {
+        //printf("cCore: PyToChannel write feed: %d [buff]\n",idx);
+        idx = circuits[cindex].outputs[chindex];
+        GlobalBuffers[idx] = value;
+    }
+    
+    return 0;
+}
 
 
 int* GetInputs(int c) {

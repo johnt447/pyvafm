@@ -37,6 +37,7 @@ struct circuit {
 
     //int update;     //index of the update function
     void (*updatef)(circuit*);  //
+    void (*pyupdater)();
 
     int init;       //index of init function
     

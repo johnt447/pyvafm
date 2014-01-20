@@ -89,8 +89,10 @@ class output(Circuit):
 		self.channels.extend(cclist)
 		
 		for ch in cclist:
-			print 'PY: registering feed:',ch.signal.cCoreFEED
-			Circuit.cCore.output_register_feed(self.cCoreID,ch.signal.cCoreFEED)
+			print 'PY: registering channel:',ch.owner.cCoreID,ch.cCoreCHID, ch.cisInput
+			#(int outer, int cindex, int chindex, int isInput)
+			#Circuit.cCore.output_register_feed(self.cCoreID,ch.signal.cCoreFEED)
+			Circuit.cCore.output_register(self.cCoreID,ch.owner.cCoreID,ch.cCoreCHID, ch.cisInput)
 		
 		#else :
 
