@@ -42,7 +42,8 @@ class myCirc(PYCircuit):
 		
 		super(self.__class__, self).__init__( machine, name )
 		
-		self.AddInput("in")
+		self.AddInput("in1")
+		self.AddInput("in2")
 		self.AddOutput("out")
 		
 		
@@ -51,5 +52,5 @@ class myCirc(PYCircuit):
 	
 	def Update(self):
 		
-		self.O["out"].value = self.I["in"].value*1.5
+		self.O["out"].value = self.I["in1"].value*self.I["in2"].value
 		

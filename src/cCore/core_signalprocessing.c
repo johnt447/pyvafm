@@ -103,7 +103,6 @@ int Add_derivative(int owner) {
     printf("cCore: added derivative circuit\n");
     return index;
 }
-
 void derivative(circuit *c) {
     
     double result = 0.5*(GlobalSignals[c->inputs[0]] - c->params[1]) / dt;
@@ -133,7 +132,6 @@ int Add_integral(int owner) {
     printf("cCore: added integral circuit\n");
     return index;
 }
-
 void integral(circuit *c) {
     
     c->params[0] += (c->params[1] + GlobalSignals[c->inputs[0]])*dt*0.5;
@@ -165,7 +163,6 @@ int Add_delay(int owner, int nsteps) {
     printf("cCore: added delay circuit\n");
     return index;
 }
-
 void delay(circuit *c) {
     
     GlobalBuffers[c->outputs[0]] = c->params[c->iparams[1]];
@@ -176,3 +173,61 @@ void delay(circuit *c) {
         c->iparams[1] = 0;
     }
 }
+
+
+int Add_peaker(int owner, int up) {
+
+    circuit c = NewCircuit();
+    c.nI = 1;
+    c.nO = 3;
+    
+    c.iplen = 3;
+    c.iparams = (int*)calloc(c.iplen, sizeof(int));
+    c.iparams[0] = up; //up
+    c.iparams[1] = 0; //counter
+    c.iparams[2] = 0; //tick
+    
+    c.plen = 5;
+    c.params = (double*)calloc(c.plen,sizeof(double));
+    c.params[0] = 0; //y
+    c.params[1] = 0; //yo
+    c.params[2] = 0; //yoo
+    c.params[3] = 0; //delay
+    c.params[4] = 0; //peak
+    //[0-nsteps-1] buffered value
+    
+    c.updatef = peaker;
+    
+    int index = AddToCircuits(c, owner);
+    printf("cCore: added peak detector circuit\n");
+    return index;
+}
+void peaker(circuit *c) {
+    
+        c->params[2] = c->params[1];
+        c->params[1] = c->params[0];
+        c->params[0] = GlobalSignals[c->inputs[0]];
+        c->iparams[2] = 0;
+
+        if(c->params[2] < c->params[1] && c->params[1] > c->params[0] && c->iparams[0]==1) {
+            c->iparams[2] = 1;
+            c->params[4] = c->params[1];
+            c->params[3] = dt*c->iparams[1];
+			c->iparams[1] = 0;
+        }
+        if(c->params[2] > c->params[1] && c->params[1] < c->params[0] && c->iparams[0]!=1) {
+            c->iparams[2] = 1;//self.tick = 1  
+			c->params[4] = c->params[1];//self.peak= self.yo
+            c->params[3] = dt*c->iparams[1];//self.delay = self.counter * self.machine.dt
+            c->iparams[1] = 0;//self.counter = 0
+        }
+        c->iparams[1]++;//self.counter=self.counter + 1
+
+        GlobalBuffers[c->outputs[0]] = c->params[4];//self.O["peak"].value = self.peak
+        GlobalBuffers[c->outputs[1]] = (double)(c->iparams[2]);//self.O["tick"].value = self.tick
+        GlobalBuffers[c->outputs[2]] = c->params[3];//self.O["delay"].value = self.delay
+}
+
+
+
+

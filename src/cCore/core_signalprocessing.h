@@ -10,6 +10,7 @@ void minmax( circuit *c );
 void derivative(circuit *c);
 void integral(circuit *c);
 void delay(circuit *c);
+void peaker(circuit *c);
 
 
 #endif

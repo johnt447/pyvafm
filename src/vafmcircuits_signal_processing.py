@@ -357,10 +357,10 @@ class delay(Circuit):
 #
 # \b Example:
 # \code
-# machine.AddCircuit(type='peakdetector', name='Peaks' , up = 1)
+# machine.AddCircuit(type='peaker', name='Peaks' , up = 1)
 # \endcode
 #
-class peaksdetector(Circuit):
+class peaker(Circuit):
     
     
 	def __init__(self, machine, name, **keys):
@@ -378,11 +378,15 @@ class peaksdetector(Circuit):
 			raise NameError("Missing up or down selection!")
 		
 		self.AddInput("signal")
-		self.AddOutput("tick")
 		self.AddOutput("peak")
+		self.AddOutput("tick")
 		self.AddOutput("delay")
 
+		self.cCoreID = Circuit.cCore.Add_peaker(machine.cCoreID, self.up)
+		
+		self.SetInputs(**keys)
 
+		"""
 		self.counter=0
 		self.yoo=0
 		self.yo=0
@@ -392,14 +396,15 @@ class peaksdetector(Circuit):
 		self.tick = 0
 		self.delay = 0
 		self.startcounter = False
-
+		"""
 
 	def Initialize (self):
-		
 		pass
 
 
 	def Update (self):
+		pass
+		"""
 		self.yoo= self.yo
 		self.yo = self.y
 		self.y= self.I["signal"].value
@@ -422,7 +427,8 @@ class peaksdetector(Circuit):
 		self.O["peak"].value = self.peak
 		self.O["tick"].value = self.tick
 		self.O["delay"].value = self.delay
-
+		"""
+		
 
 ##\brief Phasor circuit.
 ## \image html Phasor.png "schema"
