@@ -461,11 +461,13 @@ class phasor(Circuit):
 		self.AddInput("in2")
 		self.AddOutput("tick")
 		self.AddOutput("delay")
-
+		
 		self.counter= 0
 		self.check = False
-
-
+		
+		self.cCoreID = Circuit.cCore.Add_phasor(machine.cCoreID)
+		
+		self.SetInputs(**keys)
 
 	def Initialize (self):
 
@@ -475,7 +477,8 @@ class phasor(Circuit):
 
 
 	def Update (self):
-		
+		pass
+		"""
 		if	self.I["in1"].value > 0 and self.I["in2"].value < 0:
 			self.counter = self.counter +1
 			self.check= True
@@ -489,7 +492,7 @@ class phasor(Circuit):
 			self.O["delay"].value = self.counter * self.machine.dt
 			self.counter = 0
 			self.check = False
-
+		"""
 
 ##  \brief Limiter circuit.
 #

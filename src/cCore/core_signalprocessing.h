@@ -11,6 +11,7 @@ void derivative(circuit *c);
 void integral(circuit *c);
 void delay(circuit *c);
 void peaker(circuit *c);
+void phasor(circuit *c);
 
 
 #endif

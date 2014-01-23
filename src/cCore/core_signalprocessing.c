@@ -31,31 +31,31 @@ int Add_Gain(int owner, double gain) {
 }
 void Gain( circuit *c ) {
 
-        GlobalBuffers[c->outputs[0]] = GlobalBuffers[c->inputs[0]]* c->params[0];
+    GlobalBuffers[c->outputs[0]] = GlobalBuffers[c->inputs[0]]* c->params[0];
 }
 
 
 int Add_minmax(int owner, double checktime) {
 
-        circuit c = NewCircuit();
-        c.nI = 1;
-        c.nO = 4;
-        
-        c.plen = 2;
-        c.params = (double*)calloc(c.plen,sizeof(double));
-        
-        
-        c.iplen = 2;
-        c.iparams = (int*)calloc(c.iplen,sizeof(int));
-        
-        c.iparams[0] = (int)(floor(checktime/dt)); //checktime in steps
-        c.iparams[1] = 0; //step counter
-        
-        c.updatef = minmax;
-        
-        int index = AddToCircuits(c, owner);
-        printf("added minmax circuit %i\n",c.iparams[0]);
-        return index;
+    circuit c = NewCircuit();
+    c.nI = 1;
+    c.nO = 4;
+    
+    c.plen = 2;
+    c.params = (double*)calloc(c.plen,sizeof(double));
+    
+    
+    c.iplen = 2;
+    c.iparams = (int*)calloc(c.iplen,sizeof(int));
+    
+    c.iparams[0] = (int)(floor(checktime/dt)); //checktime in steps
+    c.iparams[1] = 0; //step counter
+    
+    c.updatef = minmax;
+    
+    int index = AddToCircuits(c, owner);
+    printf("added minmax circuit %i\n",c.iparams[0]);
+    return index;
 }
 void minmax( circuit *c ) {
 
@@ -226,6 +226,67 @@ void peaker(circuit *c) {
         GlobalBuffers[c->outputs[0]] = c->params[4];//self.O["peak"].value = self.peak
         GlobalBuffers[c->outputs[1]] = (double)(c->iparams[2]);//self.O["tick"].value = self.tick
         GlobalBuffers[c->outputs[2]] = c->params[3];//self.O["delay"].value = self.delay
+}
+
+
+int Add_phasor(int owner) {
+
+    circuit c = NewCircuit();
+    c.nI = 2;
+    c.nO = 2;
+    
+    c.iplen = 5;
+    c.iparams = (int*)calloc(c.iplen, sizeof(int));
+    c.iparams[0] = 0; //counter
+    c.iparams[1] = 0; //in1 had wave front
+    c.iparams[2] = 0; //in2 had wave front
+    c.iparams[3] = 0; //in1 was found
+    c.iparams[4] = 0; //in2 was found
+    
+    c.plen = 2;
+    c.params = (double*)calloc(c.plen,sizeof(double));
+    c.params[0] = 0; //in1 old
+    c.params[1] = 0; //in2 old
+
+    //[0-nsteps-1] buffered value
+    
+    c.updatef = phasor;
+    
+    int index = AddToCircuits(c, owner);
+    printf("cCore: added phasor circuit\n");
+    return index;
+}
+void phasor(circuit *c) {
+    
+    int tick = 0;
+    
+    if(GlobalSignals[c->inputs[0]] > 0 && c->params[0] <= 0)
+        c->iparams[1] = 1;
+    
+    if(GlobalSignals[c->inputs[1]] > 0 && c->params[1] <= 0 && c->iparams[1] == 1)
+        c->iparams[2] = 1;
+
+    
+    //if we have front1 but not front 2
+    if( c->iparams[1] == 1 && c->iparams[2] == 0) {
+        c->iparams[0]++; //increment the timer
+    }
+    
+   
+    //if we have both fronts
+    if( c->iparams[1] == 1 && c->iparams[2] == 1) {
+        tick = 1;
+        GlobalBuffers[c->outputs[1]] = dt*c->iparams[0];
+        c->iparams[1] = 0;
+        c->iparams[2] = 0;
+        c->iparams[0] = 0;
+    }
+    
+    c->params[0] = GlobalSignals[c->inputs[0]];
+    c->params[1] = GlobalSignals[c->inputs[1]];
+    
+    GlobalBuffers[c->outputs[0]] = tick;
+
 }
 
 
