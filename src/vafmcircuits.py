@@ -40,6 +40,7 @@ import vafmcircuits_math, vafmcircuits_output, vafmcircuits_signal_gens
 class Machine(Circuit):
 
 	singleton = False
+	main = None
 	#cCore = None
 	
 	
@@ -58,10 +59,17 @@ class Machine(Circuit):
 	def __init__(self, machine=None, name="machine", **keys):
 		
 		
-		if(Machine.singleton and machine == None):
+		if (Machine.singleton == True and machine == None):
 			raise NameError ("ERROR! Only one main machine can be initialised!")
 		
-		Machine.singleton = True
+		if(Machine.singleton == False and machine == None):
+			#if this is the absolute first machine to be added
+			print "Init main machine..."
+			Machine.singleton = True
+			Machine.main = self
+			
+
+		
 		
 		print "init of Machine..."
 		
@@ -728,6 +736,11 @@ class Machine(Circuit):
 		
 		#for i in range(int(math.floor(dtime/self.dt))): self.Update()
 		Circuit.cCore.Update(c_int(int(math.floor(dtime/self.dt))))
+	
+	def WaitSteps(self, nsteps):
+		
+		#for i in range(int(math.floor(dtime/self.dt))): self.Update()
+		Circuit.cCore.Update(c_int(nsteps))
 		
 	def Wait2(self, dtime):
 		

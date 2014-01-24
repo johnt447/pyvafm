@@ -6,13 +6,15 @@ PYINC	= /usr/include/python2.7/
 
 #CIRCUITS = core_container.o core_signals.o core_output.o core_maths.o core_logic.o  core_filters.o
 
-all: container siggen outputs maths logics filters comparison control sigproc avg pyc main.o 
+all: container siggen scanner outputs maths logics filters comparison control sigproc avg pyc main.o 
 	$(CC) $(LFLAGS) *.o
 	rm *.o
 	cp vafmcore.so ../.
 	cp vafmcore.so ../../examples/.
 main.o:
 	$(CC) $(CFLAGS) main.c
+scanner:
+	$(CC) $(CFLAGS) core_scanner.c
 outputs:
 	$(CC) $(CFLAGS) core_output.c
 maths: 
