@@ -12,5 +12,7 @@ void Scanner_DoMoveTo( circuit *c );
 int Scanner_Scan (int index, double x,double y, double z, double v, int points);
 void Scanner_DoScan( circuit *c );
 
+void Scanner_DoMove_RecordF( circuit *c );
+
 
 #endif

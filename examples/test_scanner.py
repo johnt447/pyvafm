@@ -4,7 +4,6 @@ from vafmbase import ChannelType
 from vafmcircuits import Machine
 
 import vafmcircuits
-import vafmcircuits_signal_processing
 import vafmcircuits_Scanner
 
 
@@ -18,22 +17,45 @@ def main():
 	
 	scanner = machine.AddCircuit(type='Scanner',name='scan', pushed=True )
   	
+  	#create a scalar field
+  	machine.AddCircuit(type='opMul',name='mx', in2=19, pushed=True )
+  	machine.AddCircuit(type='opMul',name='my', in2=19, pushed=True )
+  	machine.AddCircuit(type='opSin',name='sinx', pushed=True )
+  	machine.AddCircuit(type='opSin',name='siny', pushed=True )
+  	machine.AddCircuit(type='opAdd',name='add', pushed=True )
 	
+	#debug output
 	out1 = machine.AddCircuit(type='output',name='output',file='test_scanner.log', dump=1)
-	out1.Register('global.time', "scan.x", "scan.y", "scan.z")
-	out2 = machine.AddCircuit(type='output',name='image',file='test_scanner_image.log', dump=0)
-	out2.Register('global.time', "scan.x", "scan.y")
+	out1.Register('global.time', "scan.x", "scan.y", "scan.z", 'add.out')
+	
+	#image output
+	imager = machine.AddCircuit(type='output',name='image',file='test_scanner_image.log', dump=0)
+	imager.Register("scan.x", "scan.y", 'add.out')
 	
 	machine.Connect("scan.record","image.record")
+	machine.Connect("scan.x","mx.in1")
+	machine.Connect("scan.y","my.in1")
+	machine.Connect("mx.out","sinx.signal")
+	machine.Connect("my.out","siny.signal")
+	machine.Connect("sinx.out", "add.in1")
+	machine.Connect("siny.out", "add.in2")
 	
-	#machine.Wait(10)
-	scanner.Move(0.5,1,0,1)
-	scanner.Move(0.5,-0.5,-0.2,1)
-	scanner.Place(0,0.1,0.2)
-	scanner.MoveTo(x=1, v=1)
+	#this will print an empty line after each scanline
+	scanner.Recorder = imager
+	scanner.BlankLines = True 
+	#not necessary, but it makes it easier for gnuplot
 	
+	#resolution of the image [# points per line, # lines]
+	scanner.Resolution = [30,60]
 	
-	#machine.Wait(0.1)
+	#scan
+	scanner.ScanArea()
+	
+	#visualise the image with gnuplot as follows:
+	#set pm3d map
+	#set palette rgbformula 34,35,36
+	#sp'test_scanner_image.log' u 1:2:3
+	
 	
 
 if __name__ == '__main__':

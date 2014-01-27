@@ -32,7 +32,7 @@ int Scanner( int owner ) {
     c.plen = 11;
     c.params = (double*)calloc(c.plen,sizeof(double));
 	
-    c.iplen = 3;
+    c.iplen = 6;
     c.iparams = (int*)calloc(c.iplen,sizeof(int));
    
     c.updatef = Scanner_DoIdle; //this is the default scanner update function
@@ -52,43 +52,11 @@ int Scanner( int owner ) {
  * iparams[1] = elapsed steps
  * iparams[2] = fast scan resolution - points per line
  * iparams[3] = slow scan resolution - lines
+ * iparams[4] = number of steps to wait before activating record
+ * iparams[5] = elapsed steps since the last record event
  * 
  * *************************************/
 
-int Scanner_Move_JT (int index, double x,double y, double z, double v) {
-	
-    circuits[index].updatef = Scanner_DoMove;
-    circuit c = circuits[index];
-    
-    // target x
-    c.params[3] = c.params[0] + x;
-    c.params[4] = c.params[1] + y;
-    c.params[5] = c.params[2] + z;
-
-    c.params[6] = v;
-
-    // direction
-    c.params[7] = 1;
-    c.params[8] = 1;
-    c.params[9] = 1;
-    // check if -ve direction
-    if (c.params[0] > c.params[3]){c.params[7] = -1;}
-    if (c.params[1] > c.params[4]){c.params[8] = -1;}
-    if (c.params[2] > c.params[5]){c.params[9] = -1;}
-
-
-    // find largest step size
-    double stepx = (floor( (x*c.params[7])/ (dt*v) ));
-    double stepy = (floor( (y*c.params[8])/ (dt*v) ));
-    double stepz = (floor( (z*c.params[9])/ (dt*v) ));
-    double steps = stepx;
-    if (stepy > steps) {steps = stepy;}
-    if (stepz > steps) {steps = stepz;}
-
-    c.iparams[0]=steps;
-    c.iparams[1]=0;
-    return steps;
-}
 int Scanner_Move(int index, double x, double y, double z, double v) {
 	
     circuits[index].updatef = Scanner_DoMove;
@@ -116,69 +84,6 @@ int Scanner_Move(int index, double x, double y, double z, double v) {
     circuits[index].params[9] = circuits[index].params[2];
     
     return steps;
-}
-
-void Scanner_DoMove_JT( circuit *c ) {
-	
-    // pos = pos + step*direction
-    c->params[0] = c->params[0] + c->params[6]*dt*c->params[7];
-    c->params[1] = c->params[1] + c->params[6]*dt*c->params[8];
-    c->params[2] = c->params[2] + c->params[6]*dt*c->params[9];
-
-    // if increasing then use these 3 if statements
-    if (c->params[7]==1){
-    if ((c->params[0]) >= (c->params[3]) ) {c->params[0] = c->params[3];}
-    }
-
-    if (c->params[8]==1){
-    if ((c->params[1]) >= (c->params[4]) ) {c->params[1] = c->params[4];}
-    }
-
-
-    if (c->params[9]==1){
-    if ((c->params[2]) >= (c->params[5]) ) {c->params[2] = c->params[5];}
-    }
-
-
-    // if decreasing use these if statements
-    if (c->params[7]==-1){
-    if ((c->params[0]) <= (c->params[3]) ) {c->params[0] = c->params[3];}
-    }
-
-    if (c->params[8]==-1){
-    if ((c->params[1]) <= (c->params[4]) ) {c->params[1] = c->params[4];}
-    }
-
-
-    if (c->params[9]==-1){
-    if ((c->params[2]) <= (c->params[5]) ) {c->params[2] = c->params[5];}
-    }
-
-
-
-
-
-
-    c->iparams[1] = c->iparams[1] + 1;
-    // at the end adjust all the values
-    if (c->iparams[0] == c->iparams[1])
-        {
-            c->params[0] = c->params[3];
-            c->params[1] = c->params[4];
-            c->params[2] = c->params[5];
-        }
-    // idle for the time left
-    if (c->iparams[0] == c->iparams[1]) {c->updatef = Scanner_DoIdle;}
-    
-    //OUTPUT VALUES
-    GlobalBuffers[c->outputs[0]] = c->params[0];
-    GlobalBuffers[c->outputs[1]] = c->params[1];
-    GlobalBuffers[c->outputs[2]] = c->params[2];
-    
-
-    //printf("%f %i %i \n",c->params[0],c->iparams[0],c->iparams[1]);
-
-
 }
 void Scanner_DoMove( circuit *c ) {
 	
@@ -208,33 +113,45 @@ void Scanner_DoMove( circuit *c ) {
 
 
 }
+
+int Scanner_Move_Record(int index, double x, double y, double z, double v, int npts) {
+	
+	//setup a normal move command
+    int steps = Scanner_Move(index,x,y,z,v);
+    
+    //... but use a different update function
+    circuits[index].updatef = Scanner_DoMove_RecordF; //TODO: different for Backward scan!
+    
+    //nuber of steps to wait between record events
+    int dL = (int)(floor((float)steps/(float)npts));
+    circuits[index].iparams[4] = dL;
+    circuits[index].iparams[5] = 0;
+    
+    //record the first point
+    GlobalBuffers[circuits[index].outputs[3]] = 1;
+    
+    //return the number of steps to wait for
+    return steps;
+}
+
 void Scanner_DoMove_RecordF( circuit *c ) {
 	
-	c->iparams[1]++; //increment the elapsed time
+	c->iparams[5]++; //increment the elapsed time between record events
 	
-    // pos = pos + step
-    c->params[0] = c->params[7] + c->iparams[1]*(c->params[3]-c->params[7])/c->iparams[0];
-    c->params[1] = c->params[8] + c->iparams[1]*(c->params[4]-c->params[8])/c->iparams[0];
-    c->params[2] = c->params[9] + c->iparams[1]*(c->params[5]-c->params[9])/c->iparams[0];
-       
-    // at the end adjust all the values to the target
-    if (c->iparams[0] == c->iparams[1]) {
+	Scanner_DoMove(c); //do move normally
+	
+	//if we reached the point where we should record...
+	if(c->iparams[5] == c->iparams[4] || c->iparams[1] == 1) {
 		
-		c->params[0] = c->params[3];
-		c->params[1] = c->params[4];
-		c->params[2] = c->params[5];
-		c->updatef = Scanner_DoIdle; //set idle mode
+		GlobalBuffers[c->outputs[3]] = 1;
+		c->iparams[5] = 0;
+	} else {
+		GlobalBuffers[c->outputs[3]] = 0;
 	}
-    
-    //OUTPUT VALUES
-    GlobalBuffers[c->outputs[0]] = c->params[0];
-    GlobalBuffers[c->outputs[1]] = c->params[1];
-    GlobalBuffers[c->outputs[2]] = c->params[2];
-    
-
-    //printf("%f %i %i \n",c->params[0],c->iparams[0],c->iparams[1]);
-
-
+	if (c->iparams[0] == c->iparams[1]) {
+		GlobalBuffers[c->outputs[3]] = 0;
+	}
+	
 }
 
 
@@ -257,43 +174,6 @@ void Scanner_DoPlace( circuit *c ) {
 
 }
 
-int Scanner_MoveTo_JT (int index, double x,double y, double z, double v) {
-    circuits[index].updatef = Scanner_DoMoveTo;
-    circuit c = circuits[index];
-    
-    double changex = x-c.params[0];
-    double changey = y-c.params[1];
-    double changez = z-c.params[2];
-    // target x
-    c.params[3] = x;
-    c.params[4] = y;
-    c.params[5] = z;
-
-    c.params[6] = v;
-
-    // direction
-    c.params[7] = 1;
-    c.params[8] = 1;
-    c.params[9] = 1;
-    // check if -ve direction
-    if (c.params[0] > c.params[3]){c.params[7] = -1;}
-    if (c.params[1] > c.params[4]){c.params[8] = -1;}
-    if (c.params[2] > c.params[5]){c.params[9] = -1;}
-
-
-    // find largest step size
-    double stepx = abs(floor( (changex)/ (dt*v) ));
-    double stepy = abs(floor( (changey)/ (dt*v) ));
-    double stepz = abs(floor( (changez)/ (dt*v) ));
-
-    double steps = stepx;
-    if (stepy > steps) {steps = stepy;}
-    if (stepz > steps) {steps = stepz;}
-
-    c.iparams[0]=steps;
-    c.iparams[1]=0;
-    return steps;
-}
 int Scanner_MoveTo (int index, double x,double y, double z, double v) {
     
 	//circuits[index].updatef = Scanner_DoMoveTo;
@@ -451,9 +331,6 @@ void Scanner_DoScan( circuit *c )
     if (c->params[9]==-1){
     if ((c->params[2]) <= (c->params[5]) ) {c->params[2] = c->params[5];}
     }
-
-
-
 
 
     c->iparams[1] = c->iparams[1] + 1;
