@@ -579,7 +579,7 @@ class flip(Circuit):
 		self.cCoreID = Circuit.cCore.Add_flip(machine.cCoreID)
 		
 		self.SetInputs(**keys)
-		
+	
 		
 	def Initialize (self):
 		pass

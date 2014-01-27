@@ -15,22 +15,22 @@ Python circuits interface
 int Add_PYCircuit(int* owner, PyObject* self, void (*pyupd)(), int nI, int nO ) {
 	
 	
-	circuit c = NewCircuit();
+    circuit c = NewCircuit();
     c.nI = nI;
     c.nO = nO;
     
     c.plen = 3;
     c.params = (double*)calloc(c.plen,sizeof(double));
 	
-	//c.vplen = 2;
-	//c.vpparams = (void**)malloc(c.vplen*sizeof(PyObject*));
-	//c.vpparams[0] = self; //reference to the python object
-	
-	c.pyupdater = pyupd;
-	//printf("PyC init 1 %ld...\n",(c.pyupdater));
-	//int* (update)(void) = updfun;
-	//c.vpparams[1] = updfun; //reference to its update function
-	//void (*updatef)(circuit*);
+    //c.vplen = 2;
+    //c.vpparams = (void**)malloc(c.vplen*sizeof(PyObject*));
+    //c.vpparams[0] = self; //reference to the python object
+    
+    c.pyupdater = pyupd;
+    //printf("PyC init 1 %ld...\n",(c.pyupdater));
+    //int* (update)(void) = updfun;
+    //c.vpparams[1] = updfun; //reference to its update function
+    //void (*updatef)(circuit*);
 	
     c.updatef = PYUpdate;
     
@@ -45,23 +45,23 @@ int Add_PYCircuit(int* owner, PyObject* self, void (*pyupd)(), int nI, int nO ) 
 
 void PYUpdate(circuit* c) {
 	
-	//printf("cCore: PYCircuit update: %ld...\n",c->pyupdater);
-	
-	c->pyupdater();
-	//printf("cCore: PYCircuit update returned: %d\n",a);
-	
-	
-	/*
-	PyObject *func, *res, *test;
-	printf("PyC update...\n");
-	printf("PyC update 1 %ld...\n",(PyObject*)(c->vpparams[0]));
-	//function getAddress of python object
-	//func = PyObject_GetAttrString((PyObject*)(c->vpparams[0]), "Update");
-	//printf("PyC update 2 %ld...\n",func);
-	
-	PyObject_CallMethod((PyObject*)(c->vpparams[0]), "ASD", "()");
+    //printf("cCore: PYCircuit update: %ld...\n",c->pyupdater);
+    
+    c->pyupdater();
+    //printf("cCore: PYCircuit update returned: %d\n",a);
+    
+    
+    /*
+    PyObject *func, *res, *test;
+    printf("PyC update...\n");
+    printf("PyC update 1 %ld...\n",(PyObject*)(c->vpparams[0]));
+    //function getAddress of python object
+    //func = PyObject_GetAttrString((PyObject*)(c->vpparams[0]), "Update");
+    //printf("PyC update 2 %ld...\n",func);
+    
+    PyObject_CallMethod((PyObject*)(c->vpparams[0]), "ASD", "()");
     //PyObject_CallFunction(func,NULL);
-	printf("PyC update 3...\n");
-	*/
+    printf("PyC update 3...\n");
+    */
 	
 }
