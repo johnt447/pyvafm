@@ -23,6 +23,8 @@ void INIT_MATHS(int* counter) {
     pynames[i] = "opABS"; ufunctions[i] = opABS; i++;
     pynames[i] = "opPOW"; ufunctions[i] = opPOW; i++;
     pynames[i] = "opLINC"; ufunctions[i] = opPOW; i++;
+    pynames[i] = "opSIN"; ufunctions[i] = opSIN; i++;
+    pynames[i] = "opCOS"; ufunctions[i] = opCOS; i++;
 
     MathEnd = i-1;
     *counter = i;
@@ -95,7 +97,7 @@ void opDIV( circuit *c ) {
   GlobalBuffers[c->outputs[0]] = result;
  
 }
-inline void opABS( circuit *c ) {
+void opABS( circuit *c ) {
   
   GlobalBuffers[c->outputs[0]] = fabs(GlobalSignals[c->inputs[0]]);
  
@@ -117,6 +119,18 @@ void opLINC( circuit *c ) {
     }
     
     GlobalBuffers[c->outputs[0]] = result;
+ 
+}
+
+void opSIN( circuit *c ) {
+  
+  GlobalBuffers[c->outputs[0]] = sin(GlobalSignals[c->inputs[0]]);
+ 
+}
+
+void opCOS( circuit *c ) {
+  
+  GlobalBuffers[c->outputs[0]] = cos(GlobalSignals[c->inputs[0]]);
  
 }
 

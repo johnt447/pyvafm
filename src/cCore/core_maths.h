@@ -8,6 +8,7 @@ void opDIV( circuit *c );
 void opABS( circuit *c );
 void opPOW( circuit *c );
 void opLINC( circuit *c );
-
+void opSIN( circuit *c );
+void opCOS( circuit *c );
 
 #endif

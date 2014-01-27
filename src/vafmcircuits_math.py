@@ -414,3 +414,92 @@ class opPow(Circuit):
 		result = math.pow(self.I["signal"].value,  self.power)
 		
 		self.O["out"].value = result
+
+
+## \brief Sin operator circuit.
+#
+# \image html opSin.png "schema"
+# Computes the sine of an input signal
+#
+# \b Initialisation \b parameters:
+# 	- \a pushed = True|False  push the output buffer immediately if True
+#
+# \b Input \b channels:
+# 	- \a signal =  incoming signal
+#
+# \b Output \b channels:
+# 	- \a out = \f$sin(in)\f$
+#
+#\b Examples:
+# \code{.py}
+# machine.AddCircuit(type='opSin', name='sin')
+# \endcode
+#
+class opSin(Circuit):
+    
+    
+	def __init__(self, machine, name, **keys):
+		
+		super(self.__class__, self).__init__( machine, name )
+
+
+		self.AddInput("signal")
+		
+		#create output channels
+		self.AddOutput("out")
+		
+		self.cCoreID = Circuit.cCore.Add_Math(self.machine.cCoreID,"opSIN",1)
+		
+		self.SetInputs(**keys)
+
+	def Initialize (self):
+		
+		pass
+	
+	def Update (self):
+		pass
+
+## \brief Cos operator circuit.
+#
+# \image html opSin.png "schema"
+# Computes the cosine of an input signal
+#
+# \b Initialisation \b parameters:
+# 	- \a pushed = True|False  push the output buffer immediately if True
+#
+# \b Input \b channels:
+# 	- \a signal =  incoming signal
+#
+# \b Output \b channels:
+# 	- \a out = \f$cos(in)\f$
+#
+#\b Examples:
+# \code{.py}
+# machine.AddCircuit(type='opCos', name='cos')
+# \endcode
+#
+class opCos(Circuit):
+    
+    
+	def __init__(self, machine, name, **keys):
+		
+		super(self.__class__, self).__init__( machine, name )
+
+
+		self.AddInput("signal")
+		
+		#create output channels
+		self.AddOutput("out")
+		
+		self.cCoreID = Circuit.cCore.Add_Math(self.machine.cCoreID,"opCOS",1)
+		
+		self.SetInputs(**keys)
+
+	def Initialize (self):
+		
+		pass
+	
+	def Update (self):
+		pass
+
+
