@@ -85,6 +85,11 @@ void output_dump( int index ) {
     //circuits[index].updatef(&(circuits[index]));
     output_printout( &(circuits[index]) );
 }
+void output_dumpmessage( int index, char* message ) {
+    
+    //circuits[index].updatef(&(circuits[index]));
+    fprintf(circuits[index].vpparams[0], "%s\n",message);
+}
 
 /*void output_printout( circuit *c ) {
     

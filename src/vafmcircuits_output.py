@@ -142,6 +142,11 @@ class output(Circuit):
 		
 		self.cCore.output_dump(self.cCoreID)
 		
+	
+	def DumpMessage(self, message):
+		
+		self.cCore.output_dumpmessage(self.cCoreID, c_char_p(message))
+		
 
 	def Initialize (self):
 
