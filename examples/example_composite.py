@@ -28,19 +28,25 @@ def main():
 	#Add Circuits
 	
 	
-  	machine.AddCircuit(type='waver',name='osc', amp=1, freq=1, pushed=True )
+  	osc = machine.AddCircuit(type='waver',name='osc', amp=1, freq=1, pushed=True )
   	
   	compo1 = machine.AddCircuit(type='Machine', name='compo1', assembly=ADC, pushed=True)
   	
-	machine.Connect("osc.sin","compo1.signal1")
-	machine.Connect("osc.cos","compo1.signal2")
-
 	out1 = machine.AddCircuit(type='output',name='output',file='example_composite.log', dump=1)
 	out1.Register('global.time', 'osc.sin', 'osc.cos', 'compo1.out')
 	
-	for i in range(1000):
-	    machine.Update()
-
+	machine.Connect("osc.sin","compo1.signal1")
+	machine.Connect("osc.cos","compo1.signal2")
+	
+	machine.Wait(10)
+	
+	#print compo1.I.keys()
+	#print compo1.cCoreID
+	#print machine.cCoreID
+	
+	#machine.cCore.DebugCircuit(osc.cCoreID);
+	#machine.cCore.DebugCircuit(compo1.cCoreID);
+	#machine.cCore.DebugCircuit(7);
 	
 
 if __name__ == '__main__':

@@ -304,12 +304,47 @@ int GetCircuitIndex(char* type) {
 */
 
 //connect function source - destination
-int Connect(int c1, int out, int c2, int in) {
+int Connect(int c1, int out, int metaSrc, int c2, int in, int metaDst) {
   
-  circuits[c2].inputs[in] = circuits[c1].outputs[out];
-  
+    int *chout, *chin;
 
-  return 0;
+
+    //if the source is a metainput, 
+    if(metaSrc == 1) {
+        chout = &(circuits[circuits[c1].dummyin[out]].outputs[0]);
+    }
+    else {
+        //the source is not a meta, but could be a container external...
+        //if the source is a container, get the dummy out
+        if(circuits[c1].isContainer == 1)
+            chout = &(circuits[circuits[c1].dummyout[out]].outputs[0]);
+        else
+            chout = &(circuits[c1].outputs[out]); //or just a normal output
+    }
+
+    printf("cCore Connecting: SOURCE %i\n",*chout);
+    
+    if(metaDst == 1) {
+        chin = &(circuits[circuits[c2].dummyout[in]].inputs[0]);
+    }
+    else {
+        //if the destination is a container, get the dummy in
+        if(circuits[c2].isContainer == 1) {
+            chin = &(circuits[circuits[c2].dummyin[in]].inputs[0]);
+        }
+        else
+            chin = &(circuits[c2].inputs[in]);
+    }
+
+
+    printf("cCore Connecting: DST %i\n",*chin);
+
+    *chin = *chout;
+    
+    //circuits[c2].inputs[in] = circuits[c1].outputs[out];
+
+
+    return 0;
 }
 
 
@@ -321,6 +356,18 @@ int SetInput(int c, int inidx, double value){
     GlobalSignals[circuits[c].inputs[inidx]] = value;
     GlobalBuffers[circuits[c].inputs[inidx]] = value;
   
+    return 0;
+}
+int SetContainerInput(int c, int inidx, double value){
+
+    //printf("cCore: set input %i -> %lf \n",circuits[c].inputs[inidx],value);
+    int dummy = circuits[c].dummyin[inidx];
+
+    GlobalSignals[circuits[dummy].inputs[0]] = value;
+    GlobalBuffers[circuits[dummy].inputs[0]] = value;
+    GlobalSignals[circuits[dummy].outputs[0]] = value;
+    GlobalBuffers[circuits[dummy].outputs[0]] = value;
+
     return 0;
 }
 
@@ -465,11 +512,16 @@ int DebugCircuit(int c){
         }
         printf("\n");
         printf("   external inputs: \n");
-        for (int i = 0; i < circuits[c].nI; i++) 
-            printf("  -- dummy ch[%i]\n",circuits[c].dummyin[i]);
+        for (int i = 0; i < circuits[c].nI; i++) {
+            printf("  -- dummy ch[%i] - %i %i\n",circuits[c].dummyin[i],
+                circuits[circuits[c].dummyin[i]].inputs[0],circuits[circuits[c].dummyin[i]].outputs[0]);
+        }
         printf("   external outputs: \n");
-        for (int i = 0; i < circuits[c].nO; i++) 
-            printf("  -- dummy ch[%i]\n",circuits[c].dummyout[i]);
+        for (int i = 0; i < circuits[c].nO; i++) {
+            printf("  -- dummy ch[%i] - %i %i\n",circuits[c].dummyout[i],
+                circuits[circuits[c].dummyout[i]].inputs[0],circuits[circuits[c].dummyout[i]].outputs[0]);
+            
+        }
       
   }
   

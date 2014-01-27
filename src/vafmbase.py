@@ -207,6 +207,17 @@ class Circuit(object):
 			#print "PY: output "+ch+" ID:" +str(idx)
 			
 		#self.SetCCoreChannels()
+		self.SetInputs_fromKeys(**kwargs)
+		
+		
+		if 'pushed' in kwargs.keys():
+			self.pushed = bool(kwargs['pushed'])
+			if self.pushed:
+				Circuit.cCore.SetPushed(self.cCoreID, 1);
+			
+		print 'PY: circuit '+self.name+'('+self.__class__.__name__+') inited.'
+	
+	def SetInputs_fromKeys(self, **kwargs):
 		
 		for key in kwargs.keys():
 			
@@ -216,22 +227,18 @@ class Circuit(object):
 				self.I[key].Set(kwargs[key]) #deprecated... sets the value in python!
 				
 				idx = self.I.keys().index(key) #find the position of the key
-				#print "PY: "+key+" is an input channel, calling cCore:",idx,c_double(kwargs[key])
+				print "PY: "+key+" is an input channel, calling cCore:",idx,c_double(kwargs[key])
+				
 				Circuit.cCore.SetInput(self.cCoreID, idx, c_double(kwargs[key]))
 				
 				
-				print '   input '+key+' -> '+str(kwargs[key])
+				print "   input "+key+" -> "+str(kwargs[key])
+				
 			else:
 				#print the init parameter even if not an input flag
-				#print " ??" + key + " " + str(kwargs[key])
+				print " ??" + key + " " + str(kwargs[key])
 				pass
-		
-		if 'pushed' in kwargs.keys():
-			self.pushed = bool(kwargs['pushed'])
-			if self.pushed:
-				Circuit.cCore.SetPushed(self.cCoreID, 1);
-			
-		print 'PY: circuit '+self.name+'('+self.__class__.__name__+') inited.'
+
 	
 	##\internal
 	## Get the feed indexes from the cCore

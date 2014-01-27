@@ -13,7 +13,7 @@ Circuits container definitions.
 
 
 
-int Add_Container(int owner) {
+int Add_Container(int owner, int isMain) {
 	
 	printf("cCore: adding container...\n");
 	
@@ -23,11 +23,11 @@ int Add_Container(int owner) {
 	c.dummyin = (int*)calloc(1,sizeof(int));
 	c.dummyout = (int*)calloc(1,sizeof(int));
 	
-	c.updatef = ContainerUpdate;
+	c.updatef = (isMain == 1)? ContainerUpdate_Main : ContainerUpdate;
 	
 	
 	int index = AddToCircuits(c,owner);
-	printf("cCore: added container %i\n",index);
+	printf("cCore: added container %i (main:%i)\n",index,isMain);
 	return index;
 	
 }
@@ -97,11 +97,7 @@ int Add_ChannelToContainer(int c, int isInput) {
 void ContainerUpdate(circuit* c) {
 	
 	//printf("updating container with %i subcirc\n",c->nsubcircs);
-	
-	//update time
-	GlobalBuffers[circuits[c->dummyout[0]].inputs[0]] += dt;
-	GlobalSignals[circuits[c->dummyout[0]].inputs[0]] += dt;
-	
+		
 	//relay all external inputs
 	for (int i = 0; i < c->nI; i++)
 	{
@@ -110,7 +106,7 @@ void ContainerUpdate(circuit* c) {
 		GlobalBuffers[circuits[c->dummyin[i]].outputs[0]] = GlobalSignals[circuits[c->dummyin[i]].inputs[0]];
 	}
 	
-	
+	//update subcircuits
 	for (int i = 0; i < c->nsubcircs; i++) {
 		//printf("   updating: %i\n",c->subcircuits[i]);
 		circuits[c->subcircuits[i]].updatef(&(circuits[c->subcircuits[i]]));
@@ -132,11 +128,9 @@ void ContainerUpdate(circuit* c) {
 	{
 		
 		idx = circuits[c->dummyout[i]].outputs[0];
-		if(i==0) {
-			
-		
-		}
 		GlobalBuffers[idx] = GlobalSignals[circuits[c->dummyout[i]].inputs[0]];
+		
+		//printf("container relay feed of dummy: %d %d -> %lf\n",c->dummyout[i],idx,GlobalBuffers[idx]);
 		if(c->pushed == 1)
 			GlobalSignals[idx] = GlobalBuffers[idx];
 		
@@ -147,3 +141,24 @@ void ContainerUpdate(circuit* c) {
 	
 	
 }
+
+void ContainerUpdate_Main(circuit* c) {
+	
+	//printf("updating cCore time!\n");
+	//printf("updating cCore time container with %i subcirc\n",c->nsubcircs);
+	//printf("container dummy for time: %d %d\n",c->dummyout[0],circuits[c->dummyout[0]].inputs[0]);
+	//update time
+	GlobalBuffers[circuits[c->dummyout[0]].inputs[0]] += dt;
+	GlobalSignals[circuits[c->dummyout[0]].inputs[0]] += dt;
+	
+	ContainerUpdate(c);
+	
+	//printf("DONE updating cCore time!\n");
+}
+
+void DoNothing(circuit *c) {
+	
+}
+
+
+
