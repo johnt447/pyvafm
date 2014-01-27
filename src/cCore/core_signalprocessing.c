@@ -315,3 +315,33 @@ void limiter(circuit *c) {
 }
 
 
+int Add_flip(int owner) {
+    
+    circuit c = NewCircuit();
+    c.nI = 1;
+    c.nO = 1;
+    
+    c.plen = 1;
+    c.params = (double*)calloc(c.plen,sizeof(double));
+    
+    c.updatef = flip;
+    
+    int index = AddToCircuits(c, owner);
+    printf("cCore: added flip circuit\n");
+    return index;
+    
+}
+void flip(circuit *c) {
+    
+    GlobalBuffers[c->outputs[0]] = 0;
+    
+    if (GlobalSignals[c->inputs[0]] > 0 && c->params[0] < 0) {
+        GlobalBuffers[c->outputs[0]] = 1;
+    }
+    
+    c->params[0] = GlobalSignals[c->inputs[0]];
+    
+}
+
+
+
