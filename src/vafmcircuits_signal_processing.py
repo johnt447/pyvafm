@@ -45,7 +45,7 @@ class gain(Circuit):
 		else:
 			raise NameError("Missing gain parameter!")
 
-		self.cCoreID = Circuit.cCore.Add_Gain(self.machine.cCoreID, c_double(self.gain))
+		self.cCoreID = Circuit.cCore.Add_gain(self.machine.cCoreID, c_double(self.gain))
 		
 		self.SetInputs(**keys)
 
@@ -525,9 +525,11 @@ class limiter(Circuit):
 		super(self.__class__, self).__init__( machine, name )
 
 		self.AddInput("signal")
-		self.AddInput("min")
 		self.AddInput("max")
+		self.AddInput("min")
 		self.AddOutput("out")
+
+		self.cCoreID = Circuit.cCore.Add_limiter(machine.cCoreID)
 
 		self.SetInputs(**keys)
 
@@ -537,10 +539,11 @@ class limiter(Circuit):
 
 
 	def Update (self):
-	
+		pass
+		"""
 		self.O["out"].value =  max(min(self.I["signal"].value, self.I["max"].value), 
 			self.I["min"].value)
-
+		"""
 
 
 ## \brief Flip circuit.

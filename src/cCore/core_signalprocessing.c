@@ -12,7 +12,7 @@ Comparison circuits definitions.
 
 
 
-int Add_Gain(int owner, double gain) {
+int Add_gain(int owner, double gainvalue) {
 
         circuit c = NewCircuit();
         c.nI = 1;
@@ -21,15 +21,15 @@ int Add_Gain(int owner, double gain) {
         c.plen = 1;
         c.params = (double*)calloc(c.plen,sizeof(double));
         
-        c.params[0] = gain;
+        c.params[0] = gainvalue;
         
-        c.updatef = Gain;
+        c.updatef = gain;
         
         int index = AddToCircuits(c, owner);
-        printf("added Gain circuit\n");
+        printf("cCore: added Gain circuit\n");
         return index;
 }
-void Gain( circuit *c ) {
+void gain( circuit *c ) {
 
     GlobalBuffers[c->outputs[0]] = GlobalBuffers[c->inputs[0]]* c->params[0];
 }
@@ -289,6 +289,29 @@ void phasor(circuit *c) {
 
 }
 
+int Add_limiter(int owner) {
 
+    circuit c = NewCircuit();
+    c.nI = 3;
+    c.nO = 1;
+    
+    
+    c.updatef = limiter;
+    
+    int index = AddToCircuits(c, owner);
+    printf("cCore: added limiter circuit\n");
+    return index;
+}
+void limiter(circuit *c) {
+
+    GlobalBuffers[c->outputs[0]] = GlobalSignals[c->inputs[0]];
+    if (GlobalSignals[c->inputs[0]] > GlobalSignals[c->inputs[1]]) {
+        GlobalBuffers[c->outputs[0]] = GlobalSignals[c->inputs[1]];
+    }
+    if (GlobalSignals[c->inputs[0]] < GlobalSignals[c->inputs[2]]) {
+        GlobalBuffers[c->outputs[0]] = GlobalSignals[c->inputs[2]];
+    }
+    
+}
 
 
