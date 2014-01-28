@@ -145,12 +145,22 @@ def aAMPD(compo, **keys):
     
     compo.AddInput("signal")
     compo.AddOutput("amp")
+    compo.AddOutput("norm")
     
     compo.AddCircuit(type='opAbs',name='abs', pushed=True)
     compo.AddCircuit(type='SKLP', name='lp', fcut=keys["fcut"], pushed=True)
-    
+    compo.AddCircuit(type='opDiv', name='nrm', pushed=True)
+    compo.AddCircuit(type='limiter', name='lim', min=-1, max=1, pushed=True)
     
     compo.Connect('global.signal','abs.signal')
     compo.Connect('abs.out','lp.signal')
     compo.Connect('lp.out','global.amp')
+    compo.Connect('global.signal','nrm.in1')
+    compo.Connect('lp.out','nrm.in2')
+    compo.Connect('nrm.out','lim.signal')
+    compo.Connect('lim.out','global.norm')
+    
+    
+    
+    
     
