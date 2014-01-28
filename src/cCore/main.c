@@ -396,15 +396,31 @@ int PyToChannel(int cindex, int chindex, int isInput, double value) {
     
     int idx;
     
-    if(isInput == 1) {
-        //printf("cCore: PyToChannel write feed: %d [buff/value]\n",idx);
-        idx = circuits[cindex].inputs[chindex];
-        GlobalBuffers[idx] = value;
-        GlobalSignals[idx] = value;
-    } else {
-        //printf("cCore: PyToChannel write feed: %d [buff]\n",idx);
-        idx = circuits[cindex].outputs[chindex];
-        GlobalBuffers[idx] = value;
+    //if the circuit is not a container, do as normal
+    if(circuits[cindex].isContainer == 0) {
+    
+        if(isInput == 1) {
+            //printf("cCore: PyToChannel write feed: %d [buff/value]\n",idx);
+            idx = circuits[cindex].inputs[chindex];
+            GlobalBuffers[idx] = value;
+            GlobalSignals[idx] = value;
+        } else {
+            //printf("cCore: PyToChannel write feed: %d [buff]\n",idx);
+            idx = circuits[cindex].outputs[chindex];
+            GlobalBuffers[idx] = value;
+        }
+    
+    }
+    else {
+        //if it is a container...
+        
+        if(isInput == 1) { //and an input
+            //printf("cCore: PyToChannel write feed: %d [buff/value]\n",idx);
+            idx = circuits[circuits[cindex].dummyin[chindex]].inputs[0];
+            GlobalBuffers[idx] = value;
+            GlobalSignals[idx] = value;
+                    }
+        
     }
     
     return 0;

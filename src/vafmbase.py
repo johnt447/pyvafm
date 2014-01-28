@@ -102,6 +102,7 @@ class Channel(object):
 	def value_set(self,value):
 		
 		#self.signal.value = value
+		#print "setting channel: ",self.owner.cCoreID, self.cCoreCHID,self.cisInput,c_double(value)
 		Circuit.cCore.PyToChannel(self.owner.cCoreID, self.cCoreCHID, self.cisInput,c_double(value))
 		
 		#if(self.signal.owner == self.owner):
@@ -114,8 +115,9 @@ class Channel(object):
 	def Push(self):
 		self.signal.Push()
 	
-	def Set(self, value):
-		self.signal.PushValue(value)
+	def Set(self, newvalue):
+		#self.signal.PushValue(value)
+		self.value = newvalue
 
 
 	## Renew the Feed object so that it is disconnected from everything.
