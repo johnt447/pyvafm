@@ -1,6 +1,6 @@
 from vafmbase import Circuit
 import math, time
-from vafmcircuits import Machine
+#from vafmcircuits import Machine
 from ctypes import c_double
 
 ## \package vafmcircuits_Filters

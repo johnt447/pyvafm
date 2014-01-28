@@ -1,11 +1,7 @@
-from vafmbase import Circuit
+#from vafmbase import Circuit
 from vafmcircuits import Machine
 import math
 
-import vafmcircuits_Filters
-import vafmcircuits_math
-import vafmcircuits_control
-import vafmcircuits_signal_processing
 
 ## \package customs_pll
 # Contain the assembly functions for composite PLL circuits.
@@ -70,7 +66,7 @@ def aPLL(compo,**keys):
   	compo.AddCircuit(type='opMul',name='pfd', pushed=True)
   	for i in range(len(filters)):
 		f = filters[i]
-		compo.AddCircuit(type='ActiveLowPass',name='lp'+str(i+1),fcut=f, pushed=True)
+		compo.AddCircuit(type='SKLP',name='lp'+str(i+1),fcut=f, pushed=True)
 	    
   	compo.AddCircuit(type='PI',name='pump', Kp=keys['Kp'],Ki=keys['Ki'], set=0, pushed=True)
 	compo.AddCircuit(type='gain',name='dfgain', gain=keys['gain'], pushed=True)
@@ -101,3 +97,60 @@ def aPLL(compo,**keys):
 	#out1.Register('global.time',"lp"+str(len(filters))+".out",'pump.out',"global.df")
 
 	print "analog PLL assembled!"
+
+def dPFD(compo,**keys):
+	
+    # I/O
+    compo.AddInput("ref")
+    compo.AddInput("vco")
+    compo.AddInput("f0")
+    
+    compo.AddOutput("sin")
+    compo.AddOutput("cos")
+    compo.AddOutput("df")
+    compo.AddOutput("dbg")
+    
+    
+    #filters = keys['filters']
+    #print "prefilters cutoffs: ",filters
+    
+    compo.AddCircuit(type='DRFlipFlop',name='ffdr1', D=1, pushed=True)
+    compo.AddCircuit(type='DRFlipFlop',name='ffdr2', D=1, pushed=True)
+    
+    compo.AddCircuit(type='AND',name='and', pushed=True)
+    compo.AddCircuit(type='flip',name='norflp', pushed=True)
+    
+    compo.AddCircuit(type='opSub',name='sub', pushed=True)
+    compo.AddCircuit(type='gain',name='dfgain', gain=keys["gain"], pushed=True)
+	
+    compo.AddCircuit(type='SKLP',name='lowpass', fcut=keys["fcut"], pushed=True)
+    
+
+    
+    #connections
+    compo.Connect("global.ref","ffdr1.clock")
+    compo.Connect("global.vco","ffdr2.clock")
+    compo.Connect("ffdr1.Q","and.in1")
+    compo.Connect("ffdr2.Q","and.in2")
+    compo.Connect("and.out","norflp.signal")
+    compo.Connect("norflp.tick","ffdr1.R","ffdr2.R")
+    compo.Connect("ffdr1.Q","sub.in1")
+    compo.Connect("ffdr2.Q","sub.in2")
+    compo.Connect("sub.out","global.dbg")
+
+    print "digital PFD assembled!"
+
+
+def aAMPD(compo, **keys):
+    
+    compo.AddInput("signal")
+    compo.AddOutput("amp")
+    
+    compo.AddCircuit(type='opAbs',name='abs', pushed=True)
+    compo.AddCircuit(type='SKLP', name='lp', fcut=keys["fcut"], pushed=True)
+    
+    
+    compo.Connect('global.signal','abs.signal')
+    compo.Connect('abs.out','lp.signal')
+    compo.Connect('lp.out','global.amp')
+    

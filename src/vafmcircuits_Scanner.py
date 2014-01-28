@@ -2,8 +2,6 @@
 import math
 from vafmbase import Circuit
 import math
-import vafmcircuits_Logic
-from vafmcircuits import Machine
 from ctypes import *
 
 class Scanner(Circuit):

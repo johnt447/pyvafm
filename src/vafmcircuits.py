@@ -12,7 +12,10 @@ from vafmbase import Channel
 from ctypes import *
 import threading
 
-import vafmcircuits_math, vafmcircuits_output, vafmcircuits_signal_gens
+import vafmcircuits_math, vafmcircuits_output, vafmcircuits_signal_gens, vafmcircuits_Cantilever
+import vafmcircuits_Logic, vafmcircuits_Filters, vafmcircuits_control
+import vafmcircuits_signal_processing, vafmcircuits_Scanner, vafmcircuits_FlipFlop
+
 
 ## \package vafmcircuits
 # \brief This file contains the main Machine circuit.

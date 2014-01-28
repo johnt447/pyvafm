@@ -1,7 +1,7 @@
 from vafmbase import Circuit
 import math
-import vafmcircuits_Logic
-from vafmcircuits import Machine
+
+#from vafmcircuits import Machine
 
 ## \package vafmcircuits_FlipFlop
 # This file contains the flip flop circuits.
