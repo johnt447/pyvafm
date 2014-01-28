@@ -20,7 +20,7 @@ Cantilever circuits definitions.
  * inputs[0] = holderz
  * inputs[1] = fz
  * inputs[2] = exciterforce
- * outputs[0] = ztip
+ * outputs[0] = ztip - relative to canti
  * outputs[1] = zabs
  * outputs[2] = vz
  * 

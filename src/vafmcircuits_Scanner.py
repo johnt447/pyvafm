@@ -1,7 +1,6 @@
 # -*- coding:utf-8 -*-
 import math
 from vafmbase import Circuit
-import math
 from ctypes import *
 
 class Scanner(Circuit):

@@ -56,7 +56,7 @@ class Cantilever(Circuit):
 		self.AddOutput("zabs")
 		self.AddOutput("vz")
 
-		self.cCoreID = Circuit.cCore.Add_Cantilever(self.machine.cCoreID,
+		self.cCoreID = Circuit.cCore.Add_Cantilever(self.machine.cCoreID,        #CAREFUL HERE!
 			c_double(Q),c_double(k),c_double(M),c_double(F), c_double(startingz), c_double(0.0) )
 
 		self.SetInputs(**keys);
