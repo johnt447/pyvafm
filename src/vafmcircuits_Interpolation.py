@@ -7,12 +7,7 @@
 import numpy
 import math
 from vafmbase import Circuit
-import math
-import vafmcircuits_Logic
-from vafmcircuits import Machine
 from scipy.interpolate import LinearNDInterpolator
-import os
-import re
 import ctypes
 
 ## \brief Tri-linear interpolation circuit.
@@ -60,8 +55,8 @@ class i3Dlin(Circuit):
 		else:
 			raise NameError("No filename entered ")
 
-		if 'components' in keys.keys():
-			components = keys['components']
+		if 'comp' in keys.keys():
+			components = keys['comp']
 			print "components = " +str(components)
 		else:
 			raise NameError("No components entered ")
@@ -103,7 +98,7 @@ class i3Dlin(Circuit):
 		comp = [ [] for _ in range( components ) ]
 		pos = [ [] for _ in range( dim ) ]
 
-		f = open(os.path.join('./Force',filename), "r")
+		f = open(filename, "r")
 		for line in f:
 			for i in range(0,components):
 				comp[i].append( float(line.split()[i + dim]) )
@@ -114,7 +109,7 @@ class i3Dlin(Circuit):
 
 
 		Circuit.cCore.Add_i3Dlin.argtypes = [ctypes.c_int #Core Id
-			,ctypes.POINTER(ctypes.c_float) #testarr
+			,ctypes.POINTER(ctypes.c_double) #testarr
 			,ctypes.c_int #size
 			,ctypes.c_int #components
 
@@ -128,11 +123,15 @@ class i3Dlin(Circuit):
 
 			,ctypes.c_int #sizex
 			,ctypes.c_int #sizey
-			,ctypes.c_int] #sizez
+			,ctypes.c_int #sizez
+
+			,ctypes.c_double #xmax
+			,ctypes.c_double #ymax
+			,ctypes.c_double] #zmax 
 
 		size = len(comp[0])
 		coord=[]
-		for i in range(0,dim):
+		for i in range(0,components):
 			for j in range(0,size):
 					coord.append(comp[i][j])
 
@@ -140,12 +139,20 @@ class i3Dlin(Circuit):
 		ymin = pos[1][0]
 		zmin = pos[2][0]
 
-		sizey = int(pos[2][-1]/zstep - pos[2][0]/zstep +1 )
+
+		xmax = pos[0][-1]
+		ymax = pos[1][-1]
+		zmax = pos[2][-1]
+
+
+		sizey = int(pos[2][-1]/zstep - pos[2][0]/zstep +1 )*components
 		sizex = int( (pos[1][-1]/ystep - pos[1][0]/ystep+1) * sizey +1 )
 
 		sizez = int(len(pos[2]))
 
-		test_arr = (ctypes.c_float * len(coord))(*coord)
+
+
+		test_arr = (ctypes.c_double * len(coord))(*coord)
 		self.cCoreID = Circuit.cCore.Add_i3Dlin(machine.cCoreID
 			 , test_arr
 			 , size
@@ -158,9 +165,10 @@ class i3Dlin(Circuit):
 			 , ctypes.c_double(zmin)
 			 , sizex
 			 , sizey
-			 , sizez)
+			 , sizez
+			 , ctypes.c_double (xmax)
+			 , ctypes.c_double(ymax)
+			 , ctypes.c_double(zmax))
 
 		self.SetInputs(**keys)
-
-
 

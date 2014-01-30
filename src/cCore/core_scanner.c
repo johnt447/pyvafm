@@ -142,7 +142,7 @@ void Scanner_DoMove_RecordF( circuit *c ) {
 	
 	//if we reached the point where we should record...
 	if(c->iparams[5] == c->iparams[4] || c->iparams[1] == 1) {
-		
+		printf(".");
 		GlobalBuffers[c->outputs[3]] = 1;
 		c->iparams[5] = 0;
 	} else {
@@ -150,6 +150,7 @@ void Scanner_DoMove_RecordF( circuit *c ) {
 	}
 	if (c->iparams[0] == c->iparams[1]) {
 		GlobalBuffers[c->outputs[3]] = 0;
+		printf("\n");
 	}
 	
 }

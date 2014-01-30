@@ -45,7 +45,7 @@ int AllocateCircuits(void);
 
 int INIT(void) {
   
-
+    srand(time(NULL));
     AllocateCircuits();
   
     

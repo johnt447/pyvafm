@@ -1,5 +1,6 @@
 from vafmbase import Circuit
 import math
+from ctypes import c_double
 
 ## \package vafmcircuits_math
 # This file contains the basic arithmetic operator circuits.
@@ -501,5 +502,63 @@ class opCos(Circuit):
 	
 	def Update (self):
 		pass
+
+
+class Perlin(Circuit):
+	
+	def __init__(self, machine, name, **keys):
+		
+		super(self.__class__, self).__init__( machine, name )
+
+		
+		if "octaves" in keys.keys():
+			self.octaves = int(keys["octaves"])
+		else:
+			raise ValueError("ERROR: number of octaves not specified!")
+
+		self.amp = 1
+		if "amp" in keys.keys():
+			self.amp = float(keys["amp"])
+		else:
+			print "WARNING: Perlin amplitude not specified, assuming 1."
+		
+		if "persist" in keys.keys():
+			self.persist = float(keys["persist"])
+		else:
+			raise ValueError("ERROR: persistance not specified!")
+
+		if "period" in keys.keys():
+			self.period = float(keys["period"])
+		else:
+			raise ValueError("ERROR: period not specified!")
+
+		
+		self.AddInput("signal")
+		
+		#create output channels
+		self.AddOutput("out")
+		
+		self.cCoreID = Circuit.cCore.Add_Perlin(self.machine.cCoreID,
+			c_double(self.amp),c_double(self.persist),self.octaves, c_double(self.period))
+		
+		self.SetInputs(**keys)
+
+	def Initialize (self):
+		
+		pass
+	
+	def Update (self):
+		pass
+	
+	
+	
+
+
+
+
+
+
+
+
 
 

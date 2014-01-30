@@ -48,13 +48,13 @@ class Scanner(Circuit):
 
 	def Move(self, x = 0, y = 0, z = 0, v = 1): #default arguments, make the input lighter
 		steps = Circuit.cCore.Scanner_Move(self.cCoreID, c_double(x), c_double(y) ,c_double(z),c_double(v) )
-		Machine.main.WaitSteps(steps)
+		self.machine.main.WaitSteps(steps)
 		print "Scanner moved by " +str(x) + "," + str(y)+ "," + str(z)
 
 	def Place(self,x,y,z): #all parameters required
 		
 		steps = Circuit.cCore.Scanner_Place(self.cCoreID, c_double(x), c_double(y), c_double(z) )
-		Machine.main.WaitSteps(1)
+		self.machine.main.WaitSteps(1)
 		print "Scanner Placed at " +str(x) + "," + str(y)+ "," + str(z)
 
 	def MoveTo(self,**kw):
@@ -133,8 +133,8 @@ class Scanner(Circuit):
 	## Set the size of the image along the fast and slow scan directions
 	def ImageArea(self, fast, slow):
 		
-		self.imagesize[0] = fast
-		self.imagesize[1] = slow
+		self.ImageSize[0] = fast
+		self.ImageSize[1] = slow
 
 	def ScanArea(self):
 		
@@ -156,29 +156,34 @@ class Scanner(Circuit):
 		#loop for each scanline to take
 		for linenum in range(1,self.Resolution[1]+1):
 			
-			#print "starting line pos: ",params[0:3]
+			print "PY Scanner: starting line..."
 			
 			#move to the end of fast scanline
 			steps = Circuit.cCore.Scanner_Move_Record(self.cCoreID, dfast[0],dfast[1],dfast[2],
 				c_double(self.FastSpeed), c_int(self.Resolution[0]) )
-			Machine.main.WaitSteps(steps)
+			self.machine.main.WaitSteps(steps)
+			
+			print "PY Scanner: done. Repositioning..."
 			
 			if self.BlankLines == True and self.Recorder != None:
 				self.Recorder.DumpMessage("")
+			
 			
 			#move to initial pos + step along slowscan
 			repos = [c_double(x0[i]+linenum*dslow[i]) for i in range(3)]
 			#print "repositioning: ",repos
 			steps = Circuit.cCore.Scanner_MoveTo(self.cCoreID, repos[0], repos[1], repos[2],
 				c_double(self.SlowSpeed))
-			Machine.main.WaitSteps(steps)
+			self.machine.main.WaitSteps(steps)
+			print "PY Scanner: done."
 			
 		
 		#now go back to the original position
+		print "PY Scanner: Moving to starting location..."
 		repos = [c_double(x0[i]) for i in range(3)]
 		steps = Circuit.cCore.Scanner_MoveTo(self.cCoreID, repos[0], repos[1], repos[2],
 				c_double(self.SlowSpeed))
-		Machine.main.WaitSteps(steps)
+		self.machine.main.WaitSteps(steps)
 		
 		print "done!"
 
