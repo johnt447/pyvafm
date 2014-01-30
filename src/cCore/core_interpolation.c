@@ -54,8 +54,6 @@ int Add_i3Dlin( int owner, double* pointer, int size, int components,
 
 }
 
-
-
 void i3Dlin( circuit *c )
  {
     if (c->iparams[5] != 0){
@@ -179,3 +177,95 @@ void i3Dlin( circuit *c )
 
     c->iparams[5]++;
 }
+
+
+/******************************************************
+ * inputs[0] = coordinate x
+ * outputs[0-dim-1] = interpolated vector field
+ * params[0] = dx grid step
+ * params[1] = size of box
+ * iparams[0] = number of points
+ * iparams[1] = number of components
+ * iparams[2] = periodic 0|1
+ * ***************************************************/
+int Add_i1Dlin( int owner, int components, double dx, int pbc) {
+	
+    circuit c = NewCircuit();
+
+    c.nI = 1;
+    c.nO = components;
+	
+	c.plen = 2;
+	c.params = (double*)calloc(c.plen,sizeof(double));
+	c.params[0] = dx;
+	c.params[1] = dx*2;
+	
+	c.iplen = 2;
+	c.iparams = (int*)calloc(c.iplen,sizeof(int));
+	c.iparams[0] = 2;
+	c.iparams[1] = components;
+	c.iparams[2] = pbc;
+	
+	c.vplen = components;
+	c.vpparams = (void**)malloc(c.vplen*sizeof(double*));
+	for (int i = 0; i < c.vplen; i++) {
+		c.vpparams[i] = (double*)calloc(2,sizeof(double)); //this contains the data - just 2 points
+	}
+	
+    c.updatef = i1Dlin_periodic;
+    
+    int index = AddToCircuits(c,owner);
+    
+    printf("cCore: Added 1D interpolator.\n");
+    return index;
+	
+}
+void i1Dlin_SetData(int index, int c, double* data, int npts) {
+	
+	circuits[index].iparams[0] = npts;
+	circuits[index].params[1] = npts*circuits[index].params[0];
+	
+	//reallocate with the correct size
+	circuits[index].vpparams[c] = realloc(circuits[index].vpparams[c],npts*sizeof(double));
+	//easy pointer that is the same as vpparams, but itz double*
+	double *writer = (double*)circuits[index].vpparams[c];
+	
+	for(int i=0; i<npts; i++) {
+		writer[i] = data[i];
+	}
+}
+void i1Dlin_periodic(circuit* c) {
+	
+	double x = GlobalSignals[c->inputs[0]];
+	x -= floor(x/c->params[1])*c->params[1]; //pbc 
+	
+	/*else {
+		if(x > c->iparams[0]*c->params[0]) {
+			for (int i = 0; i < c->iparams[1]; i++) {
+				GlobalBuffers[c->outputs[i]] = 0;
+			}
+		}
+	}*/
+	
+	int idx = floor(x/c->params[0]); //index of the left gridpoint
+	int idxp= idx+1; //index of the right gridpoint
+	if (idxp == c->iparams[0]) {
+		idxp = 0; //take the first 
+	}
+	
+	double t = idx*c->params[0]; //position of left gridpoint
+	t = (x-t)/c->params[0]; // interpolation coordinate
+	
+	double result, *w;
+	for (int i = 0; i < c->iparams[1]; i++) {
+		w = (double*)c->vpparams[i];
+		
+		result = t*w[idxp] + (1.0-t)*w[idx];
+		GlobalBuffers[c->outputs[i]] = result;
+	}
+		
+	//printf("interpolation: %lf %d \n",x,idx);
+	
+}
+
+

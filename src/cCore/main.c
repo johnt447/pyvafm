@@ -322,7 +322,7 @@ int Connect(int c1, int out, int metaSrc, int c2, int in, int metaDst) {
             chout = &(circuits[c1].outputs[out]); //or just a normal output
     }
 
-    printf("cCore Connecting: SOURCE %i\n",*chout);
+    //printf("cCore Connecting: SOURCE %i\n",*chout);
     
     if(metaDst == 1) {
         chin = &(circuits[circuits[c2].dummyout[in]].inputs[0]);
@@ -337,7 +337,7 @@ int Connect(int c1, int out, int metaSrc, int c2, int in, int metaDst) {
     }
 
 
-    printf("cCore Connecting: DST %i\n",*chin);
+    //printf("cCore Connecting: DST %i\n",*chin);
 
     *chin = *chout;
     

@@ -665,7 +665,7 @@ class Machine(Circuit):
 
 		for tag in args[1:]: #for each target input tag
 			
-			print "PY: connecting " + args[0] + " -> " + tag
+			#print "PY: connecting " + args[0] + " -> " + tag
 			
 			# find the target channel
 			metaDst = 0
@@ -680,18 +680,18 @@ class Machine(Circuit):
 				ccDstID = target.owner.cCoreID
 				ccDstCH = target.owner.I.keys().index(chname)
 
-			print "  -> " + tag
+			#print "  -> " + tag
 			
 			target.signal = outsignal.signal
 			
 			#connect in cCore: Connect(int c1, int out, int c2, int in)
 			#outidx = outsignal.owner.O.keys().index(outsignal.name)
 			#inidx = target.owner.I.keys().index(target.name)
-			print 'PY: connecting ',ccSrcID,ccSrcCH,ccDstID,ccDstCH
+			#print 'PY: connecting ',ccSrcID,ccSrcCH,ccDstID,ccDstCH
 			
 			Circuit.cCore.Connect(ccSrcID,ccSrcCH, metaSrc, ccDstID, ccDstCH,metaDst)
 
-			print 'PY: connection done!'
+			#print 'PY: connection done!'
 
 	## Disconnect one or more input channels.
 	#
@@ -707,14 +707,14 @@ class Machine(Circuit):
 	#
 	def Disconnect(self, *args):
 
-		print "disconnecting: "
+		#print "disconnecting: "
 		for tag in args:
 
 			if self._IsGlobal(tag):
 				target = self._GetMetaChannel(tag, ChannelType.Output)
 			else:
 				target = self._GetInternalChannel(tag, ChannelType.Input)
-			print "  - "+ target.name
+			#print "  - "+ target.name
 			target.Disconnect()
 
 	

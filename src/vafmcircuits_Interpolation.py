@@ -145,11 +145,11 @@ class i3Dlin(Circuit):
 		zmax = pos[2][-1]
 
 
-		sizey = int(pos[2][-1]/zstep - pos[2][0]/zstep +1 )*components
+		sizey = int(pos[2][-1]/zstep - pos[2][0]/zstep +1 )
 		sizex = int( (pos[1][-1]/ystep - pos[1][0]/ystep+1) * sizey +1 )
 
 		sizez = int(len(pos[2]))
-
+		print "INTERPO ",sizex,sizey,sizez
 
 
 		test_arr = (ctypes.c_double * len(coord))(*coord)
@@ -171,4 +171,74 @@ class i3Dlin(Circuit):
 			 , ctypes.c_double(zmax))
 
 		self.SetInputs(**keys)
+
+
+class i1Dlin(Circuit):
+    
+    
+	def __init__(self, machine, name, **keys):        
+			
+		super(self.__class__, self).__init__( machine, name )
+
+		self.components = 0
+		if 'comp' in keys.keys():
+			self.components = int(keys['comp'])
+			print "components = " +str(self.components)
+		else:
+			raise NameError("No components entered ")
+
+		if 'step' in keys.keys():
+			step = keys['step']
+			print "step = " +str(step)
+		else:
+			raise NameError("No step entered ")
+		
+		
+		if 'pbc' in keys.keys():
+			if keys['pbc'] == True:
+				pbc = 1
+			else:
+				pbc = 0
+		else:
+			raise NameError("No pbc entered ")
+
+
+		self.AddInput("x")
+		
+		for i in range(0,self.components):
+			self.AddOutput("F"+str(i+1))
+		
+		Circuit.cCore.Add_i1Dlin.argtypes = [ctypes.c_int,ctypes.c_int,ctypes.c_double,ctypes.c_int]
+		self.cCoreID = Circuit.cCore.Add_i1Dlin(machine.cCoreID
+			, ctypes.c_int(self.components)
+			, ctypes.c_double(step)
+			, ctypes.c_int(pbc))
+
+		self.SetInputs(**keys)
+
+	def SetData(self, datapoints):
+		
+		npts = len(datapoints)
+		if(npts < 2):
+			raise ValueError("ERROR: there are less than 2 points in the field!")
+		
+		#(int index, int c, double* data, int npts)
+		Circuit.cCore.i1Dlin_SetData.argtypes = [ctypes.c_int,ctypes.c_int,
+			ctypes.POINTER(ctypes.c_double),ctypes.c_int]
+		
+		if self.components > 1:
+			for c in range(self.components):
+				
+				lst = [p[c] for p in datapoints]
+				#print lst
+				test_arr = (ctypes.c_double * npts)(*lst)
+				
+				Circuit.cCore.i1Dlin_SetData(self.cCoreID, c,test_arr,npts)
+		else:
+			test_arr = (ctypes.c_double * npts)(*datapoints)
+			Circuit.cCore.i1Dlin_SetData(self.cCoreID, 0,test_arr,npts)
+
+
+
+
 
