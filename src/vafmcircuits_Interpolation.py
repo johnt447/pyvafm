@@ -12,19 +12,19 @@ import ctypes
 
 ## \brief Tri-linear interpolation circuit.
 #
-# This is the circuit that calculates the interpolation of the provided force field. 
-# The force field must be in the following format, but plese note that the interpolation 
-# circuit is capable of taking any number of dimensions and components in, 
-# but for a case where there is an unequal amount of dimensions and components the 
-# unused components column must be filled with zeros. 
-# Except in the case of 3 dimensions and 1 component, this can be left as it is. 
+# This is the circuit that calculates the interpolation of the provided force field.
+# The force field must be in the following format, but plese note that the interpolation
+# circuit is capable of taking any number of dimensions and components in,
+# but for a case where there is an unequal amount of dimensions and components the
+# unused components column must be filled with zeros.
+# Except in the case of 3 dimensions and 1 component, this can be left as it is.
 # Examples of how the force fields must be formated is shown below.: \n
 # <pre> x y z Fx Fy Fz or x y z F or x y z Fx 0 0 or x y Fx 0 <pre>
 #
 # - \b Initialisation \b parameters:
-#         - \a Filename = Filename of the force field input file.
-#         - \a Dimensions = Number of dimensons in the force field.
-#         - \a Components = Number of components of force in the force field.
+# - \a Filename = Filename of the force field input file.
+# - \a Dimensions = Number of dimensons in the force field.
+# - \a Components = Number of components of force in the force field.
 #
 # - \b Input \b channels:
 # - \a coord : this is the coordiante to calcualte the interpolation.
@@ -41,136 +41,190 @@ import ctypes
 class i3Dlin(Circuit):
     
     
-	def __init__(self, machine, name, **keys):        
-			
+	def __init__(self, machine, name, **keys):
+
 		super(self.__class__, self).__init__( machine, name )
 
-		#filename = "forces.dat"
-		#components = 3
-		#dim = 3
-
-		if 'filename' in keys.keys():
-			filename = keys['filename']
-			print "filename = " +str(filename)
-		else:
-			raise NameError("No filename entered ")
-
-		if 'comp' in keys.keys():
-			components = keys['comp']
-			print "components = " +str(components)
+		if 'components' in keys.keys():
+			self.components = keys['components']
+			print "components = " +str(self.components)
 		else:
 			raise NameError("No components entered ")
-
-		if 'dim' in keys.keys():
-			dim = keys['dim']
-			print "dim = " +str(dim)
-		else:
-			raise NameError("No dim entered ")
-
-
-		if 'xstep' in keys.keys():
-			xstep = keys['xstep']
-			print "xstep = " +str(xstep)
-		else:
-			raise NameError("No xstep entered ")
-
-		if 'ystep' in keys.keys():
-			ystep = keys['ystep']
-			print "ystep = " +str(ystep)
-		else:
-			raise NameError("No ystep entered ")
 		
-		if 'zstep' in keys.keys():
-			zstep = keys['zstep']
-			print "zstep = " +str(zstep)
-		else:
-			raise NameError("No zstep entered ")
-
+		self.npts = None; self.nptsSET = False
+		self.step = None; self.stepSET = False
+		self.pbc = None; self.pbcSET = False
+		self.data = None
 
 		self.AddInput("x")
 		self.AddInput("y")
 		self.AddInput("z")
-		
-		for i in range(0,components):
+
+		for i in range(0,self.components):
 			self.AddOutput("F"+str(i+1))
+
 		
+		self.cCoreID = Circuit.cCore.Add_i3Dlin(self.machine.cCoreID, self.components)
+		
+		Circuit.cCore.i3Dlin_step.argtypes = [
+			ctypes.c_int, #Core Id
+			ctypes.c_double, #xstep
+			ctypes.c_double, #ystep
+			ctypes.c_double] #zstep
+		Circuit.cCore.i3Dlin_npts.restype =  ctypes.POINTER(ctypes.POINTER(ctypes.c_double))
+		
+		self.SetInputs(**keys)
 
-		comp = [ [] for _ in range( components ) ]
-		pos = [ [] for _ in range( dim ) ]
-
+	def Configure(self, **keys):
+		
+		#check for npoints
+		if 'npoints' in keys.keys():
+			if len(keys['npoints']) != 3:
+				raise ValueError("ERROR! the number of points is not a triplet!")
+			else:
+				self.npts = [int(n) for n in keys['npoints']]
+				print "i3Dlin: npoints",self.npts
+				self.nptsSET = True
+				#send the changes to cCore
+				self.data = Circuit.cCore.i3Dlin_npts(self.cCoreID, self.npts[0], self.npts[1], self.npts[2])
+				#print self.data[0][0]
+				
+		#check for steps
+		if 'steps' in keys.keys():
+			if len(keys['steps']) != 3:
+				raise ValueError("ERROR! the grid steps is not a triplet!")
+			else:
+				self.step = keys['steps']
+				print "i3Dlin: steps",self.step
+				self.stepSET = True
+				#call a cCore function to save the values
+				Circuit.cCore.i3Dlin_step(self.cCoreID, self.step[0], self.step[1], self.step[2])
+			
+		#check for pbc
+		if 'pbc' in keys.keys():
+			if len(keys['pbc']) != 3:
+				raise ValueError("ERROR! the PBC is not a triplet!")
+			else:
+				self.pbc = [0,0,0]
+				for i in xrange(len(keys['pbc'])):
+					if keys['pbc'][i] == True:
+						self.pbc[i] = 1
+					else:
+						self.pbc[i] = 0
+				#print "PBC ",self.pbc
+				Circuit.cCore.i3Dlin_pbc(self.cCoreID, self.pbc[0], self.pbc[1], self.pbc[2])
+				self.pbcSET = True
+	
+	def ReadData(self,filename):
+		
+		if self.nptsSET == False:
+			raise ValueError("ERROR! The amount of grid points along each axis was not yet specified!")
+		if self.stepSET == False:
+			raise ValueError("ERROR! The grid step sizes were not yet specified!")
+					
+		fsize = self.npts[0]*self.npts[1]*self.npts[2]
+		yzsize = self.npts[1]*self.npts[2]
+		zsize = self.npts[2]
+		
+		
 		f = open(filename, "r")
 		for line in f:
-			for i in range(0,components):
-				comp[i].append( float(line.split()[i + dim]) )
+			words = line.split()
+			i = int(words[0])-1
+			j = int(words[1])-1
+			k = int(words[2])-1
+			index = i*yzsize + j*zsize + k
+			for c in xrange(self.components): #convert the components to float
+				words[c+3] = ctypes.c_double(float(words[c+3]))
+				self.data[c][index] = words[c+3]
+		
+		f.close()
+'''
+	def MakeData(self):
+		
+		self.comp = [ [] for _ in range( self.components ) ]
+		self.pos = [ [] for _ in range( self.dim ) ]
 
-			for i in range(0,dim):
-				pos[i].append( float(line.split()[i]) )
+		self.testpos = [ [] for _ in range( self.dim ) ]
+		self.testcomp = [ [] for _ in range( self.components ) ]
 
+		f = open(self.filename, "r")
+		for line in f:
+			for i in range(0,self.components):
+				self.comp[i].append( float(line.split()[i + self.dim]) )
 
+			for i in range(0,self.dim):
+				self.pos[i].append( float(line.split()[i]) )
 
-		Circuit.cCore.Add_i3Dlin.argtypes = [ctypes.c_int #Core Id
-			,ctypes.POINTER(ctypes.c_double) #testarr
-			,ctypes.c_int #size
-			,ctypes.c_int #components
-
-			,ctypes.c_double #zstep
-			,ctypes.c_double #ystep
-			,ctypes.c_double #zstep
-
-			,ctypes.c_double #xmin
-			,ctypes.c_double #ymin
-			,ctypes.c_double #zmin
-
-			,ctypes.c_int #sizex
-			,ctypes.c_int #sizey
-			,ctypes.c_int #sizez
-
-			,ctypes.c_double #xmax
-			,ctypes.c_double #ymax
-			,ctypes.c_double] #zmax 
-
-		size = len(comp[0])
-		coord=[]
-		for i in range(0,components):
-			for j in range(0,size):
-					coord.append(comp[i][j])
-
-		xmin = pos[0][0]
-		ymin = pos[1][0]
-		zmin = pos[2][0]
+		smallestx = min(self.pos[0])	
+		smallesty = min(self.pos[1])	
+		smallestz = min(self.pos[2])
 
 
-		xmax = pos[0][-1]
-		ymax = pos[1][-1]
-		zmax = pos[2][-1]
+		largestx = max(self.pos[0])
+		largesty = max(self.pos[1])
+		largestz = max(self.pos[2])
+
+		sizez = int((largestz - smallestz) / self.zstep + 1 )
+		sizey = int((largesty - smallesty) / self.ystep + 1 )
+		sizex = int((largestx - smallestx) / self.xstep + 1 )
+
+		offsetx = 0
+		offsety = 0
+		offsetz = 0
 
 
-		sizey = int(pos[2][-1]/zstep - pos[2][0]/zstep +1 )
-		sizex = int( (pos[1][-1]/ystep - pos[1][0]/ystep+1) * sizey +1 )
+		if smallestz == 0:
+			offsetz = 1
 
-		sizez = int(len(pos[2]))
-		print "INTERPO ",sizex,sizey,sizez
+		if smallesty == 0:
+			offsety = 1
+
+		if smallestx == 0:
+			offsetx = 1	
 
 
-		test_arr = (ctypes.c_double * len(coord))(*coord)
-		self.cCoreID = Circuit.cCore.Add_i3Dlin(machine.cCoreID
-			 , test_arr
-			 , size
-			 , components
-			 , ctypes.c_double (xstep)
-			 , ctypes.c_double(ystep)
-			 , ctypes.c_double(zstep)
-			 , ctypes.c_double (xmin)
-			 , ctypes.c_double(ymin)
-			 , ctypes.c_double(zmin)
-			 , sizex
-			 , sizey
-			 , sizez
-			 , ctypes.c_double (xmax)
-			 , ctypes.c_double(ymax)
-			 , ctypes.c_double(zmax))
 
-		self.SetInputs(**keys)
+		# USED FOR THE BLOCK SIZE CALCULATION
+		pos = [ [] for _ in range( self.dim ) ]
+
+		pos[2] = sorted(self.pos[2])	
+		pos[1] = sorted(self.pos[1])	
+		pos[0] = sorted(self.pos[0])	
+
+
+		sizezblock = int(len(pos[2]))	
+
+		sizeyblock = int(pos[2][-1]/self.zstep - pos[2][0]/self.zstep) + offsety
+
+		sizexblock = int( ( (pos[1][-1]/self.ystep - pos[1][0]/self.ystep) +offsetx) * sizeyblock+offsety)
+
+
+
+		####################################
+
+		for i in range (0,sizex+1):
+			for j in range (0,sizey+1):
+				for k in range (0 ,sizez):
+					self.testpos[0].append(i*self.xstep)
+					self.testpos[1].append(j*self.ystep)
+					self.testpos[2].append(k*self.zstep + 3)
+
+			index = i*sizexblock + j*sizeyblock + k
+			for r in range(0,self.components):
+				self.testcomp[r].append(self.comp[r][index])
+
+
+
+		print len(self.testpos[0])
+
+		w = open('test.txt', "w")
+		for i in range(0,10944):
+			w.write( str(self.testpos[0][i])+" "+ str(self.testpos[1][i]) +" "+str(self.testpos[2][i]) + " " + str(self.testcomp[0][i]) + " " + str(self.testcomp[1][i])+ " " + str(self.testcomp[2][i]) + "\n" )
+
+		self.check = 1
+'''
+
 
 
 class i1Dlin(Circuit):

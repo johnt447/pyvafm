@@ -39,6 +39,7 @@ class Scanner(Circuit):
 		#
 		self.BlankLines = False
 		
+		Circuit.cCore.Scanner_Place.argtypes = [c_int, c_double, c_double, c_double]
 		self.GetParams = Circuit.cCore.ScannerParams
 		self.GetParams.restype = POINTER(c_double)
 		
@@ -51,11 +52,25 @@ class Scanner(Circuit):
 		self.machine.main.WaitSteps(steps)
 		print "Scanner moved by " +str(x) + "," + str(y)+ "," + str(z)
 
-	def Place(self,x,y,z): #all parameters required
+	def Place(self,**kw): #all parameters required
 		
-		steps = Circuit.cCore.Scanner_Place(self.cCoreID, c_double(x), c_double(y), c_double(z) )
+		#finds out where the scanner is by asking cCore
+		params = self.GetParams(self.cCoreID);
+		x = params[0]
+		y = params[1]
+		z = params[2]
+		print "original place: ",x,y,z
+		
+		if 'x' in kw.keys():
+			x = kw['x']
+		if 'y' in kw.keys():
+			y = kw['y']
+		if 'z' in kw.keys():
+			z = kw['z']
+		
+		steps = Circuit.cCore.Scanner_Place(self.cCoreID, c_double(x), c_double(y), c_double(z))
 		self.machine.main.WaitSteps(1)
-		print "Scanner Placed at " +str(x) + "," + str(y)+ "," + str(z)
+		print "Scanner Placed at ", x, y, z
 
 	def MoveTo(self,**kw):
 		
@@ -75,7 +90,7 @@ class Scanner(Circuit):
 			raise NameError ("ERROR! Scanner MoveTo requires v.")
 
 		steps = Circuit.cCore.Scanner_MoveTo(self.cCoreID, c_double(x), c_double(y), c_double(z), c_double(v))
-		Machine.main.WaitSteps(steps)                
+		self.machine.main.WaitSteps(steps)                
 		print "Scanner moved to " +str(x) + "," + str(y)+ "," + str(z)
 
 	#def Scan(self,x,y,z,v,points):
