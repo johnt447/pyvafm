@@ -234,7 +234,7 @@ int AddToCircuits(circuit c, int containerindex) {
         
         //alloc for the first time
         circuits[containerindex].subcircuits = (int*)calloc(
-            circuits[containerindex].subcircuits, circuits[containerindex].nsubcircs*sizeof(int));
+            circuits[containerindex].nsubcircs, sizeof(int));
     } else {
         // else reshape
         circuits[containerindex].subcircuits = (int*)realloc(
@@ -451,11 +451,13 @@ int* GetOutputs(int c) {
 int Update(int steps) {
  
     for(int t=0; t<steps; t++) {
-    //printf("step %d\n",t);
         
+        //printf("step %d\n",t);
         circuits[0].updatef( &circuits[0] ); //this way is faster
         
-/*        for(int i=0; i<GlobalCircuitCounter; i++){
+        
+        
+/*      for(int i=0; i<GlobalCircuitCounter; i++){
             //printf("circuit[%d] function[%d]\n",i,circuits[i].update);
             //ufunctions[circuits[i].update]( &circuits[i] );
             circuits[i].updatef( &circuits[i] ); //this way is faster
