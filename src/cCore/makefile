@@ -6,7 +6,7 @@ PYINC	= /usr/include/python2.7/
 
 #CIRCUITS = core_container.o core_signals.o core_output.o core_maths.o core_logic.o  core_filters.o
 
-all: container cantilever siggen scanner interpo outputs flops maths logics filters comparison control sigproc avg pyc main.o 
+all: container cantilever siggen scanner interpo outputs rsa flops maths logics filters comparison control sigproc avg pyc main.o 
 	$(CC) $(LFLAGS) *.o
 	rm *.o
 	cp vafmcore.so ../.
@@ -21,6 +21,8 @@ interpo:
 	$(CC) $(CFLAGS) core_interpolation.c
 outputs:
 	$(CC) $(CFLAGS) core_output.c
+rsa:
+	$(CC) $(CFLAGS) core_rsa.c
 maths: 
 	$(CC) $(CFLAGS) core_maths.c
 logics: 

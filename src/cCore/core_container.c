@@ -62,7 +62,6 @@ int Add_Dummy( int container ) {
 }
 
 
-
 int Add_ChannelToContainer(int c, int isInput) {
 	
 	/*
@@ -119,6 +118,7 @@ void ContainerUpdate(circuit* c) {
 			}
 			
 		}
+		//printf("   done: %i\n",c->subcircuits[i]);
 	}
 	
 	

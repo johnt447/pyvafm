@@ -69,6 +69,13 @@ class output(Circuit):
 
 		self.SetInputs(**keys)
 
+
+	def Start(self):
+		Circuit.cCore.output_start(self.cCoreID);
+	
+	def Stop(self):
+		Circuit.cCore.output_stop(self.cCoreID);
+
 	## Register an output channel for file output.
 	#
 	# If the channel is already registered in this output circuit, it won't be registered again.

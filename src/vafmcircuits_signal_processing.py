@@ -573,7 +573,7 @@ class flip(Circuit):
 
 		super(self.__class__, self).__init__( machine, name )
 		self.AddInput("signal")
-		self.AddOutput("out")
+		self.AddOutput("tick")
 		self.yo= 0
 		
 		self.cCoreID = Circuit.cCore.Add_flip(machine.cCoreID)
@@ -586,13 +586,6 @@ class flip(Circuit):
 	
 	def Update (self):
 		pass
-		"""
-		self.O["out"].value = 0
-		
-		if	self.I["signal"].value > 0 and self.yo < 0:
-			self.O["out"].value = 1
-		
-		self.yo=self.I["in"].value
-		"""
+
 
 

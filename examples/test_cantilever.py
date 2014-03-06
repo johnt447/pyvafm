@@ -10,7 +10,7 @@ from customs_pll import *
 def main():
 	
 	
-	machine = Machine(name='machine', dt=5.0e-8, pushed=True);
+	machine = Machine(name='machine', dt=1.0e-9, pushed=True);
 	f0 = 100000.0
 	
 	#Add Circuits

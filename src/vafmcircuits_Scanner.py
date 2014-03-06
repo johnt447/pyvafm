@@ -47,6 +47,8 @@ class Scanner(Circuit):
 		self.SetInputs(**keys)
 
 
+
+
 	def Move(self, x = 0, y = 0, z = 0, v = 1): #default arguments, make the input lighter
 		steps = Circuit.cCore.Scanner_Move(self.cCoreID, c_double(x), c_double(y) ,c_double(z),c_double(v) )
 		self.machine.main.WaitSteps(steps)

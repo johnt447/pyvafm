@@ -104,6 +104,8 @@ def dPFD(compo,**keys):
     compo.AddInput("ref")
     compo.AddInput("vco")
     compo.AddInput("f0")
+    compo.AddInput("KI")
+    compo.AddInput("KP")
     
     compo.AddOutput("sin")
     compo.AddOutput("cos")
@@ -122,21 +124,26 @@ def dPFD(compo,**keys):
     
     compo.AddCircuit(type='opSub',name='sub', pushed=True)
     compo.AddCircuit(type='gain',name='dfgain', gain=keys["gain"], pushed=True)
-	
     compo.AddCircuit(type='SKLP',name='lowpass', fcut=keys["fcut"], pushed=True)
+    
+    compo.AddCircuit(type='PI',name='pi', set=0, pushed=True)
+    
     
 
     
     #connections
+    compo.Connect("global.KI","pi.Ki"); compo.Connect("global.KP","pi.Kp")
     compo.Connect("global.ref","ffdr1.clock")
     compo.Connect("global.vco","ffdr2.clock")
-    compo.Connect("ffdr1.Q","and.in1")
-    compo.Connect("ffdr2.Q","and.in2")
+    compo.Connect("ffdr1.Q","and.in1","sub.in1")
+    compo.Connect("ffdr2.Q","and.in2","sub.in2")
     compo.Connect("and.out","norflp.signal")
     compo.Connect("norflp.tick","ffdr1.R","ffdr2.R")
-    compo.Connect("ffdr1.Q","sub.in1")
-    compo.Connect("ffdr2.Q","sub.in2")
-    compo.Connect("sub.out","global.dbg")
+    compo.Connect("sub.out","pi.signal")
+    compo.Connect("pi.out","lowpass.signal")
+    compo.Connect("lowpass.out","dfgain.signal")
+    compo.Connect("dfgain.out","global.df")
+    #compo.Connect("ffdr1.front","global.dbg")
 
     print "digital PFD assembled!"
 

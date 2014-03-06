@@ -237,11 +237,12 @@ class DRFlipFlop(Circuit):
 
 		self.AddInput("D")
 		self.AddInput("R")
+		self.AddInput("clock")
 
 		self.AddOutput("Q")
 		self.AddOutput("Qbar")
-		self.Qprevious = 0
-
+		self.AddOutput("front")
+		
 		self.cCoreID = Circuit.cCore.Add_DRFlipFLop(self.machine.cCoreID)
 		
 		self.SetInputs(**keys)
@@ -251,28 +252,3 @@ class DRFlipFlop(Circuit):
 
 	def Update (self):
 		pass
-
-	'''        
-			if self.I["D"].value <= 0 and self.Qprevious <= 0:
-					self.O["Q"].value = 0
-					self.O["Qbar"].value = 1
-
-			if self.I["D"].value <= 0 and self.Qprevious > 0:
-					self.O["Q"].value = 0
-					self.O["Qbar"].value = 1
-
-			if self.I["D"].value > 0 and self.Qprevious <= 0:
-					self.O["Q"].value = 1
-					self.O["Qbar"].value = 0
-
-			if self.I["D"].value > 0 and self.Qprevious > 0:
-					self.O["Q"].value = 1
-					self.O["Qbar"].value = 0
-
-
-			if self.I["R"].value > 0:
-					self.O["Q"].value = 0
-					self.O["Qbar"].value = 1
-
-			self.Qprevious = self.O["Q"].value
-	'''
