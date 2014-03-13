@@ -1,11 +1,6 @@
 #!/usr/bin/env python
 
-from vafmbase import ChannelType
 from vafmcircuits import Machine
-
-import vafmcircuits
-import vafmcircuits_avg
-import vafmcircuits_math
 
 
 def main():
@@ -23,7 +18,7 @@ def main():
   	
 	machine.Connect("osc.sin","avg.signal","avg2.signal")
 
-	out1 = machine.AddCircuit(type='output',name='output',file='test_avg.log', dump=2)
+	out1 = machine.AddCircuit(type='output',name='output',file='test_avg.out', dump=2)
 	out1.Register('global.time', 'osc.sin', 'avg.out','avg2.out')
 	
 	machine.Wait(10)

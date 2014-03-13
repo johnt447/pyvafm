@@ -15,7 +15,7 @@ import threading
 import vafmcircuits_math, vafmcircuits_output, vafmcircuits_signal_gens, vafmcircuits_Cantilever
 import vafmcircuits_Logic, vafmcircuits_Filters, vafmcircuits_control, vafmcircuits_Interpolation
 import vafmcircuits_signal_processing, vafmcircuits_Scanner, vafmcircuits_FlipFlop
-import vafmcircuits_pycirc, vafmcircuits_Comparison
+import vafmcircuits_pycirc, vafmcircuits_Comparison, vafmcircuits_avg
 
 ## \package vafmcircuits
 # \brief This file contains the main Machine circuit.
