@@ -1,10 +1,6 @@
 #!/usr/bin/env python
 
-from vafmbase import ChannelType
 from vafmcircuits import Machine
-
-import vafmcircuits
-import vafmcircuits_signal_processing
 
 
 def main():
@@ -19,7 +15,7 @@ def main():
 	
 	machine.Connect("osc.sin","lim.signal")
 
-	out1 = machine.AddCircuit(type='output',name='output',file='test_limiter.log', dump=1)
+	out1 = machine.AddCircuit(type='output',name='output',file='test_limiter.out', dump=1)
 	out1.Register('global.time', "osc.sin","lim.out")
 	
 	machine.Wait(5)

@@ -1,10 +1,6 @@
 #!/usr/bin/env python
 
-from vafmbase import ChannelType
 from vafmcircuits import Machine
-
-import vafmcircuits
-import vafmcircuits_signal_processing
 
 
 def main():
@@ -21,7 +17,7 @@ def main():
 	
 	machine.Connect("osc.sin","pkd.signal")
 
-	out1 = machine.AddCircuit(type='output',name='output',file='test_peaker.log', dump=1)
+	out1 = machine.AddCircuit(type='output',name='output',file='test_peaker.out', dump=1)
 	out1.Register('global.time', "osc.sin","pkd.tick","pkd.peak","pkd.delay")
 	
 	machine.Wait(5)
