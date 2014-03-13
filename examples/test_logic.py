@@ -1,10 +1,6 @@
 #!/usr/bin/env python
 
-from vafmbase import ChannelType
 from vafmcircuits import Machine
-
-import vafmcircuits
-import vafmcircuits_Logic
 
 
 def main():
@@ -27,12 +23,11 @@ def main():
 	machine.Connect("s2.out","and.in2","or.in2","xor.in2","nor.in2")
 	
 	
-	out1 = machine.AddCircuit(type='output',name='output',file='test_logic.log', dump=1)
+	out1 = machine.AddCircuit(type='output',name='output',file='test_logic.out', dump=1)
 	out1.Register('global.time', 's1.out', 's2.out','not.out','and.out','or.out','xor.out','nor.out')
 	
-	for i in range(1000):
-	    machine.Update()
-
+	machine.Wait(10)
+	
 	
 
 if __name__ == '__main__':

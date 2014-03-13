@@ -350,27 +350,19 @@ class RCLP(Circuit):
 		if 'order' in keys.keys():
 			self.Order = keys['order']
 		else:
-			print "WARNING! No order given, using default order = "+str(self.Order)
+			print "WARNING! Filter order not specified, using default order = "+str(self.Order)
 
-		self.fc = 2*math.pi*self.fc # fc -> wc
-		self.a = 2*machine.dt*self.fc # this is 2dt wc
-		self.a = self.a/(1+self.a) # this is 2dt wc/(1+2dt wc)
-		#self.a = machine.dt/(machine.dt+(1.0/self.fc)) # this is 2dt wc
-		
-		self.y  = [0] * (self.Order +1) #this is the output at time t+dt of each filter, y[0] is the incoming signal
-		self.yo = [0] * (self.Order +1) #this is the output at time t of each filter		
-		self.yoo= [0] * (self.Order +1) #this is the output at time t-dt of each filter		
-		#print self.folds
+		self.cCoreID = Circuit.cCore.Add_RCLP(self.machine.cCoreID,
+			c_double(self.fc), self.Order)
 		
 	def Initialize (self):
-		
 		pass
 		
 		
 	
 	def Update (self):
-		
-		
+		pass
+		'''
 		self.y[0] = self.I["signal"].value 
 		
 		for i in range(self.Order):
@@ -382,6 +374,7 @@ class RCLP(Circuit):
 		for i in range(self.Order+1):
 			self.yoo[i] = self.yo[i]
 			self.yo[i] = self.y[i]
+		'''
 
 ## \brief RC high-pass filter circuit.
 #
@@ -434,22 +427,15 @@ class RCHP(Circuit):
 		#self.fc = 1/(2*math.pi * self.fc)
 		#self.a = self.fc/(machine.dt +self.fc) #what was this?
 		
-		self.fc = 2*math.pi*self.fc # fc -> wc
-		self.a = 2*machine.dt*self.fc # this is (2dt wc)
-		self.a = 1.0/(1+self.a) # this is 2dt wc/(1+2dt wc)
-
-		self.y  = [0] * (self.Order +1) #this is the output at time t+dt of each filter, y[0] is the incoming signal
-		self.yo = [0] * (self.Order +1) #this is the output at time t of each filter	
-		self.yoo = [0] * (self.Order +1) #this is the output at time t-dt of each filter	
-
+		self.cCoreID = Circuit.cCore.Add_RCHP(self.machine.cCoreID,
+			c_double(self.fc), self.Order)
 		
 	def Initialize (self):
-		
 		pass
 		
 	def Update (self):
-
-		
+		pass
+		'''
 		self.y[0] = self.I["signal"].value 
 
 		for i in range(self.Order):
@@ -463,4 +449,4 @@ class RCHP(Circuit):
 			self.yo[i] = self.y[i]
 		
 		self.O["out"].value= self.y[self.Order]
-		
+		'''

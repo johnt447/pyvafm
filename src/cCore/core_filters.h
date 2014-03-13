@@ -10,6 +10,6 @@ void SKBP( circuit *c );
 
 int add_RCLP( int owner, double fcut, int order);
 void RCLP( circuit *c );
-
+void RCHP( circuit *c );
 
 #endif

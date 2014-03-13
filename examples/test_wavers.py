@@ -1,9 +1,7 @@
-# -*- coding:utf-8 -*-
+#!/usr/bin/env python
 
-from vafmbase import ChannelType
 from vafmcircuits import Machine
 
-import vafmcircuits
 
 
 def main():
@@ -16,7 +14,7 @@ def main():
 	machine.AddCircuit(type='square',name='sqw', amp=1.5, freq=2, offset=0.0, duty=0.2, pushed=True )
 	
 	#output to file - dump=0 means only manual dump
-	out1 = machine.AddCircuit(type='output',name='output',file='test_wavers.log', dump=1)
+	out1 = machine.AddCircuit(type='output',name='output',file='test_wavers.out', dump=1)
 	out1.Register('global.time', 'wave.sin', 'wave.cos', 'wave.saw', 'sqw.out')
 	
 	
