@@ -24,6 +24,26 @@
   })();
 
 </script>
+
+<script type="text/javascript">
+function toggleMenu(objID, button) {
+    
+    if (!document.getElementById) return;
+    
+    var ob = document.getElementById(objID).style;
+    if(ob.display == 'block') {
+	ob.display = 'none';
+	button.innerHTML = "+";
+    }
+    else {
+	ob.display = 'block';
+	button.innerHTML = "-";
+    }
+    //ob.display = (ob.display == 'block')?'none': 'block';
+}
+
+</script>
+
 </head><body>
 <a name="top"></a>
 <!-- wrap starts here -->

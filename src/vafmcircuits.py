@@ -28,6 +28,18 @@ import vafmcircuits_pycirc, vafmcircuits_Comparison, vafmcircuits_avg
 # but it also contains an internal assembly of circuits that run during the \ref Update
 # cycle. Every machine always has the output channel \a 'time' created during initialisation.
 #
+# \b Initialisation \b parameters:
+#	- \a dt = timestep (only for main machine)
+#	- \a assembly = constructor function (only for composites)
+# 	- \a pushed = True|False  push the output buffer immediately if True
+#
+# \b Input \b channels:
+# 	- custom inputs (only for composites)
+#
+# \b Output \b channels:
+# 	- \a time = global simulation time
+# 	- custom outputs (only for composites)
+#
 #
 # \b Example:
 # \code{.py}
@@ -35,7 +47,7 @@ import vafmcircuits_pycirc, vafmcircuits_Comparison, vafmcircuits_avg
 # machine = Machine(name='machine', dt=1.0e-8)
 #
 # #create a machine circuit inside the main machine
-# composite = machine.AddCircuit(type="Machine", name='pll', ...)
+# composite = machine.AddCircuit(type="Machine", name='pll', assembly=PLL, ...)
 # 
 # \endcode
 #
@@ -325,7 +337,7 @@ class Machine(Circuit):
 		#self.cCoreO.append(idx) 
 		
 
-	## \internal
+	
 	## Add a circuit of type 'ctype' named 'name' to the setup.
 	#
 	# This looks into all the loaded modules whose name starts with
@@ -557,25 +569,6 @@ class Machine(Circuit):
 			return False
 
 
-	## Connect the output of a circuit to the input of another.
-	#
-	# The I/O channels to connect are specified with the syntax: "circuit.channel", in the *args arguments
-	# array. The first element has to be the output channel to use as source, while all
-	# the following elements refer to the destination channels.
-	#
-	# @param *args Name of the channels to connect: "circuit.channel"
-	#
-	# \b Example:
-	# \code{.py}
-  	# main = Machine(name='machine', dt=0.01, pushed=True);
-  	# 
-  	# main.AddCircuit(type='waver', name='osc', amp=1, freq=1)
-  	# main.AddCircuit(type='opAdd', name='adder', factors=3)
-  	#
-  	# main.Connect("osc.sin", "adder.in1")
-  	# main.Connect("osc.cos", "adder.in2", adder.in3)
-  	#
-	# \endcode
 	def Connect_OLD(self, *args):
 
 		#if the output is a global, then it means that we want to connect
@@ -637,6 +630,26 @@ class Machine(Circuit):
 			Circuit.cCore.Connect(ccSrcID,ccSrcCH, ccDstID, ccDstCH)
 
 			print 'PY: connection done!'
+
+	## Connect the output of a circuit to the input of another.
+	#
+	# The I/O channels to connect are specified with the syntax: "circuit.channel", in the *args arguments
+	# array. The first element has to be the output channel to use as source, while all
+	# the following elements refer to the destination channels.
+	#
+	# @param *args Name of the channels to connect: "circuit.channel"
+	#
+	# \b Example:
+	# \code{.py}
+  	# main = Machine(name='machine', dt=0.01, pushed=True);
+  	# 
+  	# main.AddCircuit(type='waver', name='osc', amp=1, freq=1)
+  	# main.AddCircuit(type='opAdd', name='adder', factors=3)
+  	#
+  	# main.Connect("osc.sin", "adder.in1")
+  	# main.Connect("osc.cos", "adder.in2", "adder.in3")
+  	#
+	# \endcode
 	def Connect(self, *args):
 
 		#if the output is a global, then it means that we want to connect
@@ -695,7 +708,8 @@ class Machine(Circuit):
 
 	## Disconnect one or more input channels.
 	#
-	# This is the same as Disconnect, but it can take multiple "circuit.channel" arguments.
+	# Disconnects the input channels listed in the arguments. Each channel must be given as
+	# a string in the format "circuit.channel".
 	#
 	# @param *args Input channels given as list of strings of format: "circuit.channel"
 	#
@@ -756,10 +770,7 @@ class Machine(Circuit):
 		for kw in self.circuits.keys():
 			self.circuits[kw].Initialize()
 
-	## Update cycle.
-	#
-	# Calls the update routine of each circuit in the setup.
-	# 
+
 	def UpdateOLD(self):
 
 		#print 'updating machine ' +self.name
@@ -788,6 +799,10 @@ class Machine(Circuit):
 
 		#print 'after post' + str(self.O['time'].value)
 
+	## Update cycle.
+	#
+	# Calls the update routine of each circuit in the setup.
+	# 
 	def Update(self):
 		
 		Circuit.cCore.Update(1)
@@ -818,12 +833,19 @@ class Machine(Circuit):
 			if(self.circuits[kw].enabled):
 				self.circuits[kw].Push()
 
-
+	## Integrate the machine.
+	#
+	# Calls the update routine of each circuit in the setup for a given amount of time.
+	# 
 	def Wait(self, dtime):
 		
 		#for i in range(int(math.floor(dtime/self.dt))): self.Update()
 		Circuit.cCore.Update(c_int(int(math.floor(dtime/self.dt))))
 	
+	## Integrate the machine.
+	#
+	# Calls the update routine of each circuit in the setup for a given amount of steps.
+	# 
 	def WaitSteps(self, nsteps):
 		
 		#for i in range(int(math.floor(dtime/self.dt))): self.Update()

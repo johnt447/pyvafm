@@ -249,8 +249,8 @@ class SKBP(Circuit):
 			print "WARNING! No gain given, using default gain = "+str(self.Gain)
 
 		self.fc=0
-		if 'fc' in keys.keys():
-			self.fc = keys['fc']
+		if 'fcut' in keys.keys():
+			self.fc = keys['fcut']
 		else:
 			raise NameError("Missing fc!")
 
