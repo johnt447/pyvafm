@@ -27,10 +27,11 @@ import math
 # \b Input \b channels: 
 # 	- \a S = set signal
 #	- \a R = reset signal
+#	- \a clock = digital clock signal
 #
 # \b Output \b channels: 
-#	- \a Q =  stored bit (0|1)
-#	- \a Qbar =  opposite of the stored bit
+#	- \a Q = stored bit (0|1)
+#	- \a Qbar = opposite of the stored bit
 #
 #\b Examples:
 # \code{.py}
@@ -46,21 +47,21 @@ class SRFlipFlop(Circuit):
 
 		self.AddInput("S")
 		self.AddInput("R")
-
+		self.AddInput("clock")
+		
 		self.AddOutput("Q")
 		self.AddOutput("Qbar")
-
+		
+		self.cCoreID = Circuit.cCore.Add_SRFlipFLop(self.machine.cCoreID)
 
 
 	def Initialize (self):
-
 		pass
 
 
-
-
 	def Update (self):
-	
+		pass
+		'''
 		if self.I["R"].value > 0:
 			self.O["Q"].value = 0
 			self.O["Qbar"].value = 1
@@ -69,7 +70,7 @@ class SRFlipFlop(Circuit):
 		if self.I["S"].value > 0 and self.I["R"].value <= 0:
 			self.O["Q"].value = 1
 			self.O["Qbar"].value = 0
-
+		'''
 
 
 ## \brief JK Flip Flop circuit.
@@ -91,11 +92,12 @@ class SRFlipFlop(Circuit):
 # \b Input \b channels: 
 # 	- \a J = set signal
 #	- \a K = reset signal
+#	- \a clock = digital clock signal
 #
 #
 # \b Output \b channels: 
-#	- \a Q =  stored bit (0|1)
-#	- \a Qbar =  opposite of the stored bit
+#	- \a Q = stored bit (0|1)
+#	- \a Qbar = opposite of the stored bit
 #
 #\b Examples:
 # \code{.py}
@@ -111,9 +113,15 @@ class JKFlipFlop(Circuit):
 
 		self.AddInput("J")
 		self.AddInput("K")
-
+		self.AddInput("clock")
+		
 		self.AddOutput("Q")
 		self.AddOutput("Qbar")
+
+		self.cCoreID = Circuit.cCore.Add_JKFlipFLop(self.machine.cCoreID)
+	
+		self.SetInputs(**keys)
+
 
 
 
@@ -125,6 +133,8 @@ class JKFlipFlop(Circuit):
 
 
 	def Update (self):		
+		pass
+		"""
 		if self.I["J"].value > 0 and self.I["K"].value <= 0:
 			self.O["Q"].value = 1
 			self.O["Qbar"].value = 0
@@ -136,7 +146,7 @@ class JKFlipFlop(Circuit):
 		if self.I["J"].value > 0 and self.I["K"].value > 0:
 			self.O["Q"].value = self.O["Qbar"].value
 			self.O["Qbar"].value = self.O["Q"].value
-
+		"""
 
 
 ## D Flip Flop circuit.
@@ -155,10 +165,12 @@ class JKFlipFlop(Circuit):
 #
 # \b Input \b channels:
 # 	- \a D = Data Channel
+#	- \a clock = digital clock signal
+#
 #
 # \b Output \b channels: 
-#	- \a Q =  stored bit (0|1)
-#	- \a Qbar =  opposite of the stored bit
+#	- \a Q = stored bit (0|1)
+#	- \a Qbar = opposite of the stored bit
 #
 #\b Examples:
 # \code{.py}
@@ -173,20 +185,20 @@ class DFlipFlop(Circuit):
 		super(self.__class__, self).__init__( machine, name )
 
 		self.AddInput("D")
+		self.AddInput("clock")
 
 		self.AddOutput("Q")
 		self.AddOutput("Qbar")
-		self.Qprevious = 0
+		
+		self.cCoreID = Circuit.cCore.Add_DFlipFLop(self.machine.cCoreID)
 
 
 	def Initialize (self):
-
 		pass
 
-
-
-
-	def Update (self):		
+	def Update (self):
+		pass
+		'''
 		if self.I["D"].value <= 0 and self.Qprevious <= 0:
 			self.O["Q"].value = 0
 			self.O["Qbar"].value = 1
@@ -204,7 +216,7 @@ class DFlipFlop(Circuit):
 			self.O["Qbar"].value = 0
 
 			self.Qprevious = self.O["Q"].value
-
+		'''
 
 
 ## DR Flip Flop circuit.
@@ -223,10 +235,11 @@ class DFlipFlop(Circuit):
 # \b Input \b channels: 
 # 	- \a D = Data Channel
 #	- \a R = Reset Channel
+#	- \a clock = digital clock signal
 #
 # \b Output \b channels: 
-#	- \a Q =  stored bit (0|1)
-#	- \a Qbar =  opposite of the stored bit
+#	- \a Q = stored bit (0|1)
+#	- \a Qbar = opposite of the stored bit
 #
 class DRFlipFlop(Circuit):
     
@@ -241,7 +254,6 @@ class DRFlipFlop(Circuit):
 
 		self.AddOutput("Q")
 		self.AddOutput("Qbar")
-		self.AddOutput("front")
 		
 		self.cCoreID = Circuit.cCore.Add_DRFlipFLop(self.machine.cCoreID)
 		
