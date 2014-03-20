@@ -31,7 +31,7 @@ def main():
 	machine.AddCircuit(type='minmax', name='askbp', CheckTime=0.2, pushed=True)
 
 	#passive low pass filter
-	machine.AddCircuit(type='RCLP',name='rclp', fcut=100, order=2, pushed=True )
+	machine.AddCircuit(type='RCLP',name='rclp', fcut=100, order=1, pushed=True )
 	#amplitude detector for the filter
 	machine.AddCircuit(type='minmax', name='arclp', CheckTime=0.2, pushed=True)
 
