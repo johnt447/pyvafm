@@ -272,8 +272,8 @@ void RCLP( circuit *c ) {
 
     GlobalBuffers[c->outputs[0]] = y[order];
 
-}
 
+}
 
 /*********************************************************
 * passive low pass filter.
