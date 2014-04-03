@@ -4,10 +4,11 @@ from vafmbase import Channel
 
 import math
 
-## \package vafmcircuits_control.py
+
+
+## \package vafmcircuits_control
 # This file contains the controller circuits.
 #
-
 
 ## \brief PI circuit.
 #
@@ -48,11 +49,7 @@ class PI(Circuit):
 		
 		
 		self.AddOutput("out")
-
-		#self.delta = 0
-		#self.integral=0
-		#self.oldInt=0
-		
+	
 		self.cCoreID = Circuit.cCore.Add_PI(machine.cCoreID)
 		
 		self.SetInputs(**keys)
@@ -65,12 +62,7 @@ class PI(Circuit):
 
 	def Update (self):
 		pass
-		"""
-		self.delta =  self.I["set"].value - self.I["signal"].value
-		self.integral = self.integral + ( 0.5*(self.oldInt + self.I["Ki"].value*self.delta)*self.machine.dt  )
-		self.O["out"].value = self.delta * self.I["Kp"].value + self.integral
-		self.oldInt = self.I["Ki"].value * self.delta
-		"""
+
 
 ##  \brief PID circuit.
 #
@@ -111,12 +103,6 @@ class PID(Circuit):
 		self.AddInput("Ki")
 		self.AddInput("Kd")
 		self.AddOutput("out")
-
-		#self.delta = 0
-		#self.integral=0
-		#self.oldInt=0
-		#self.olddelta = 0
-		#self.counter = 0 # I didnt see why this was here?
 		
 		self.cCoreID = Circuit.cCore.Add_PID(machine.cCoreID)
 		
@@ -130,17 +116,5 @@ class PID(Circuit):
 
 
 	def Update (self):
-	
-		self.delta =  self.I["set"].value - self.I["signal"].value
-		self.integral = self.integral + ( 0.5*(self.oldInt + self.I["Ki"].value*self.delta)*self.machine.dt  )
-		
-		#if self.counter > 0: #i removed this if...
-		self.O["out"].value = self.delta * self.I["Kp"].value + self.integral + self.I["Kd"].value *(self.delta-self.olddelta)/self.machine.dt
-		
-		self.oldInt = self.I["Ki"].value * self.delta
-		self.olddelta = self.delta
-		#self.counter = self.counter + 1
-
-
-
+		pass
 

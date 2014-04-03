@@ -68,13 +68,8 @@ class opAdd(Circuit):
 		
 		
 	def Update (self):
-		
-		result = 0
-		
-		for i in self.I.values():
-			result += i.value
-			
-		self.O['out'].value = result
+		pass
+
 
 ## \brief Arithmetic subtraction circuit.
 #
@@ -120,9 +115,7 @@ class opSub(Circuit):
 		
         
 	def Update (self):
-		
-		result = self.I["in1"].value - self.I["in2"].value
-		self.O['out'].value = result
+		pass
 
 
 ## \brief Arithmetic multiplier circuit.
@@ -175,20 +168,11 @@ class opMul(Circuit):
 		
 
 	def Initialize (self):
-		
 		pass
 		
 		
-		
-		
 	def Update (self):
-		
-		result = 1
-
-		for i in self.I.values():
-			result *= i.value
-		
-		self.O['out'].value = result
+		pass
 
 
 ## \brief Arithmetic division circuit.
@@ -235,9 +219,8 @@ class opDiv(Circuit):
 		
         
 	def Update (self):
-		
-		result = self.I["in1"].value / self.I["in2"].value
-		self.O['out'].value = result
+		pass
+
 
 
 ## \brief Arithmetic linear-combo circuit.
@@ -292,20 +275,10 @@ class opLinC(Circuit):
 		
 
 	def Initialize (self):
-		
 		pass
 		
-		
-		
-		
 	def Update (self):
-		
-		result = 0
-		
-		for i in range(self.factors):
-			result += self.I["ina"+str(i+1)].value * self.I["inb"+str(i+1)].value
-			
-		self.O['out'].value = result
+		pass
 
 
 ## \brief Absolute value operator circuit.
@@ -346,20 +319,10 @@ class opAbs(Circuit):
 		self.SetInputs(**keys)
 
 	def Initialize (self):
-		
 		pass
-		
-		
-		
+	
 	def Update (self):
-		
-		result = self.I["signal"].value
-		
-		if self.I["signal"].value < 0:
-			result = self.I["signal"].value * -1
-		
-		self.O["out"].value = result
-
+		pass
 
 
 ## Power operator circuit.
@@ -405,16 +368,10 @@ class opPow(Circuit):
 		self.SetInputs(**keys)
 
 	def Initialize (self):
-		
 		pass
-		
-		
-		
+	
 	def Update (self):
-		
-		result = math.pow(self.I["signal"].value,  self.power)
-		
-		self.O["out"].value = result
+		pass
 
 
 ## \brief Sin operator circuit.
@@ -454,7 +411,6 @@ class opSin(Circuit):
 		self.SetInputs(**keys)
 
 	def Initialize (self):
-		
 		pass
 	
 	def Update (self):
@@ -504,6 +460,29 @@ class opCos(Circuit):
 		pass
 
 
+## \brief Perlin Noise circuit.
+#
+# \image html Perlin.png "schema"
+# Outputs perlin noise
+#
+# \b Initialisation \b parameters:
+# 	- \a pushed = True|False  push the output buffer immediately if True.
+# 	- \a octaves = Number of octaves to combine.
+#	- \a amp  = amplitude, the difference between the lowest noise value and the largest.
+#	- \a persist = Persitance of the perlin noise (how noisy the end result will be).
+#	- \a period  = period of the noise wave.
+#
+# \b Input \b channels:
+# 	- \a signal =  incoming signal
+#
+# \b Output \b channels:
+# 	- \a out = signal plus noise
+#
+#\b Examples:
+# \code{.py}
+# machine.AddCircuit(type='opCos', name='cos')
+# \endcode
+#
 class Perlin(Circuit):
 	
 	def __init__(self, machine, name, **keys):
@@ -550,15 +529,3 @@ class Perlin(Circuit):
 	def Update (self):
 		pass
 	
-	
-	
-
-
-
-
-
-
-
-
-
-

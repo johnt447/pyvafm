@@ -22,7 +22,7 @@ import math
 #
 #\b Examples:
 # \code{.py}
-# machine.AddCircuit(type='GreaterOrEqual', name='GreaterOrEqual',pushed = 'True')
+# machine.AddCircuit(type='GreaterOrEqual', name='geq', pushed=True)
 # \endcode
 #
 class GreaterOrEqual(Circuit):
@@ -45,11 +45,8 @@ class GreaterOrEqual(Circuit):
 		pass	
 
 	def Update (self):
-		result=0
+		pass
 
-		if self.I["in1"].value >= self.I["in2"].value :
-			result=1
-		self.O['out'].value = result
 
 ## \brief Less or equal to  circuit.
 #
@@ -68,7 +65,7 @@ class GreaterOrEqual(Circuit):
 #
 #\b Examples:
 # \code{.py}
-# machine.AddCircuit(type='LessOrEqual', name='LessOrEqual',pushed = 'True')
+# machine.AddCircuit(type='LessOrEqual', name='leq', pushed=True)
 # \endcode
 #
 class LessOrEqual(Circuit):
@@ -91,11 +88,8 @@ class LessOrEqual(Circuit):
 		pass	
 
 	def Update (self):
-		result=0
+		pass
 
-		if self.I["in1"].value <= self.I["in2"].value :
-			result=1
-		self.O['out'].value = result
 
 ## \brief equal to  circuit.
 #
@@ -114,7 +108,7 @@ class LessOrEqual(Circuit):
 #
 #\b Examples:
 # \code{.py}
-# machine.AddCircuit(type='Equal', name='Equal',pushed = 'True')
+# machine.AddCircuit(type='Equal', name='eq', pushed=True)
 # \endcode
 #
 class Equal(Circuit):
@@ -137,8 +131,5 @@ class Equal(Circuit):
 		pass	
 
 	def Update (self):
-		result=0
+		pass
 
-		if self.I["in1"].value == self.I["in2"].value :
-			result=1
-		self.O['out'].value = result

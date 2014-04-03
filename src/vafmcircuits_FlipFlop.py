@@ -1,7 +1,6 @@
 from vafmbase import Circuit
 import math
 
-#from vafmcircuits import Machine
 
 ## \package vafmcircuits_FlipFlop
 # This file contains the flip flop circuits.
@@ -61,16 +60,7 @@ class SRFlipFlop(Circuit):
 
 	def Update (self):
 		pass
-		'''
-		if self.I["R"].value > 0:
-			self.O["Q"].value = 0
-			self.O["Qbar"].value = 1
 
-
-		if self.I["S"].value > 0 and self.I["R"].value <= 0:
-			self.O["Q"].value = 1
-			self.O["Qbar"].value = 0
-		'''
 
 
 ## \brief JK Flip Flop circuit.
@@ -123,31 +113,11 @@ class JKFlipFlop(Circuit):
 		self.SetInputs(**keys)
 
 
-
-
 	def Initialize (self):
-
 		pass
-
-
-
 
 	def Update (self):		
 		pass
-		"""
-		if self.I["J"].value > 0 and self.I["K"].value <= 0:
-			self.O["Q"].value = 1
-			self.O["Qbar"].value = 0
-
-		if self.I["J"].value <= 0 and self.I["K"].value > 0:
-			self.O["Q"].value = 0
-			self.O["Qbar"].value = 1
-
-		if self.I["J"].value > 0 and self.I["K"].value > 0:
-			self.O["Q"].value = self.O["Qbar"].value
-			self.O["Qbar"].value = self.O["Q"].value
-		"""
-
 
 ## D Flip Flop circuit.
 # \image html DFlipFlop.png
@@ -192,31 +162,11 @@ class DFlipFlop(Circuit):
 		
 		self.cCoreID = Circuit.cCore.Add_DFlipFLop(self.machine.cCoreID)
 
-
 	def Initialize (self):
 		pass
 
 	def Update (self):
 		pass
-		'''
-		if self.I["D"].value <= 0 and self.Qprevious <= 0:
-			self.O["Q"].value = 0
-			self.O["Qbar"].value = 1
-
-		if self.I["D"].value <= 0 and self.Qprevious > 0:
-			self.O["Q"].value = 0
-			self.O["Qbar"].value = 1
-
-		if self.I["D"].value > 0 and self.Qprevious <= 0:
-			self.O["Q"].value = 1
-			self.O["Qbar"].value = 0
-
-		if self.I["D"].value > 0 and self.Qprevious > 0:
-			self.O["Q"].value = 1
-			self.O["Qbar"].value = 0
-
-			self.Qprevious = self.O["Q"].value
-		'''
 
 
 ## DR Flip Flop circuit.
@@ -240,6 +190,11 @@ class DFlipFlop(Circuit):
 # \b Output \b channels: 
 #	- \a Q = stored bit (0|1)
 #	- \a Qbar = opposite of the stored bit
+#
+#\b Examples:
+# \code{.py}
+# machine.AddCircuit(type='DRFlipFlop', name='DR')
+# \endcode
 #
 class DRFlipFlop(Circuit):
     

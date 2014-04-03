@@ -31,7 +31,6 @@ class PYCircuit(Circuit):
 		self.SetInputs(**keys)
 		
 	def Initialize (self):
-
 		pass
 	
 

@@ -1,8 +1,6 @@
 from vafmbase import Circuit
 import math
-from ctypes import c_double
 import ctypes
-
 
 ## \breif Van Der Waals force circuit.
 # \image html VDW.png "schema"
@@ -18,6 +16,7 @@ import ctypes
 #
 # \b Input \b channels: 
 #	- \a ztip = z posisiton of the tip
+#
 # \b Output \b channels: 
 #	- \a fz = force 
 #
@@ -51,14 +50,14 @@ class VDW(Circuit):
 			radius = keys['radius']
 			print "radius = " +str(radius)
 		else:
-			raise NameError("No radius entered ")	
+			raise NameError("No radius entered ")			
 
 
 		if 'offset' in keys.keys():
 			offset = keys['offset']
 			print "offset = " +str(offset)
 		else:
-			raise NameError("No radius entered ")	
+			raise NameError("No offset entered ")	
 
 		self.AddInput("ztip")
 		self.AddOutput("fz")

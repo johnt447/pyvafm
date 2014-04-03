@@ -45,7 +45,8 @@ class NOT(Circuit):
 		pass
 
 	def Update (self):
-		self.O['out'].value = int(not(self.I["signal"].value>0))
+		pass
+
 
 ## And Gate
 # \image html And.png "schema"
@@ -103,14 +104,7 @@ class AND(Circuit):
 		pass        
 
 	def Update (self):
-
-		self.result = 1
-		for i in self.I.values():
-			#print i
-			if i.value <= 0:
-				self.result = 0
-				break 
-		self.O['out'].value = self.result
+		pass
 
 
 ## Or Gate
@@ -168,18 +162,10 @@ class OR(Circuit):
 		self.result = 0
 
 	def Initialize (self):
-
-			pass        
+		pass        
 
 	def Update (self):
-
-		self.result = 0
-		for i in self.I.values():
-			if i.value > 0:
-				self.result = 1
-				break
-		
-		self.O['out'].value = self.result                
+		pass             
 
 
 ## XOr Gate
@@ -239,16 +225,7 @@ class XOR(Circuit):
 		pass        
 
 	def Update (self):
-
-		self.result = 0
-				
-		for i in self.I.values():
-			self.result += int(i.value>0)
-			
-		if self.result != 1:
-			self.result = 0
-		
-		self.O['out'].value = self.result
+		pass
 
 
 ## NOR Gate
@@ -302,19 +279,10 @@ class NOR(Circuit):
 
 		self.SetInputs(**keys)
 
-		self.result = 0
-
 
 	def Initialize (self):
 		pass        
 
 	def Update (self):
-	
-		self.result = 1
-		
-		for i in self.I.values():
-			if i.value > 0:
-				self.result = 0
-				break
-		
-		self.O['out'].value = self.result
+		pass
+

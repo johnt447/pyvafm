@@ -30,6 +30,7 @@ import vafmcircuits_VDW
 # but it also contains an internal assembly of circuits that run during the \ref Update
 # cycle. Every machine always has the output channel \a 'time' created during initialisation.
 #
+#
 # \b Initialisation \b parameters:
 #	- \a dt = timestep (only for main machine)
 #	- \a assembly = constructor function (only for composites)
@@ -408,6 +409,7 @@ class Machine(Circuit):
 		self.circuits[cname] = instance
 		return instance
 
+	##\internal
 	## Find the channel with the given tag among the subcircuits.
 	# The tag of a channel is a string containing the name of the circuit to which it belongs
 	# and the name of the channel separated by a dot.
@@ -571,67 +573,26 @@ class Machine(Circuit):
 			return False
 
 
-	def Connect_OLD(self, *args):
+	## Connect the output of a circuit to the input of another.
+	#
+	# The I/O channels to connect are specified with the syntax: "circuit.channel", in the *args arguments
+	# array. The first element has to be the output channel to use as source, while all
+	# the following elements refer to the destination channels.
+	#
+	# @param *args Name of the channels to connect: "circuit.channel"
+	#
+	# \b Example:
+	# \code{.py}
+  	# main = Machine(name='machine', dt=0.01, pushed=True);
+  	# 
+  	# main.AddCircuit(type='waver', name='osc', amp=1, freq=1)
+  	# main.AddCircuit(type='opAdd', name='adder', factors=3)
+  	#
+  	# main.Connect("osc.sin", "adder.in1")
+  	# main.Connect("osc.cos", "adder.in2", adder.in3)
+  	#
+	# \endcode
 
-		#if the output is a global, then it means that we want to connect
-		#the global input to input channels in the machine
-		
-		ccSrcID = -1
-		ccDstID = -1
-		ccSrcCH = -1
-		ccDstCH = -1
-		
-		#find the output channel
-		if self._IsGlobal(args[0]):
-			#look in MetaI
-			outsignal = self._GetMetaChannel(args[0], ChannelType.Input)
-			
-			print 'PY: connect src - out channel name ',outsignal.name
-			print 'PY: connect src - index ',self.I.keys().index(outsignal.name)
-			ccSrcID = self.cCoreI[self.I.keys().index(outsignal.name)]
-			ccSrcCH = 1 #dummy has only one in and one out!
-			print 'PY: connect src - dummyidx ',ccSrcID
-			print self.cCoreI
-			#the global output is the dummy output
-			
-		else:
-			#otherwise, just look for the channel in the normal circuits
-			outsignal = self._GetInternalChannel(args[0], ChannelType.Output)
-			ccSrcID = outsignal.owner.cCoreID
-			ccSrcCH = outsignal.owner.O.keys().index(outsignal.name)
-			
-		
-		
-
-		for tag in args[1:]: #for each target input tag
-			
-			print "PY: connecting " + args[0] + " -> " + tag
-			
-			# find the target channel
-			if self._IsGlobal(tag):
-				target = self._GetMetaChannel(tag, ChannelType.Output)
-				#print 'PY: connect dst - out channel name ',target.name
-				#print 'PY: connect dst - index ',self.O.keys().index(target.name)
-				ccDstID = self.cCoreO[self.O.keys().index(target.name)]
-				ccDstCH = 0 #dummy has only one in and one out!
-				#print 'PY: connect dst - dummyidx ',ccDstID
-				#the global output is the dummy input
-			else:
-				target = self._GetInternalChannel(tag, ChannelType.Input)
-				ccDstID = target.owner.cCoreID
-				ccDstCH = target.owner.I.keys().index(target.name)
-
-			print "  -> " + tag
-			target.signal = outsignal.signal
-			
-			#connect in cCore: Connect(int c1, int out, int c2, int in)
-			#outidx = outsignal.owner.O.keys().index(outsignal.name)
-			#inidx = target.owner.I.keys().index(target.name)
-			print 'PY: connecting ',ccSrcID,ccSrcCH,ccDstID,ccDstCH
-			
-			Circuit.cCore.Connect(ccSrcID,ccSrcCH, ccDstID, ccDstCH)
-
-			print 'PY: connection done!'
 
 	## Connect the output of a circuit to the input of another.
 	#
@@ -708,8 +669,6 @@ class Machine(Circuit):
 
 			#print 'PY: connection done!'
 
-	## Disconnect one or more input channels.
-	#
 	# Disconnects the input channels listed in the arguments. Each channel must be given as
 	# a string in the format "circuit.channel".
 	#
@@ -773,33 +732,6 @@ class Machine(Circuit):
 			self.circuits[kw].Initialize()
 
 
-	def UpdateOLD(self):
-
-		#print 'updating machine ' +self.name
-
-		for key in self.O.keys(): self.O[key].Push()
-
-		# pass the global inputs to metainput
-		for key in self.I.keys():
-			self._MetaI[key].Set(self.I[key].value)
-		#for key in self.I.keys():
-		#	self._MetaI[key].Set(self.I[key].value)
-
-		for kw in self.circuits.keys():
-			
-			if(self.circuits[kw].enabled):
-				self.circuits[kw].Update()
-				if self.circuits[kw].pushed: #push if needed
-					self.circuits[kw].Push()
-
-		self._idt += 1
-		self._MetaO['time'].Set(self.time)
-		self.O['time'].Set(self.time)
-		#print 'before post' + str(self.O['time'].value)
-
-		self._PostUpdate()
-
-		#print 'after post' + str(self.O['time'].value)
 
 	## Update cycle.
 	#
@@ -835,13 +767,13 @@ class Machine(Circuit):
 			if(self.circuits[kw].enabled):
 				self.circuits[kw].Push()
 
+
 	## Integrate the machine.
 	#
 	# Calls the update routine of each circuit in the setup for a given amount of time.
 	# 
 	def Wait(self, dtime):
 		
-		#for i in range(int(math.floor(dtime/self.dt))): self.Update()
 		Circuit.cCore.Update(c_int(int(math.floor(dtime/self.dt))))
 	
 	## Integrate the machine.
@@ -849,8 +781,6 @@ class Machine(Circuit):
 	# Calls the update routine of each circuit in the setup for a given amount of steps.
 	# 
 	def WaitSteps(self, nsteps):
-		
-		#for i in range(int(math.floor(dtime/self.dt))): self.Update()
 		Circuit.cCore.Update(c_int(nsteps))
 		
 	def Wait2(self, dtime):
