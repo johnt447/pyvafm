@@ -9,6 +9,7 @@ def main():
 	machine = Machine(name='machine', dt=0.01, pushed=True);
 	
 	#Add Circuits
+	
 	scanner = machine.AddCircuit(type='Scanner',name='scan', pushed=True )
 	machine.AddCircuit(type='Perlin', name='nx', octaves=3, persist=0.3, amp=0.05, period=1.23, pushed=True)
 	machine.AddCircuit(type='Perlin', name='ny', octaves=3, persist=0.3, amp=0.05, period=1.23, pushed=True)

@@ -5,7 +5,6 @@ from vafmcircuits import Machine
 
 def main():
 	
-	
 	machine = Machine(name='machine', dt=0.01, pushed=True);
 	
 	#Add Circuits
@@ -18,7 +17,6 @@ def main():
 	out1.Register('global.time', 'osc.sin', 'lag.out')
 	
 	machine.Wait(5)
-
 	
 
 if __name__ == '__main__':

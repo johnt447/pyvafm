@@ -1,13 +1,9 @@
 #!/usr/bin/env python
 
-from vafmbase import ChannelType
 from vafmcircuits import Machine
-
 from customs_pll import *
 
-
 def main():
-	
 	
 	machine = Machine(name='machine', dt=1.0e-9, pushed=True);
 	f0 = 100000.0

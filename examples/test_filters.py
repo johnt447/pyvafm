@@ -1,6 +1,5 @@
-# -*- coding:utf-8 -*-
+#!/usr/bin/env python
 
-from vafmbase import ChannelType
 from vafmcircuits import Machine
 
 
@@ -16,14 +15,14 @@ def main():
 	machine.AddCircuit(type='SKLP',name='sklp', fcut=100, pushed=True )
 	#amplitude detector for the filter
 	machine.AddCircuit(type='minmax', name='asklp', CheckTime=0.2, pushed=True)
-
+	
 	#high-pass filter
 	machine.AddCircuit(type='SKHP',name='skhp', fcut=100, pushed=True )
 	#amplitude detector for the filter
 	machine.AddCircuit(type='minmax', name='askhp', CheckTime=0.2, pushed=True)
 
 	#band-pass filter
-	machine.AddCircuit(type='SKBP',name='skbp', fcut=100, band=60, pushed=True )
+	machine.AddCircuit(type='SKBP',name='skbp', fc=100, band=60, pushed=True )
 	#amplitude detector for the filter
 	machine.AddCircuit(type='minmax', name='askbp', CheckTime=0.2, pushed=True)
 
@@ -32,15 +31,14 @@ def main():
 	#amplitude detector for the filter
 	machine.AddCircuit(type='minmax', name='arclp', CheckTime=0.2, pushed=True)
 
-
 	#passive high pass filter
 	machine.AddCircuit(type='RCHP',name='rchp', fcut=100, order=1, pushed=True )
 	#amplitude detector for the filter
 	machine.AddCircuit(type='minmax', name='archp', CheckTime=0.2, pushed=True)
 
-
 	#connect oscillator to the filters
 	machine.Connect("wave.sin","sklp.signal","skhp.signal","skbp.signal","rclp.signal","rchp.signal")
+
 	machine.Connect("sklp.out","asklp.signal") #filter -> amplitude detector
 	machine.Connect("skhp.out","askhp.signal") #filter -> amplitude detector
 	machine.Connect("skbp.out","askbp.signal") #filter -> amplitude detector
@@ -50,13 +48,11 @@ def main():
 	#output to file - dump=0 means only manual dump
 	out1 = machine.AddCircuit(type='output',name='output',file='test_filters.out', dump=0)
 	out1.Register('wave.freq', 'asklp.amp', 'askhp.amp', 'askbp.amp',"arclp.amp","archp.amp")
-
-
+	
 	#set the frequency and relax the filter
 	freq = 5
 	machine.SetInput(channel="wave.freq", value=freq)
 	machine.Wait(1)
-
 
 	while freq < 700:
 
@@ -68,7 +64,6 @@ def main():
 
 		out1.Dump() #output to file
 		freq *= 1.2 #ramp the frequency
-			
 	
 
 if __name__ == '__main__':

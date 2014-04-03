@@ -18,7 +18,6 @@ def main():
 	out1.Register('global.time', 'osc.sin', 'avg.out','avg2.out')
 	
 	machine.Wait(10)
-
 	
 
 if __name__ == '__main__':

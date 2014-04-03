@@ -2,6 +2,7 @@
 
 from vafmcircuits import Machine
 
+
 def main():
     
     machine = Machine(name='machine', dt=0.01, pushed=True);

@@ -26,8 +26,8 @@ def main():
 	out1.Register('global.time', 'pfd.ref', 'pfd.vco', 'pfd.df')
 	
 	machine.Wait(0.1)
-	
-		
+
+
 if __name__ == '__main__':
 	main()
 

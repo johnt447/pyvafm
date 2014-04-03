@@ -20,7 +20,6 @@ def main():
 	out1.Register('global.time', "w1.sin","w2.cos","lag.tick","lag.delay")
 	
 	machine.Wait(10)
-
 	
 
 if __name__ == '__main__':

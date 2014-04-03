@@ -3,7 +3,6 @@
 from vafmcircuits import Machine
 
 
-
 def main():
 	
 	#main machine
@@ -19,7 +18,6 @@ def main():
 	
 	
 	machine.Wait(1)
-	
 	
 
 if __name__ == '__main__':

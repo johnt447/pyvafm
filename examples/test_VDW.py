@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-from vafmbase import ChannelType
 from vafmcircuits import Machine
 
 
@@ -18,11 +17,11 @@ def main():
 	out1 = machine.AddCircuit(type='output',name='output',file='VDW.out', dump=1)
 	out1.Register("scan.z", "VDW.fz")
 
-
 	machine.Connect("scan.z","VDW.ztip")
 
 	scanner.Place(x=0,y=0,z=10)
 	scanner.Move(x=0,y=0,z=10.1,v=1)
+
 
 if __name__ == '__main__':
 	main()

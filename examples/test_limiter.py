@@ -5,9 +5,7 @@ from vafmcircuits import Machine
 
 def main():
 	
-	
 	machine = Machine(name='machine', dt=0.01, pushed=True);
-	
 	
 	#Add the circuits	
   	machine.AddCircuit(type='waver',name='osc', amp=1, freq=1.3, pushed=True )
@@ -20,7 +18,6 @@ def main():
 	
 	machine.Wait(5)
 
-	
 
 if __name__ == '__main__':
 	main()
