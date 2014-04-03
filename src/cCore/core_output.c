@@ -143,7 +143,7 @@ void output_printout( circuit *c ) {
         else
             feedidx = circuits[regs[3*i]].outputs[regs[3*i+1]];
         
-        fprintf((c->vpparams[0]), "%15.8lf ", GlobalSignals[feedidx]);
+        fprintf((c->vpparams[0]), "%e ", GlobalSignals[feedidx]);
         
     }
     //printf("\n");

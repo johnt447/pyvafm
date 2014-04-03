@@ -215,13 +215,13 @@ void SKBP( circuit *c ) {
 
 /*********************************************************
 * passive low pass filter.
-//[0]=fcut
-//[1]=a
-// vparams[0] = x (notation from wiki)
-// vparams[1] = y
+    //[0]=fcut
+    //[1]=a
+    // vparams[0] = x (notation from wiki)
+    // vparams[1] = y
 * ******************************************************/
 int Add_RCLP(int owner, double fcut, int order) {
-
+	
     circuit c = NewCircuit();
     c.nI = 1;
     c.nO = 1;
@@ -233,9 +233,8 @@ int Add_RCLP(int owner, double fcut, int order) {
     c.iparams = (int*)calloc(c.plen,sizeof(double));
     
     fcut = 1/(2*PI*fcut);
-    
+
     double a = dt/(fcut+dt);
-    
     
     c.params[0] = fcut;
     c.params[1] = a;
@@ -247,17 +246,15 @@ int Add_RCLP(int owner, double fcut, int order) {
     c.vpparams[0] = (double*)calloc(order+2,sizeof(double)); //this is x
     c.vpparams[1] = (double*)calloc(order+2,sizeof(double)); //this is y
 
-
-    printf("cCore: added RCHP filter\n");
-
     c.updatef = RCLP;
     int index = AddToCircuits(c,owner);
 
+    printf("cCore: added RCHP filter\n");
     return index;
 }
 
 void RCLP( circuit *c ) {
-        
+    
     double *x = (double*)c->vpparams[0];
     double *y = (double*)c->vpparams[1];
     int order = c->iparams[0];
@@ -266,22 +263,14 @@ void RCLP( circuit *c ) {
 
     for (int i=0; i<order;i++)
     {
-	y[i+1] = (x[i]) + (y[i] - x[i]) *c->params[1];
-	x[i] = y[i+1];
+        y[i+1] = (x[i]) + (y[i] - x[i]) *c->params[1];
+        x[i] = y[i+1];
     }
 
     GlobalBuffers[c->outputs[0]] = y[order];
-
-
+    
 }
 
-/*********************************************************
-* passive low pass filter.
-//[0]=fcut
-//[1]=a
-// vparams[0] = x (notation from wiki)
-// vparams[1] = y
-* ******************************************************/
 
 int Add_RCHP(int owner, double fcut, int order) {
     
@@ -329,14 +318,15 @@ void RCHP( circuit *c ) {
 
     for (int i=1; i<order+1;i++)
     {
-	y[i] = ( x[i] + y[i-1] - x[i-1] ) *c->params[1];
+        y[i] = ( x[i] + y[i-1] - x[i-1] ) *c->params[1];
     }
 
     for (int i=0; i<order+1;i++)
     {
-	x[i] = y[i];
+        x[i] = y[i];
     }
 
     GlobalBuffers[c->outputs[0]] = y[order];
+
 }
 
