@@ -5,16 +5,12 @@ from vafmcircuits import Machine
 
 def main():
 	
-	
 	machine = Machine(name='machine', dt=0.01, pushed=True);
 	
-	
 	#Add Circuits
-	
-	
   	machine.AddCircuit(type='waver',name='osc', amp=1, freq=1, pushed=True )
-	machine.AddCircuit(type='avg', name='avg', time=0.5, pushed=True)
-	machine.AddCircuit(type='avg', name='avg2', time=0.5, moving=True, pushed=True)
+	machine.AddCircuit(type='avg', name='avg', time=10, pushed=True)
+	machine.AddCircuit(type='avg', name='avg2', time=1, moving=True, pushed=True)
   	
 	machine.Connect("osc.sin","avg.signal","avg2.signal")
 

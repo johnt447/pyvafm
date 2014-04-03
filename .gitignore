@@ -3,4 +3,6 @@ html
 *.log
 *.pyc
 *.o
+*~
 *.out
+*.dat
