@@ -3,7 +3,6 @@
 from vafmbase import ChannelType
 from vafmcircuits import Machine
 
-import vafmcircuits
 from customs_pll import *
 
 

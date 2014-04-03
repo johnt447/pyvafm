@@ -3,9 +3,6 @@
 from vafmbase import ChannelType
 from vafmcircuits import Machine
 
-import vafmcircuits
-import vafmcircuits_signal_processing
-import vafmcircuits_Filters
 
 def main():
 	

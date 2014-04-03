@@ -1,7 +1,4 @@
 #!/usr/bin/env python
-#import sys
-#sys.path.append('/Users/johntracey/Desktop/pyvafm-master/src')
-
 
 from vafmbase import ChannelType
 from vafmcircuits import Machine
