@@ -3,6 +3,9 @@ html
 *.log
 *.pyc
 *.o
+<<<<<<< HEAD
 *~
 *.out
+=======
+>>>>>>> FETCH_HEAD
 *.dat
