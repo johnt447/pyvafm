@@ -11,16 +11,20 @@ from scipy.interpolate import LinearNDInterpolator
 import ctypes
 
 ## \brief Tri-linear interpolation circuit.
+#
 # \image html i3dlin.png "schema"
 #
-# Trilinear interpolation of a 3D volumetric field, scalar or vector with any amount of components.
+# This is the circuit that calculates the interpolation of the provided force field.
+# The force field must be in the following format, but plese note that the interpolation circuit is capable of taking any number of components in. 
 #
-# Examples of how the force fields must be formated is shown below.: \n
-# <pre> x y z Fx Fy Fz or x y z F or x y z Fx 0 0 or x y Fx 0 <pre>
+# x y z F1 F2 F3 
 #
-# - \b Initialisation \b parameters:
-# 	- \a components = number of components of force in the force field
+# The force field must also use a constant step size for each dimenson, although the force field can be in any order. The x y and z must also be the index
+# of the point eg: 1 1 1 , 1 1 2 , 1 1 3 etc. When you configure the circuit later on you set the steps size to whatever you want it to be.
 #
+# - \b Initialisation \b parameters:.
+# 	- \a Components = Number of components of force in the force field.
+# 	- \a pushed True|False
 # - \b Initialisation \b commands:
 #	- Configure(steps=array, npoints=integer, pbc=True|False, ForceMultipler=float)
 #		- \a steps = step size of the force field must be specfied in this format [x,y,z]
@@ -29,15 +33,12 @@ import ctypes
 #		- \a ForceMultipler = A global multipler for all the force field values, use this to change the units of the force field into what ever units are desired.
 #	-  ReadData(filename = string)
 #		- \a Filename is the force field being interpolated.
-#
 # - \b Input \b channels:
-# 	- \a x : x position for extrapolation
-# 	- \a y : y position for extrapolation
-# 	- \a z : z position for extrapolation
-#
+#	 - \a x : this is x the coordiante to calculate the interpolation.
+#	 - \a y : this is y the coordiante to calculate the interpolation.
+#	 - \a z : this is z the coordiante to calculate the interpolation.
 # - \b Output \b channels:
-# 	- \a Fc: c component of the interpolated field, c from 1 to \i components
-#
+# 	- \a Fn: The interpolated forces where n is the component for example F1 would be first first component.
 #
 # \b Example:
 # \code
@@ -125,6 +126,13 @@ class i3Dlin(Circuit):
 				#print "PBC ",self.pbc
 				Circuit.cCore.i3Dlin_pbc(self.cCoreID, self.pbc[0], self.pbc[1], self.pbc[2])
 				self.pbcSET = True
+
+		if 'ForceMultiplier' in keys.keys():
+			self.ForceMultiplier = keys['ForceMultiplier']
+			print "ForceMultiplier = " +str(self.ForceMultiplier)
+		else:
+			self.ForceMultiplier = 1
+
 	
 	def ReadData(self,filename):
 		
@@ -146,11 +154,10 @@ class i3Dlin(Circuit):
 			k = int(words[2])-1
 			index = i*yzsize + j*zsize + k
 			for c in xrange(self.components): #convert the components to float
-				words[c+3] = ctypes.c_double(float(words[c+3]))
+				words[c+3] = ctypes.c_double(float(words[c+3]) * self.ForceMultiplier)
 				self.data[c][index] = words[c+3]
 		
 		f.close()
-
 
 
 ## \brief linear interpolation circuit.
@@ -184,6 +191,7 @@ class i3Dlin(Circuit):
 #	inter.SetData(forces)
 # \endcode
 #
+
 class i1Dlin(Circuit):
     
     
@@ -248,8 +256,6 @@ class i1Dlin(Circuit):
 		else:
 			test_arr = (ctypes.c_double * npts)(*datapoints)
 			Circuit.cCore.i1Dlin_SetData(self.cCoreID, 0,test_arr,npts)
-
-
 
 
 
