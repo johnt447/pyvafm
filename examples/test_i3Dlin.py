@@ -41,7 +41,6 @@ def main():
 	scan.ScanArea()
 
 
->>>>>>> FETCH_HEAD
 
 if __name__ == '__main__':
         main()
