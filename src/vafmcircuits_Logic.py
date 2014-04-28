@@ -107,6 +107,31 @@ class AND(Circuit):
 		pass
 
 
+class NAND(Circuit):
+
+	def __init__(self, machine, name, **keys):
+
+		super(self.__class__, self).__init__( machine, name )
+
+
+		
+		#create input channels
+		self.AddInput("in1")
+		self.AddInput("in2")
+		
+		self.AddOutput("out")
+
+		self.cCoreID = Circuit.cCore.Add_Logic(self.machine.cCoreID,"opNAND",2)
+
+		self.SetInputs(**keys)
+
+	def Initialize (self):
+		pass        
+
+	def Update (self):
+		pass
+
+
 ## Or Gate
 # \image html OrGate.png "schema"
 #
