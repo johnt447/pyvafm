@@ -128,8 +128,8 @@ def dPFD(compo,**keys):
     
     compo.AddCircuit(type='PI',name='pi', set=0, pushed=True)
     
-    
-
+    compo.AddCircuit(type='opAdd',name='fsum', pushed=True)
+    compo.AddCircuit(type='waver',name='vco', amp=1, pushed=True)
     
     #connections
     compo.Connect("global.KI","pi.Ki"); compo.Connect("global.KP","pi.Kp")
@@ -142,8 +142,13 @@ def dPFD(compo,**keys):
     compo.Connect("sub.out","pi.signal")
     compo.Connect("pi.out","lowpass.signal")
     compo.Connect("lowpass.out","dfgain.signal")
-    compo.Connect("dfgain.out","global.df")
-    #compo.Connect("ffdr1.front","global.dbg")
+    compo.Connect("dfgain.out","fsum.in1","global.df")
+    compo.Connect("global.f0", "fsum.in2")
+    compo.Connect("fsum.out",   "vco.freq")
+    compo.Connect("vco.sin",   "global.sin")
+    compo.Connect("vco.cos",   "global.cos")
+    compo.Connect("pi.out",   "global.dbg")
+    
 
     print "digital PFD assembled!"
 
