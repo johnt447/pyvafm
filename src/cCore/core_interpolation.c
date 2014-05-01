@@ -120,7 +120,9 @@ void i3Dlin( circuit *c ) {
     
     //outputs 0 if out of bounds
     if(oob == 0) {
-	printf("WARNING! i3Dlin OOB!\n");
+	//this message will flood the screen when the tip is far away!
+	//we have to do something about it!
+	//printf("WARNING! i3Dlin OOB! %lf %lf %lf \n",pos[0],pos[1],pos[2]);
 	for (int comp=0; comp<c->iparams[0]; comp++)
 	    GlobalBuffers[c->outputs[comp]] = 0;
 	return;
