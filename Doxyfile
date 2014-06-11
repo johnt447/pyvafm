@@ -610,7 +610,7 @@ WARN_LOGFILE           =
 # with spaces.
 
 INPUT                  = "./src/" "./doc/index.dox" "./doc/intro.dox" "./doc/circuits.dox" \
-		"./doc/credits.dox" "./doc/example_filter.dox" \
+		"./doc/about.dox" "./doc/credits.dox" "./doc/example_filter.dox" \
 		"./doc/tutorials.dox" "./doc/tut_basic.dox" \
 		"./doc/install.dox"  "./doc/quickstart.dox" \
 		"./doc/running.dox"  "./doc/documentation.dox" \
