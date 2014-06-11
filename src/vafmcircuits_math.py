@@ -166,7 +166,6 @@ class opMul(Circuit):
 		
 
 	def Initialize (self):
-<<<<<<< HEAD
 		pass
 		
 		
@@ -273,16 +272,7 @@ class opLinC(Circuit):
 		
 
 	def Initialize (self):
-<<<<<<< HEAD
 		pass
-		
-	def Update (self):
-=======
-		
-		pass
-		
-		
-		
 		
 	def Update (self):
 		pass
