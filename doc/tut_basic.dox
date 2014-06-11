@@ -74,7 +74,7 @@ The full python input file is:
 
 
 and the output is then plotted (gnuplot) as follows:
-##image html tutorial_basic_1.png
+
 \htmlonly
 <img src="tutorial_basic_1.png" width=400>
 \endhtmlonly
