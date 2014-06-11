@@ -5,7 +5,6 @@ from vafmbase import Channel
 import math
 
 
-
 ## \package vafmcircuits_control
 # This file contains the controller circuits.
 #
@@ -49,7 +48,7 @@ class PI(Circuit):
 		
 		
 		self.AddOutput("out")
-	
+
 		self.cCoreID = Circuit.cCore.Add_PI(machine.cCoreID)
 		
 		self.SetInputs(**keys)
@@ -109,7 +108,6 @@ class PID(Circuit):
 		self.SetInputs(**keys)
 
 	def Initialize (self):
-
 		pass
 
 

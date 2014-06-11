@@ -250,6 +250,7 @@ int Add_RCLP(int owner, double fcut, int order) {
     int index = AddToCircuits(c,owner);
 
     printf("cCore: added RCHP filter\n");
+
     return index;
 }
 
@@ -272,6 +273,14 @@ void RCLP( circuit *c ) {
 }
 
 
+
+/*********************************************************
+* passive low pass filter.
+    params[0] = fcut
+    params[1] = a
+    vparams[0] = x (notation from wiki)
+    vparams[1] = y
+* ******************************************************/
 int Add_RCHP(int owner, double fcut, int order) {
     
     circuit c = NewCircuit();

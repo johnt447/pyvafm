@@ -7,5 +7,4 @@ void RunCantilever(circuit *c);
 int Add_AdvancedCantilever(int owner, int numberofmodesV, int numberofmodesL);
 void RunAdvancedCantilever(circuit *c);
 
-
 #endif

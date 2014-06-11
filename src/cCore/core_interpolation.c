@@ -118,11 +118,21 @@ void i3Dlin( circuit *c ) {
 	}
     }
     
+    
+    if( pos[2] >= (c->iparams[2+1]-1)*c->params[2])
+    {
+
+    	oob = 1;
+    for (int comp=0; comp<c->iparams[0]; comp++)
+	    GlobalBuffers[c->outputs[comp]] = 0;
+	return;
+    }
+
+	
+
     //outputs 0 if out of bounds
     if(oob == 0) {
-	//this message will flood the screen when the tip is far away!
-	//we have to do something about it!
-	//printf("WARNING! i3Dlin OOB! %lf %lf %lf \n",pos[0],pos[1],pos[2]);
+	printf("WARNING! i3Dlin OOB!\n");
 	for (int comp=0; comp<c->iparams[0]; comp++)
 	    GlobalBuffers[c->outputs[comp]] = 0;
 	return;

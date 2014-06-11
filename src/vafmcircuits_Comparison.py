@@ -47,7 +47,6 @@ class GreaterOrEqual(Circuit):
 	def Update (self):
 		pass
 
-
 ## \brief Less or equal to  circuit.
 #
 # \image html LessOrEqual.png "schema"
@@ -90,7 +89,6 @@ class LessOrEqual(Circuit):
 	def Update (self):
 		pass
 
-
 ## \brief equal to  circuit.
 #
 # \image html Equal.png "schema"
@@ -132,4 +130,5 @@ class Equal(Circuit):
 
 	def Update (self):
 		pass
+
 

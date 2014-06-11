@@ -70,7 +70,6 @@ class opAdd(Circuit):
 	def Update (self):
 		pass
 
-
 ## \brief Arithmetic subtraction circuit.
 #
 # Outputs the difference between two input signals 'in#' in the output 'out'.
@@ -116,7 +115,6 @@ class opSub(Circuit):
         
 	def Update (self):
 		pass
-
 
 ## \brief Arithmetic multiplier circuit.
 #
@@ -168,11 +166,13 @@ class opMul(Circuit):
 		
 
 	def Initialize (self):
+<<<<<<< HEAD
 		pass
 		
 		
 	def Update (self):
 		pass
+
 
 
 ## \brief Arithmetic division circuit.
@@ -220,8 +220,6 @@ class opDiv(Circuit):
         
 	def Update (self):
 		pass
-
-
 
 ## \brief Arithmetic linear-combo circuit.
 #
@@ -275,7 +273,16 @@ class opLinC(Circuit):
 		
 
 	def Initialize (self):
+<<<<<<< HEAD
 		pass
+		
+	def Update (self):
+=======
+		
+		pass
+		
+		
+		
 		
 	def Update (self):
 		pass
@@ -374,6 +381,7 @@ class opPow(Circuit):
 		pass
 
 
+
 ## \brief Sin operator circuit.
 #
 # \image html opSin.png "schema"
@@ -459,7 +467,6 @@ class opCos(Circuit):
 	def Update (self):
 		pass
 
-
 ## \brief Perlin Noise circuit.
 #
 # \image html Perlin.png "schema"
@@ -528,4 +535,4 @@ class Perlin(Circuit):
 	
 	def Update (self):
 		pass
-	
+

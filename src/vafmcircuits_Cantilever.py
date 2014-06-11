@@ -3,7 +3,8 @@
 import numpy
 import math
 from vafmbase import Circuit
-from ctypes import c_double
+import ctypes
+
 
 ## \package vafmcircuits_Cantilever
 # This file contains the cantilever circuit
@@ -83,10 +84,10 @@ class Cantilever(Circuit):
 		self.AddOutput("vz")
 
 		self.cCoreID = Circuit.cCore.Add_Cantilever(self.machine.cCoreID,        #CAREFUL HERE!
-			c_double(Q),c_double(k),c_double(M),c_double(F), c_double(startingz), c_double(0.0) )
+			ctypes.c_double(Q),ctypes.c_double(k),ctypes.c_double(M),
+			ctypes.c_double(F),ctypes.c_double(startingz),ctypes.c_double(0.0) )
 
 		self.SetInputs(**keys);
-
 
 
 ## \brief Advanced cantilever circuit.
@@ -142,7 +143,7 @@ class AdvancedCantilever(Circuit):
 
 		super(self.__class__, self).__init__( machine, name )
 
-		
+
 		if 'NumberOfModesV' in keys.keys():
 			NumberOfModesV = keys['NumberOfModesV']
 			print "Number of Vertical Modes = " +str(NumberOfModesV)
@@ -278,5 +279,6 @@ class AdvancedCantilever(Circuit):
 		Circuit.cCore.AddM(self.cCoreID, Marray)
 
 		farray = (ctypes.c_double * len(f))(*f)
+
 		Circuit.cCore.AddF(self.cCoreID,farray)		
 

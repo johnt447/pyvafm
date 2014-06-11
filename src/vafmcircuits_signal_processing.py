@@ -171,6 +171,7 @@ class derivative(Circuit):
 	def Update (self):
 		pass
 
+
 ## \brief Integration circuit.
 #
 # \image html integral.png "schema"

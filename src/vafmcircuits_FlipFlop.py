@@ -57,11 +57,8 @@ class SRFlipFlop(Circuit):
 	def Initialize (self):
 		pass
 
-
 	def Update (self):
 		pass
-
-
 
 ## \brief JK Flip Flop circuit.
 # \image html JKFlipFlop.png
@@ -119,6 +116,7 @@ class JKFlipFlop(Circuit):
 	def Update (self):		
 		pass
 
+
 ## D Flip Flop circuit.
 # \image html DFlipFlop.png
 # Truth Table D Flip Fop
@@ -161,6 +159,9 @@ class DFlipFlop(Circuit):
 		self.AddOutput("Qbar")
 		
 		self.cCoreID = Circuit.cCore.Add_DFlipFLop(self.machine.cCoreID)
+
+		self.SetInputs(**keys)
+
 
 	def Initialize (self):
 		pass
@@ -219,3 +220,4 @@ class DRFlipFlop(Circuit):
 
 	def Update (self):
 		pass
+

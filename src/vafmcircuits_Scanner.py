@@ -7,8 +7,7 @@ from ctypes import *
 #
 #
 # \image html scanner.png "schema"
-# This is scanner circuit, it is designed to move the cantilever round the 
-# force field but in essence it just calculates paths between two points.
+# The scanner circuit is designed to move the cantilever over time.
 #
 # \b Initialisation \b parameters:
 # 	- \a pushed = True|False  push the output buffer immediately if True
@@ -17,6 +16,7 @@ from ctypes import *
 #	- Place(x=float,y=float,z=float) = Place the scanner at a given location.
 #	- Move(x=float,y=float,z=float, v=float) = Move the scanner by a give vector at a given speed.
 #	- MoveTo(x=float,y=float,z=float, v=float) = Move the scanner to a given postion at a given speed.
+#	- MoveRecord(x=float,y=float,z=float, v=float, points=integer) = same as Move command except will only record a set number of points
 #	- Direction(x=integer,y=integer,z=integer) = Set the direction of the fast scan using a tyical unit vector format.
 #	- ScanArea() = Start the auto scan (this should be set up as shown in the tutorials)
 #
@@ -29,6 +29,7 @@ from ctypes import *
 # 	- \a x = x coordinate value.
 # 	- \a y = y coordinate value.
 # 	- \a z = z coordinate value.
+#	- \a record = Will output 1 when the scanner wants to output a value.
 #
 #\b Examples:
 # \code{.py}
@@ -122,7 +123,8 @@ class Scanner(Circuit):
 		if "x" in kw.keys(): x = float(kw["x"])
 		if "y" in kw.keys(): y = float(kw["y"])
 		if "z" in kw.keys(): z = float(kw["z"])
-		if not("z" in kw.keys()):
+
+		if ("v" in kw.keys()):
 			v = float(kw["v"])
 		else:
 			raise NameError ("ERROR! Scanner MoveTo requires v.")
@@ -209,7 +211,7 @@ class Scanner(Circuit):
 		#loop for each scanline to take
 		for linenum in range(1,self.Resolution[1]+1):
 			
-			print "PY Scanner: starting line..."
+			print "PY Scanner: starting line number "+str(linenum) + "..."
 			
 			#move to the end of fast scanline
 			steps = Circuit.cCore.Scanner_Move_Record(self.cCoreID, dfast[0],dfast[1],dfast[2],
@@ -241,5 +243,29 @@ class Scanner(Circuit):
 		print "done!"
 
 
+	def MoveRecord(self, **kw):
+		#finds out where the scanner is by asking cCore
+		params = self.GetParams(self.cCoreID);
+		x = params[0]
+		y = params[1]
+		z = params[2]
+		v = 1
+		npts=0
+		if "x" in kw.keys(): x = float(kw["x"])
+		if "y" in kw.keys(): y = float(kw["y"])
+		if "z" in kw.keys(): z = float(kw["z"])
+		if ("v" in kw.keys()):
+			v = float(kw["v"])
+		else:
+			raise NameError ("ERROR! Scanner MoveRecord requires v.")
+		if ("points" in kw.keys()):
+			npts = int(kw["points"])
+		else:
+			raise NameError ("ERROR! Scanner MoveRecord requires number of points.")
+
+
+		steps = Circuit.cCore.Scanner_Move_Record(self.cCoreID, c_double(x), c_double(y), c_double(z), c_double(v), c_int(npts)) 
+		self.machine.main.WaitSteps(steps)                
+		print "Scanner moved by " +str(x) + "," + str(y)+ "," + str(z)
 
 

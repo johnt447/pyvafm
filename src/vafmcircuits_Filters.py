@@ -73,7 +73,6 @@ class SKLP(Circuit):
 
 	def Initialize (self):
 		pass
-		
 	def Update (self):
 		pass
 
@@ -141,11 +140,9 @@ class SKHP(Circuit):
 		
 	def Initialize (self):
 		pass
-
 		
 	def Update (self):
 		pass
-
 
 ## \brief Active Band Pass Filter  circuit.
 #
@@ -207,7 +204,7 @@ class SKBP(Circuit):
 
 	def Initialize (self):
 		pass
-		
+
 	def Update (self):
 		pass
 
@@ -247,6 +244,7 @@ class RCLP(Circuit):
 
 
 		self.fc=0
+
 		if 'fcut' in keys.keys():
 			self.fc = keys['fcut']
 		else:
@@ -266,7 +264,6 @@ class RCLP(Circuit):
 	
 	def Update (self):
 		pass
-
 
 ## \brief RC high-pass filter circuit.
 #

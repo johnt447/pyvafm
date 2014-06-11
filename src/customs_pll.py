@@ -98,8 +98,10 @@ def aPLL(compo,**keys):
 
 	print "analog PLL assembled!"
 
+
+
 def dPFD(compo,**keys):
-	
+    
     # I/O
     compo.AddInput("ref")
     compo.AddInput("vco")
@@ -171,8 +173,5 @@ def aAMPD(compo, **keys):
     compo.Connect('lp.out','nrm.in2')
     compo.Connect('nrm.out','lim.signal')
     compo.Connect('lim.out','global.norm')
-    
-    
-    
     
     
