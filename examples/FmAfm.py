@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-<<<<<<< HEAD
 from vafmcircuits import Machine
 from customs_pll import *
 
