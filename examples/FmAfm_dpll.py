@@ -48,9 +48,15 @@ def main():
 	out2.Register('global.time', 'amp.amp','agc.out','pll.df','pew.delay')
 
 	machine.Wait(0.01)
+<<<<<<< HEAD
 	out1.Start()
 	machine.Wait(0.001)
 	out1.Stop()
+=======
+	#out1.Start()
+	machine.Wait(0.001)
+	#out1.Stop()
+>>>>>>> 72dc09fb8affb9761e7d26360f54c6668336189d
 	machine.Wait(0.05)
 	out1.Start()
 	machine.Wait(0.001)
@@ -60,4 +66,7 @@ def main():
 
 if __name__ == '__main__':
         main()
+<<<<<<< HEAD
 
+=======
+>>>>>>> 72dc09fb8affb9761e7d26360f54c6668336189d

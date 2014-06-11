@@ -1,7 +1,20 @@
+<<<<<<< HEAD
 #!/usr/bin/env python
 
 from vafmcircuits import Machine
 
+=======
+# -*- coding:utf-8 -*-
+import sys
+sys.path.append('/Users/johntracey/Desktop/pyvafm-master/src')
+from vafmbase import ChannelType
+from vafmcircuits import Machine
+
+import vafmcircuits
+import vafmcircuits_Comparison
+import vafmcircuits_signal_processing
+import vafmcircuits_Filters
+>>>>>>> 72dc09fb8affb9761e7d26360f54c6668336189d
 
 def main():
 	
@@ -20,11 +33,19 @@ def main():
 	machine.Connect("wave.sin","eq.in2","leq.in2","geq.in2")
 	
 	#output to file
+<<<<<<< HEAD
 	out1 = machine.AddCircuit(type='output',name='output',file='test_comparison.out', dump=1)
+=======
+	out1 = machine.AddCircuit(type='output',name='output',file='test_comparison.log', dump=1)
+>>>>>>> 72dc09fb8affb9761e7d26360f54c6668336189d
 	out1.Register('global.time','wave.cos','wave.sin','eq.out','leq.out','geq.out')
 	
 	machine.Wait(1)
 	
+<<<<<<< HEAD
+=======
+	
+>>>>>>> 72dc09fb8affb9761e7d26360f54c6668336189d
 
 if __name__ == '__main__':
 	main()
