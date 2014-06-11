@@ -1,18 +1,7 @@
 #!/usr/bin/env python
-<<<<<<< HEAD
 
 from vafmcircuits import Machine
 
-=======
-import sys
-sys.path.append('/Users/johntracey/Desktop/pyvafm-master/src')
-from vafmbase import ChannelType
-from vafmcircuits import Machine
-
-import vafmcircuits
-import vafmcircuits_Logic
-
->>>>>>> 72dc09fb8affb9761e7d26360f54c6668336189d
 
 def main():
 	
@@ -34,19 +23,10 @@ def main():
 	machine.Connect("s2.out","and.in2","or.in2","xor.in2","nor.in2")
 	
 	
-<<<<<<< HEAD
 	out1 = machine.AddCircuit(type='output',name='output',file='test_logic.out', dump=1)
 	out1.Register('global.time', 's1.out', 's2.out','not.out','and.out','or.out','xor.out','nor.out')
 	
 	machine.Wait(10)
-=======
-	out1 = machine.AddCircuit(type='output',name='output',file='test_logic.log', dump=1)
-	out1.Register('global.time', 's1.out', 's2.out','not.out','and.out','or.out','xor.out','nor.out')
-	
-	for i in range(1000):
-	    machine.Update()
-
->>>>>>> 72dc09fb8affb9761e7d26360f54c6668336189d
 	
 
 if __name__ == '__main__':

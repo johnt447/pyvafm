@@ -1,26 +1,10 @@
 #!/usr/bin/env python
-<<<<<<< HEAD
 
 from vafmcircuits import Machine
-
-
-def main():
-	
-=======
-import vafmcircuits
 import math
-from customs_pll import *
-#!/usr/bin/env python
-
-from vafmbase import ChannelType
-from vafmcircuits import Machine
-
-
 
 def main():
 	
-	
->>>>>>> 72dc09fb8affb9761e7d26360f54c6668336189d
 	machine = Machine(name='machine', dt=0.01, pushed=True);
 	scanner = machine.AddCircuit(type='Scanner',name='scan', pushed=True)
 	inter = machine.AddCircuit(type='i1Dlin',name='inter', comp=2, step=0.1, pbc=True, pushed=True)
@@ -40,22 +24,6 @@ def main():
 	#machine.Wait(0.02)
 	scanner.Move(x=2,v=1)
 
-<<<<<<< HEAD
-=======
-	'''
-	#machine.SetInput(channel="output.record", value=1)	
-	scanner.Recorder = imager
-	scanner.BlankLines = True 
-	#resolution of the image [# points per line, # lines]
-	scanner.Resolution = [30,1]
-	
-	scanner.ImageArea(5.64,5.64)        
-	scanner.FastSpeed = 10
-	scanner.SlowSpeed = 20
-	scanner.ScanArea()
-	'''
-
->>>>>>> 72dc09fb8affb9761e7d26360f54c6668336189d
 
 if __name__ == '__main__':
 	main()

@@ -1,19 +1,6 @@
 #!/usr/bin/env python
 
-<<<<<<< HEAD
 from vafmcircuits import Machine
-=======
-#from vafmbase import ChannelType
-
-
-import sys
-sys.path.append('/Users/johntracey/Desktop/pyvafm-master/src')
-from vafmcircuits import Machine
-import vafmcircuits
-import vafmcircuits_control
-#import vafmcircuits_math
-import vafmcircuits_Filters
->>>>>>> 72dc09fb8affb9761e7d26360f54c6668336189d
 
 
 def main():
@@ -24,13 +11,8 @@ def main():
     machine.AddCircuit(type='opAbs',name='abs', pushed=True)
     machine.AddCircuit(type='SKLP',name='lp', fcut=0.04, pushed=True)
     
-<<<<<<< HEAD
     pi = machine.AddCircuit(type='PI', name='pi', set=1,Kp=1.5,Ki=0.2)
     #pid = machine.AddCircuit(type='PID', name='pi', set=1,Kp=1.5,Ki=0.2,Kd=0.1)
-=======
-    #pi = machine.AddCircuit(type='PI', name='pi', set=1,Kp=1.5,Ki=0.2)
-    pid = machine.AddCircuit(type='PID', name='pi', set=1,Kp=1.5,Ki=0.2,Kd=0.1)
->>>>>>> 72dc09fb8affb9761e7d26360f54c6668336189d
     
     machine.Connect("osc.sin","abs.signal")
     machine.Connect("abs.out","lp.signal")
@@ -38,11 +20,7 @@ def main():
     machine.Connect("lp.out","pi.signal")
     machine.Connect("pi.out","osc.amp")
     
-<<<<<<< HEAD
     out1 = machine.AddCircuit(type='output',name='output',file='test_pi.out', dump=5)
-=======
-    out1 = machine.AddCircuit(type='output',name='output',file='test_pi.log', dump=5)
->>>>>>> 72dc09fb8affb9761e7d26360f54c6668336189d
     out1.Register('global.time', 'osc.sin', 'lp.out', 'pi.out')
     
     machine.Wait(100)

@@ -1,15 +1,7 @@
 #!/usr/bin/env python
-import subprocess
-import sys
-sys.path.append('/Users/johntracey/Desktop/pyvafm-master/src')
 
-import vafmcircuits
-from customs_pll import *
-#!/usr/bin/env python
-
-from vafmbase import ChannelType
 from vafmcircuits import Machine
-
+from customs_pll import *
 
 
 def main():
@@ -100,3 +92,4 @@ def main():
 
 if __name__ == '__main__':
 	main()
+

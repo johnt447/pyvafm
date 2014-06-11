@@ -38,7 +38,7 @@ def main():
 	
 	machine.Connect('exc.out','canti.exciter')
 	
-    #Outputs
+	#Outputs
 	out1 = machine.AddCircuit(type='output',name='output',file='testafm.out', dump=2)
 	out1.Register('global.time', 'canti.zabs','amp.norm','pll.cos','pll.sin','exc.in2','pll.dbg')
 	#out1.Register('global.time', 'wave.cos','pll.cos','pll.sin','exc.in2')
@@ -48,15 +48,10 @@ def main():
 	out2.Register('global.time', 'amp.amp','agc.out','pll.df','pew.delay')
 
 	machine.Wait(0.01)
-<<<<<<< HEAD
 	out1.Start()
 	machine.Wait(0.001)
 	out1.Stop()
-=======
-	#out1.Start()
-	machine.Wait(0.001)
-	#out1.Stop()
->>>>>>> 72dc09fb8affb9761e7d26360f54c6668336189d
+
 	machine.Wait(0.05)
 	out1.Start()
 	machine.Wait(0.001)
@@ -66,7 +61,4 @@ def main():
 
 if __name__ == '__main__':
         main()
-<<<<<<< HEAD
 
-=======
->>>>>>> 72dc09fb8affb9761e7d26360f54c6668336189d

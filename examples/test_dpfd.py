@@ -31,7 +31,4 @@ def main():
 if __name__ == '__main__':
 	main()
 
-<<<<<<< HEAD
 
-=======
->>>>>>> 72dc09fb8affb9761e7d26360f54c6668336189d

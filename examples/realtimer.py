@@ -1,13 +1,6 @@
 #!/usr/bin/env python
-#Mandatory Imports
 
-from vafmbase import ChannelType
 from vafmcircuits import Machine
-import vafmcircuits
-import subprocess
-
-#User defined inports
-import vafmcircuits_Filters
 
 
 def main():
@@ -33,8 +26,5 @@ def main():
 
 	machine.Wait(2)
 	
-
-	#out1.FinishPlot()
-
 if __name__ == '__main__':
 	main()
