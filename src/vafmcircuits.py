@@ -26,9 +26,9 @@ import vafmcircuits_VDW
 
 ## Virtual %Machine main class.
 #
-# The vitual machine is effectively a \link vafmbase.Circuit circuit \endlink, with input/output channels,
-# but it also contains an internal assembly of circuits that run during the \ref Update
-# cycle. Every machine always has the output channel \a 'time' created during initialisation.
+# This is the main virtual machine object. It can also be used as a conventional \link vafmbase.Circuit circuit \endlink, acting as a
+# circuit container. Every Machine circuit has one default output channel \a 'time', but other input/output
+# channels can be added.
 #
 #
 # \b Initialisation \b parameters:
@@ -573,6 +573,7 @@ class Machine(Circuit):
 			return False
 
 
+	## \internal
 	## Connect the output of a circuit to the input of another.
 	#
 	# The I/O channels to connect are specified with the syntax: "circuit.channel", in the *args arguments
@@ -653,7 +654,7 @@ class Machine(Circuit):
 			Circuit.cCore.Connect(ccSrcID,ccSrcCH, ccDstID, ccDstCH)
 
 			print 'PY: connection done!'
->>>>>>> 72dc09fb8affb9761e7d26360f54c6668336189d
+
 	def Connect(self, *args):
 
 		#if the output is a global, then it means that we want to connect
@@ -772,6 +773,7 @@ class Machine(Circuit):
 		for kw in self.circuits.keys():
 			self.circuits[kw].Initialize()
 
+	## \internal
 	## Update cycle.
 	#
 	# Calls the update routine of each circuit in the setup.
@@ -804,7 +806,6 @@ class Machine(Circuit):
 
 		#print 'after post' + str(self.O['time'].value)
 
->>>>>>> 72dc09fb8affb9761e7d26360f54c6668336189d
 	def Update(self):
 		
 		Circuit.cCore.Update(1)
