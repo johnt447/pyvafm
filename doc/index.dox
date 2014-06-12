@@ -4,8 +4,11 @@
 Welcome to the \progname documentation.
 
  -# \subpage page_about
+  -# \ref Info 
+  -# \ref Features
+  -# \ref Units
  -# \subpage page_install
- -# \subpage page_quickstart
+ -# Quickstart (show here a very basic input file, and how to run it)
  -# \subpage page_tutorial
  -# \subpage page_circs
 

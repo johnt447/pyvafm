@@ -1,4 +1,5 @@
 html
+<<<<<<< HEAD
 
 *.log
 *.pyc
@@ -9,3 +10,13 @@ html
 =======
 >>>>>>> FETCH_HEAD
 *.dat
+=======
+Work
+*.log
+*.pyc
+*.o
+*.dat
+*.in
+*.out
+*.sh
+>>>>>>> 72dc09fb8affb9761e7d26360f54c6668336189d
