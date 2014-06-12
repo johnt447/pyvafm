@@ -252,8 +252,8 @@
 </div>
 <div id="VDW">
 @endhtmlonly
-	- Van Der Walls force
-		- \link vafmcircuits_VDW.VDW VDW\endlink - <i> Van der walls force circuit</i>
+	- Van Der Waals force
+		- \link vafmcircuits_VDW.VDW VDW\endlink - <i> Van Der waals force circuit</i>
 @htmlonly
 </div><!-- end of Composites list -->
 @endhtmlonly
