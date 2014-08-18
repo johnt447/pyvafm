@@ -314,7 +314,7 @@ class peaker(Circuit):
 			self.upordown = keys['up']
 			if self.upordown is True:
 				self.up = 1
-			if self.upordown is False:
+			elif self.upordown is False:
 				self.up = 0
 			else:
 				raise ValueError("Invalid value for up!")
