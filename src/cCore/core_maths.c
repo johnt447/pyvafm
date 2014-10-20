@@ -24,7 +24,7 @@ void INIT_MATHS(int* counter) {
     pynames[i] = "opDIV"; ufunctions[i] = opDIV; i++;
     pynames[i] = "opABS"; ufunctions[i] = opABS; i++;
     pynames[i] = "opPOW"; ufunctions[i] = opPOW; i++;
-    pynames[i] = "opLINC"; ufunctions[i] = opPOW; i++;
+    pynames[i] = "opLINC"; ufunctions[i] = opLINC; i++;
     pynames[i] = "opSIN"; ufunctions[i] = opSIN; i++;
     pynames[i] = "opCOS"; ufunctions[i] = opCOS; i++;
 
@@ -117,6 +117,7 @@ void opLINC( circuit *c ) {
     double result = 0;
     
     for(int i=0; i < c->nI; i+=2) {
+        //printf("linc sum i %i\n",i);
         result += GlobalSignals[c->inputs[i]]*GlobalSignals[c->inputs[i+1]];
     }
     

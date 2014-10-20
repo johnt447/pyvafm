@@ -54,7 +54,7 @@ int Add_minmax(int owner, double checktime) {
     c.updatef = minmax;
     
     int index = AddToCircuits(c, owner);
-    printf("added minmax circuit %i\n",c.iparams[0]);
+    printf("cCore: added minmax circuit (check steps %i)\n",c.iparams[0]);
     return index;
 }
 void minmax( circuit *c ) {

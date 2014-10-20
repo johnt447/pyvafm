@@ -56,28 +56,7 @@ class Feed(object):
 		self._buff = 0.0
 		self.cCoreFEED = -1
 		
-	#@property
-	def value_get(self):
-		return self._value
-	
-	#@value.setter
-	def value_set(self,value):
-		self._buff = value
-		#print 'buffering value '+str(value)
-		
-	value = property(value_get, value_set)
-	
-	def Push(self):
-		
-		#print 'pushing '+str(self._buff)+' old('+str(self._value)+")"
-		self._value = self._buff;
-		
-	def PushValue(self, value):
-		self._value = value
-		self._buff = value
-	
-	def __str__ (self):
-		return str(self._value)  #+ "("+str(self._buff)+")"
+
 
 class Channel(object):
 	
@@ -97,10 +76,13 @@ class Channel(object):
 	#@property
 	def value_get(self):
 		#return self.signal.value
+		#print "hei this is valueget n00b!"
+		#r = Circuit.cCore.ChannelToPy(self.owner.cCoreID, self.cCoreCHID, self.cisInput)
+		#print r
 		return Circuit.cCore.ChannelToPy(self.owner.cCoreID, self.cCoreCHID, self.cisInput)
 	#@value.setter
 	def value_set(self,value):
-		
+		#print "debuggy!!!"
 		#self.signal.value = value
 		#print "setting channel: ",self.owner.cCoreID, self.cCoreCHID,self.cisInput,c_double(value)
 		Circuit.cCore.PyToChannel(self.owner.cCoreID, self.cCoreCHID, self.cisInput,c_double(value))
@@ -125,7 +107,7 @@ class Channel(object):
 		self.signal = Feed(self.owner)
 
 	def __str__(self):
-		return self.owner.name+"."+self.name+" = "+str(self.signal)
+		return self.owner.name+"."+self.name+" = "+str(self.value)
 		
 
 
