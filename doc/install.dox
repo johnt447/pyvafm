@@ -13,7 +13,7 @@ The following libraries and programs must be installed:
 
 - Python 2.7
 - gcc compiler (developed with v4.6.1)
-- scipy and numpy
+- scipy and numpy Python libraries
 
 
 \section Installation

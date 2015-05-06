@@ -526,3 +526,32 @@ class Perlin(Circuit):
 	def Update (self):
 		pass
 
+
+
+class ComplexMagAndPhase(Circuit):
+	
+	def __init__(self, machine, name, **keys):
+		
+		super(self.__class__, self).__init__( machine, name )
+
+
+		self.AddInput("Real")
+		self.AddInput("Complex")
+
+		#create output channels
+		self.AddOutput("Mag")
+		self.AddOutput("Phase")
+
+		
+		self.cCoreID = Circuit.cCore.Add_ComplexMagAndPhase(self.machine.cCoreID)
+		
+		self.SetInputs(**keys)
+
+
+
+	def Initialize (self):
+		
+		pass
+	
+	def Update (self):
+		pass

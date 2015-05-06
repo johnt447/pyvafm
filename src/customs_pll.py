@@ -53,12 +53,12 @@ def aPLL(compo,**keys):
   	compo.AddInput("signal1")
   	compo.AddInput("signal2")
   	compo.AddInput("f0")
-  	
+
   	compo.AddOutput("sin")
   	compo.AddOutput("cos")
   	compo.AddOutput("df")
-  	compo.AddOutput("dbg")
-  	
+  	compo.AddOutput("phase")
+
   	
   	filters = keys['filters']
   	print "prefilters cutoffs: ",filters
@@ -82,18 +82,18 @@ def aPLL(compo,**keys):
   	compo.Connect("pfd.out","lp1.signal")
 	for i in range(1,len(filters)):
 		compo.Connect("lp"+str(i)+".out","lp"+str(i+1)+".signal")
-  	
-  	compo.Connect("lp"+str(len(filters))+".out","pump.signal")
+
+  	compo.Connect("lp"+str(len(filters))+".out","pump.signal","global.phase")
   	compo.Connect("pump.out","dfgain.signal")
   	compo.Connect("dfgain.out","fsum.in1","global.df")
   	compo.Connect("global.f0", "fsum.in2")
 	compo.Connect("fsum.out",   "vco.freq")
 	compo.Connect("vco.sin",   "global.sin")
 	compo.Connect("vco.cos",   "global.cos")
-	compo.Connect("pfd.out",   "global.dbg")
+	#compo.Connect("pfd.out",   "global.dbg")
 	
 
-	print "analog PLL assembled!"
+	print "analog PLL assembled!" 
 
 
 
@@ -189,3 +189,64 @@ def FakePLL(compo, **keys):
 
 
     compo.Connect('sub.out','global.df')
+
+
+
+def LockInAmp(compo, **keys):
+
+    compo.AddInput("signal")
+    compo.AddInput("CentFreq")
+
+
+    compo.AddOutput("amp")
+    compo.AddOutput("phase")
+    compo.AddOutput("refWave")
+
+
+
+    compo.AddOutput("X")
+    compo.AddOutput("Y")
+
+
+    compo.AddCircuit(type='waver',name='WaveGen', freq=keys["CentFreq"] ,amp=1, pushed=True)
+    compo.AddCircuit(type='opMul',name='Xmul', pushed=True)
+    compo.AddCircuit(type='opMul',name='Ymul', pushed=True)
+
+    compo.AddCircuit(type='opMul',name='gain', pushed=True,in2=keys["OutAmp"])
+    compo.AddCircuit(type='opMul',name='AmpGain', pushed=True,in2=keys["Gain"])
+
+
+    compo.AddCircuit(type='RCLP', name='lpX', order=4 ,fc=1.0/keys["intTime"], pushed=True)
+    compo.AddCircuit(type='RCLP', name='lpY', order=4 ,fc=1.0/keys["intTime"], pushed=True)
+
+    compo.AddCircuit(type='ComplexMagAndPhase',name='Complex')
+
+    compo.Connect('global.CentFreq','WaveGen.freq')
+
+    compo.Connect('global.signal','Xmul.in1')
+    compo.Connect('WaveGen.cos','Xmul.in2')
+    compo.Connect('Xmul.out','lpX.signal')
+
+
+    compo.Connect('global.signal','Ymul.in1')
+    compo.Connect('WaveGen.sin','Ymul.in2')
+    compo.Connect('Ymul.out','lpY.signal')    
+
+    compo.Connect('lpX.out','Complex.Real')
+    compo.Connect('lpY.out','Complex.Complex')
+
+    compo.Connect('Complex.Mag','AmpGain.in1')
+    compo.Connect('AmpGain.out','global.amp')
+
+    compo.Connect('Complex.Phase','global.phase')    
+
+
+    compo.Connect('WaveGen.cos','gain.in1')
+    compo.Connect('gain.out','global.refWave')
+
+    compo.Connect('lpX.out','global.X')
+    compo.Connect('lpY.out','global.Y')
+
+
+
+
