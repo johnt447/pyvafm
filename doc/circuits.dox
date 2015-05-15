@@ -36,6 +36,8 @@
 		- \link vafmcircuits_Logic.XOR XOR\endlink - <i>XOrGate gate circuit.</i>
 		- \link vafmcircuits_Logic.NOR NOR\endlink - <i>NOrGate gate circuit.</i>
 
+	-Misc 
+		- \link vafmcircuits_math.ComplexMagAndPhase ComplexMagAndPhase\endlink - <i>Complex magnitude and phase</i>
 
 
 @htmlonly
@@ -178,7 +180,13 @@
 <div id="Composites">
 @endhtmlonly
 	- Custom Composites
-		- \link customs_pll.aPLL aPLL\endlink - <i> analog PLL</i>
+
+		- \link customs.aPLL aPLL\endlink - <i> analog PLL</i>
+		- \link customs.dPFD dPFD\endlink - <i> digital PLL</i>
+		- \link customs.LockInAmp LockInAmp\endlink - <i> Lock in Amp</i>
+		- \link customs.aAMPD aAMPD\endlink - <i> Analogue amplitude detection circuit</i>
+		
+
 @htmlonly
 </div><!-- end of Composites list -->
 @endhtmlonly

@@ -3,7 +3,7 @@ from vafmcircuits import Machine
 import math
 
 
-## \package customs_pll
+## \package customs
 # Contain the assembly functions for composite PLL circuits.
 
 
@@ -96,6 +96,43 @@ def aPLL(compo,**keys):
 	print "analog PLL assembled!" 
 
 
+## \brief Digital PLL composite circuit.
+#Compares the delay between two flip flops becomoing positive allowing frequency shift between two signals to be measured.
+#
+# 
+# \note For this to work, the output \a sin should be connected to \a signal2 in the parent circuit (as shown in example). 
+# Also, both signals should be normalised (amplitude = 1) and their offset should be removed.
+#
+#
+# \b Initialisation \b parameters:
+# - fcut = Cutoff frequencies for dPFD lowpass filter
+# - Kp = proportional constant of the charge pump
+# - Ki = integral constant of the charge pump
+# - gain = gain on the charge pump output
+# - pushed = True|False  push the output buffer immediately if True
+#
+# \b Input \b channels:
+# - \a ref = incoming signal
+# - \a vco = reference signal
+# - \a f0 = fundamental frequency
+#
+# \b Output \b channels:
+# - \a sin = sine wave of the internal VCO
+# - \a cos = cosine wave of the internal VCO
+# - \a df = frequency shift from \a f0
+#
+# 
+# \b Example:
+# \code{.py}
+#machine = Machine(name='machine', dt=1.0e-8, pushed=True);
+#
+#machine.AddCircuit(type="Machine",name='pll', assembly=dPFD, filters=[1000,500],
+# gain=600.0, f0=1.0e5, Kp=0.4, Ki=500)
+#
+#machine.Connect("pll.sin","pll.signal2")
+# \endcode
+#
+
 
 def dPFD(compo,**keys):
     
@@ -150,6 +187,26 @@ def dPFD(compo,**keys):
     print "digital PFD assembled!"
 
 
+## \brief Analogue amplitude detection circuit.
+# Passed a singal throuhg a low pass filter to calculate the amplitude of it. 
+#
+# \b Initialisation \b parameters:
+# - fcut = Cut off frequency for the low pass filter 
+# 
+#
+# \b Input \b channels:
+# - \a signal = incoming signal
+#
+# \b Output \b channels:
+# - \a amp = Amplitude of the incoming wave
+# - \a norm = normalaised input wave.
+#
+# 
+# \b Example:
+# \code{.py}
+# machine.AddCircuit(type="Machine",name='amp', fcut=10000, assembly=aAMPD, pushed=True)
+# \endcode
+
 def aAMPD(compo, **keys):
     
     compo.AddInput("signal")
@@ -189,6 +246,37 @@ def FakePLL(compo, **keys):
 
 
     compo.Connect('sub.out','global.df')
+
+
+
+## \brief Lock in amplifier.
+# Calculates the complex  phase shift and magnitude of a given signal 
+#
+# \b Initialisation \b parameters:
+# - fcut = Cut off frequency for the low pass filter 
+# - intTime = Integration time of the lock in amp
+# - CentFreq = the central frequency of the lock in amp signal
+# - OutAmp = the outputted amplitude of the reference signal
+# - Gain = gain of the final outputted signal 
+#
+# \b Input \b channels:
+# - \a signal = incoming signal
+# - \a CentFreq = incoming signal
+#
+# \b Output \b channels:
+# - \a amp = Complex magnitude of the signal. 
+# - \a phase = Complex phase of the signal.
+# - \a refWave = the reference wave used in the lock in amp, oscilating at the central frequency.
+# - \a X = Real part of the complex output.
+# - \a Y = Imaginary part of the complex output.
+
+#
+# 
+# \b Example:
+# \code{.py}
+#f0 = 10000
+# machine.AddCircuit(type="Machine",name='LockInAmp', intTime=1.0/f0 * 100, CentFreq=f0, OutAmp=Az , Gain=2 ,assembly=LockInAmp, pushed=True)
+# \endcode
 
 
 
