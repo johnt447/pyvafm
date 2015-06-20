@@ -221,6 +221,7 @@ class i1Dlin(Circuit):
 		else:
 			raise NameError("No pbc entered ")
 
+		
 
 		self.AddInput("x")
 		
