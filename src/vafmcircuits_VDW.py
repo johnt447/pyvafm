@@ -159,3 +159,48 @@ class VDWtorn(Circuit):
 	def Update (self):
 		pass		
 
+
+
+
+class LJ(Circuit):
+    
+    
+	def __init__(self, machine, name, **keys):
+		
+		super(self.__class__, self).__init__( machine, name )
+
+		if 'epsilon' in keys.keys():
+			ep = keys['epsilon']
+		else:
+			raise NameError("No epsilon entered ")
+
+
+		if 'sigma' in keys.keys():
+			sig = keys['sigma']
+		else:
+			raise NameError("No sigma entered ")
+
+
+		self.AddInput("ztip")
+		
+		self.AddOutput("F")
+		self.AddOutput("Repulsive")
+		self.AddOutput("Attractive")
+
+
+		Circuit.cCore.Add_LJ.argtypes = [
+		ctypes.c_int, #owner
+		ctypes.c_double, #ep
+		ctypes.c_double] #sig
+
+		self.cCoreID = Circuit.cCore.Add_LJ(self.machine.cCoreID,ep,sig)
+		
+		self.SetInputs(**keys)
+
+
+	def Initialize (self):
+		pass
+				
+		
+	def Update (self):
+		pass	

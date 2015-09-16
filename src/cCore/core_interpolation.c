@@ -307,7 +307,11 @@ void i1Dlin_periodic(circuit* c) {
     if (c->iparams[2] == 0 )
         if (x >= (c->iparams[0]-1)*c->params[0] || x< 0){
         for (int i = 0; i < c->iparams[1]; i++)
-        { GlobalBuffers[c->outputs[i]] = 0;
+        {   
+            if (x<0) 
+            {printf("WARNING:Crashed into Surface\n");}
+            
+            GlobalBuffers[c->outputs[i]] = 0;
             return; }}
 	
 	/*else {
