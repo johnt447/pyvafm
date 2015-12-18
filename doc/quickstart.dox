@@ -79,7 +79,7 @@ The full python input file is:
 and the output is then plotted (gnuplot) as follows:
 
 \htmlonly
-<img src="quickstart.png" width="800px">
+<img src="quickstart.jpg" width="800px">
 \endhtmlonly
 
 

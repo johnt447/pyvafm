@@ -162,6 +162,32 @@ class VDWtorn(Circuit):
 
 
 
+## \brief Lennard Jones Potential circuit.
+# \image html LJ.png "schema"
+#
+# Produces a Lennard Jones potentinal with given paramaters
+#
+# \b Initialisation \b parameters:
+# 	- \a pushed = True|False  push the output buffer immediately if True
+# 	- \a epsilon  = epsilon of the Lennard Jones potential
+#	- \a sigma =  Sigma of the Lennard Jones potential
+#
+# \b Input \b channels: 
+#	- \a ztip = z posisiton of the tip
+#
+# \b Output \b channels: 
+#	- \a F = Total Potential Output
+#	- \a Repulsive = Just the repuslive part of the Potential
+#	- \a Attractive = Just the attractive part of the Potential
+#
+#\b Examples:
+# \code{.py}
+#	machine.AddCircuit(type='LJ', name='lj',epsilon=3.9487, sigma=1 , pushed=True)
+# \endcode
+#
+
+
+
 class LJ(Circuit):
     
     

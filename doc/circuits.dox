@@ -36,7 +36,7 @@
 		- \link vafmcircuits_Logic.XOR XOR\endlink - <i>XOrGate gate circuit.</i>
 		- \link vafmcircuits_Logic.NOR NOR\endlink - <i>NOrGate gate circuit.</i>
 
-	-Misc 
+	- Misc 
 		- \link vafmcircuits_math.ComplexMagAndPhase ComplexMagAndPhase\endlink - <i>Complex magnitude and phase</i>
 
 
@@ -58,6 +58,8 @@
 	- Signal Generation
 		- \link vafmcircuits_signal_gens.waver waver\endlink - <i>sinusoidal wave generator</i>
 		- \link vafmcircuits_signal_gens.square square\endlink - <i>square wave generator</i>
+		- \link vafmcircuits_VDW.LJ LJ\endlink - <i>Lennard Jones Potential</i>
+
 
 @htmlonly
 </div><!-- end of signalgen list -->
