@@ -285,6 +285,8 @@
 		- \link vafmcircuits_Dipole.ExtractPotential Extract Potential\endlink - <i> Extract Potential Circuit</i>
 		- \link vafmcircuits_Dipole.LOCPOTShaping LOCPOT Shaping\endlink - <i> LOCPOT Shaping Circuit</i>
 		- \link vafmcircuits_Dipole.Dipole Dipole Aproximation\endlink - <i> Dipole Aproximation Circuit</i>
+		- \link vafmcircuits_Interpolation.MechAfmToPyVafm MechAfmToPyVafm\endlink - <i> MechAFM force field to PyVAFM force field Circuit</i>
+
 
 @htmlonly
 </div><!-- end of Composites list -->

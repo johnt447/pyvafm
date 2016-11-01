@@ -9,7 +9,7 @@ machine = Machine(machine=None, name='machine', dt=5.0e-8)
 canti = machine.AddCircuit(type='Cantilever',name='canti', startingz=0.5,Q=10000, k=167.0, f0=150000, pushed=True)
  
  
-machine.AddCircuit(type="Machine",name='amp', fcut=10000, assembly=aAMPD, pushed=True)
+machine.AddCircuit(type="Machine",name='amp', fcut=[10000], assembly=aAMPD, pushed=True)
  
 machine.AddCircuit(type='PI', name='agc', Kp=1.1, Ki=800, set=1, pushed=True)
 machine.AddCircuit(type="limiter",name='agclim', min=-100000,max=1000000, pushed=True)
@@ -38,7 +38,7 @@ out1.Register('global.time', 'canti.zabs','amp.norm','pll.cos','pll.sin','exc.in
 out1.Stop()
  
 out2 = machine.AddCircuit(type='output',name='output2',file='testafm2.out', dump=10000)
-out2.Register('global.time', 'canti.ztip','agc.out','pll.df',"canti.fz")
+out2.Register('global.time', 'canti.ztip','agc.out','pll.df',"canti.fz",'amp.amp')
 #out2.Stop()
  
 #Imaging output
